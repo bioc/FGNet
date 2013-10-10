@@ -1,0 +1,20 @@
+export(query_gtLinker)
+export(getResults_gtLinker)
+export(query_david)
+export(getResults_david)
+export(adjMatrix)
+export(functionalNetwork)
+export(intersectionNetwork)
+export(plotMetagroupsDistance)
+export(report_gtLinker)
+export(report_david)
+export(getTerms)
+
+
+import(igraph)
+import(hwriter)
+import(RCurl)
+importFrom(R.utils, capitalize)
+importFrom(R.utils, decapitalize)
+importFrom(XML, xmlToDataFrame)
+

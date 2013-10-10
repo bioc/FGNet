@@ -1,0 +1,144 @@
+
+body {
+
+   margin:0;
+   padding:0;
+   font-family: 'Trebuchet MS',Arial, Helvetica, sans-serif, Georgia, Times, Times New Roman;
+   font-size: 0.8em;
+   text-align:left;
+   color:#29303B;
+   line-height:1.3em;
+   background: white;
+   margin: auto; 
+   width: 800px;
+}
+
+/******* Text ***********/
+
+h1
+{
+	text-align:center;
+}
+
+h2
+{
+	
+}
+.InfoLabel
+{
+	font-weight:bold;
+}
+
+/******* Image ***********/
+img {
+     border:1;
+}
+a.network img{
+    height: 600px;
+}
+
+a.intersectionNw img {
+    height: 200px;
+    
+}
+a.distance img{
+    height: 400px;
+}
+
+/******* Link ***********/
+
+a:link, a:visited {
+ text-decoration:none;
+ /*color: #2f4774; */
+ color: #365286;
+}
+
+a:hover, a:active {
+ color: #90bfff;
+}
+
+a.goLink
+{
+	text-align:center;
+}
+
+/******* Tables ***********/
+table{
+	padding: 0;
+	margin: 0;
+	border-spacing:0;
+	border:0px solid;
+}
+tr{
+}
+td.Terms{
+	padding: 0;
+	margin: 0;
+	border: 0px solid;
+}
+td.termsRow{
+	float:top;
+	border:0px solid;
+	text-align:left;
+	width:500px;
+}
+td.annotRow{
+	float:top;
+	border:0px solid;
+	text-align:right;
+	width:100px;
+}
+td.mgHeader{
+	border:0;
+	border:5px solid;
+}
+td.mgAttr{
+	width: 120px;
+}
+table.ImageTable
+{
+	width: 800px;
+}
+a.goLink {
+	float:right;
+}
+.matrix
+{
+		text-align: center;
+		font-weight: normal;
+		padding: 5px;
+		width: 25px;
+		border-collapse: collapse;
+		border: 0px solid white;
+}
+
+/******* Genes tooltip ***********/
+.tooltip{
+ 		display: inline;
+		position: relative;
+}
+
+.tooltip:hover:after{
+		background: #333;
+		background: rgba(0,0,0,.8);
+		border-radius: 5px;
+		bottom: 26px;
+		color: #fff;
+		content: attr(title);
+		left: 20%;
+		padding: 5px 15px;
+		position: absolute;
+		z-index: 98;
+		width: 300px;
+}
+
+.tooltip:hover:before{
+		border: solid;
+		border-color: #333 transparent;
+		border-width: 6px 6px 0 6px;
+		bottom: 20px;
+		content: "";
+		left: 50%;
+		position: absolute;
+		z-index: 99;
+}

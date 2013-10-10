@@ -1,0 +1,445 @@
+% -*- mode: noweb; noweb-default-code-mode: R-mode; -*-
+%\VignetteIndexEntry{FGNet}
+%\VignetteKeywords{Visualization, Annotation, GO, Pathways, GeneSetEnrichment, Networks, NetworkVisualization}
+%\VignetteDepends{FGNet}
+%\VignettePackage{FGNet}
+\documentclass[a4paper,12pt]{article}
+
+\usepackage{Sweave} %modify for your R home directory
+\usepackage{amsmath}
+\usepackage{hyperref}
+\usepackage{authblk}
+\usepackage{anysize}
+\usepackage{float}
+\usepackage[font=small, labelfont=bf, labelsep=period]{caption}
+\usepackage{subfigure} %or subcaption
+\setlength{\captionmargin}{30pt}
+
+\marginsize{1in}{1in}{0.5in}{0.5in}
+\setlength{\parindent}{0pt}
+
+\pagestyle{myheadings}
+\markright{FGNet\hfill}
+
+\title{\textit{FGNet}\\ Functional Gene Networks \\ derived from biological enrichment analyses}
+\author{Sara Aibar}
+\author{Celia Fontanillo}
+\author{Conrad Droste}
+\author{Javier De Las Rivas}
+\affil{Bioinformatics and Functional Genomics Group\\ Centro de Investigacion del Cancer (CiC-IBMCC, CSIC/USAL)\\ Salamanca - Spain}
+
+\begin{document}
+\SweaveOpts{concordance=TRUE}
+\maketitle 
+\begin{center}
+Version: 1.0
+\end{center}
+\tableofcontents
+
+\newpage
+\section{Introduction to \textit{Functional Gene Networks}}
+\label{sec:intro}
+
+Functional Gene Networks (FGNet) allows to analize the results from a clustered functional enrichment analysis and transform them into a gene network. In this way, FGNet provides a functional gene network, which is analyzed and presented as a graphical object allowing an overview of the links and overlapping betwen genes and biological functions. The package also includes an interface to perform the enrichment and clustering through \emph{DAVID} and \emph{GeneTerm Linker} tools.\\
+
+\textbf{Biological functional analysis}
+
+After obtaining a list of genes or proteins from an experiment or omic studies (i.e. microarrays, RNAseq, mass spectrometry, etc), next step is usually to perform a functional analysis of the genes to search for the biological functions or processes in which they are involved. In order to facilitate the analysis of large lists of genes, multiple functional enrichment tools have been developed. These tools search for the genes in biological databases (i.e. GO, Kegg, Interpro), and test whether any biological annotations are over-represented in the query gene list compared to what would be expected in the whole population. However, the raw output from a functional enrichment analysis often provides hundreds of terms, and it still requires a lot of time and attention to go through the whole list of genes and annotations. A way to simplify this task is grouping genes and terms which often appear together and create associated networks. \emph{Functional Gene Networks} algorithm has been designed with this purpose. To do so, it uses the output of a previous functional enrichment analysis. The package has been implemented to support two specific tools:
+
+\begin{enumerate}
+\item Functional Annotation Clustering from DAVID, which measures relationships among annotation terms based on their co-association with genes within the query gene list \cite{Huang1, Huang2}. This type of clustering mostly results in groups of highly related terms, such as synonymous annotations from different annotation spaces (i.e. Glycolysis in KEGG and GO-BP), which also share most of their genes. 	
+\item	GeneTerm Linker, a post-enrichment tool, which focuses on clearing and sorting the results from a previous enrichment analysis. This is achieved by filtering little informative terms (i.e. \emph{cellular process}) and redundant annotations (i.e. \emph{metabolic process} and \emph{primary metabolic process}). The remaining gene-term sets are grouped into \emph{metagroups} based on their shared genes and terms (\emph{reciprocal linkage}) \cite{Fontanillo}.
+\end{enumerate}
+
+\begin{figure}[h]
+\centering
+\subfigure{
+	\includegraphics[width=.3\textwidth]{nwExample1}
+	 \label{fig:subfig1a}
+}
+\centering
+\subfigure{
+	\includegraphics[width=.3\textwidth]{nwExample2}
+	 \label{fig:subfig1b}
+	 }
+\centering
+\subfigure{
+	\includegraphics[width=.3\textwidth]{nwExample3}
+	 \label{fig:subfig1c}
+}
+
+Different levels of overlap between gene groups.
+\end{figure} 
+ 
+\newpage
+\textbf{Functional network}
+
+The \emph{functional network} is the representation of the results from a functional enrichment analysis clustering. Each of the genes is one node, and the genes are linked to each other if they are in the same gene-term set. In the plot, the groups (metagroups or clusters) are also represented by a coloured background. The genes that are only in one group, will also be coloured. \\
+
+
+The package includes a \emph{report} function which allows to automatically generate an HTML file with the functional network, the terms included in each group, the intersection network and distance matrix. The \emph{intersection network} is a simplified functional network where all the genes that belong to only one metagroup are clustered into a single node. Therefore, the resulting network contains only the nodes in several groups (\emph{intersection} between groups) linked to the metagroups they belong to. The \emph{distance matrix} represents the similarity between the groups based on the genes they share with each other (binary distance).\\
+
+
+A pdf version of this report is available at the end of this vignette.
+
+\section{Installation}
+\label{sec:installation}
+To install \textit{FGNet} from \textit{Bioconductor}, type in your R console:
+<<eval=FALSE>>=
+source("http://bioconductor.org/biocLite.R")
+biocLite("FGNet")
+@ 
+
+Note on libraries and dependencies: FGNet requires libraries \emph{igraph} (version 0.6 or older), \emph{hwriter}, \emph{RCurl}, \emph{XML} and \emph{R.utils}.
+
+In addition, it may also use \emph{RColorBrewer} and \emph{png}. These libraries are not required for creating the Functional Networks, but they will enhance the network plots.
+
+\section{Basic example: network from a list of genes/proteins}
+\label{sec:BasicExample}
+
+FGNet can automatically generate an HTML report with the functional analysis and network directly from a gene list. To do so, just load the library, the gene list, and call either \emph{report\_david()} or \emph{report\_gtLinker()}.
+
+In this example we will use the sample yeast dataset provided by GeneTerm Linker:
+
+<<eval=TRUE>>=
+library(FGNet)
+genesYeast <- c("ADA2", "APC1", "APC11", "APC2", "APC4", "APC5", "APC9", 
+"CDC16", "CDC23", "CDC26", "CDC27", "CFT1", "CFT2", "DCP1", "DOC1", "FIP1", 
+"GCN5", "GLC7", "HFI1", "KEM1", "LSM1", "LSM2", "LSM3", "LSM4", "LSM5", 
+"LSM6", "LSM7", "LSM8", "MPE1", "NGG1", "PAP1", "PAT1", "PFS2", "PTA1", 
+"PTI1", "REF2", "RNA14", "RPN1", "RPN10", "RPN11", "RPN13", "RPN2", "RPN3",
+"RPN5", "RPN6", "RPN8", "RPT1", "RPT3", "RPT6", "SGF11", "SGF29", "SGF73",
+"SPT20", "SPT3", "SPT7", "SPT8", "TRA1", "YSH1", "YTH1")
+@
+%DAVID:
+<<eval=FALSE>>=
+report_david(genesYeast)
+@
+%GeneTerm Linker:
+<<eval=FALSE>>=
+report_gtLinker(genesYeast, organism = "Sc")
+@
+
+These report functions are wrappers that include all the steps to query to the functional enrichment tool (DAVID or GtLinker) and generate the functional network (see \textbf{Section Workflow}). The first step for creating the functional network is to perform the functional enrichment and clustering. This which can be done directly in R (see following sections) but also through their web sites: 
+\begin{itemize}
+	\item DAVID: \url{http://david.abcc.ncifcrf.gov} (Functional Annotation Clustering Tool)
+	\item GeneTerm Linker: \url{http://gtlinker.dacya.ucm.es}
+\end{itemize}
+
+\begin{figure}[h]
+\centering
+\subfigure{
+	\includegraphics[width=.31\textwidth]{ssGtlinker}
+	 \label{fig:subfig2a}
+}
+\centering
+\subfigure{
+	\includegraphics[width=.31\textwidth]{ssDavid}
+	 \label{fig:subfig2b}
+	 \centering
+}
+
+To use an analysis performed at the web sites, take GeneTerm linker's \emph{job ID} or DAVID's \emph{download file}
+\end{figure}
+
+To generate the \emph{functional network} out of a previously performed analysis, the jobID (GeneTerm Linker) or the .txt file (DAVID) can be used. \emph{jobName} allows setting the name of the HTML file and the folder where the data will be saved.
+
+i.e. This analysis was performed for an Alzheimer dataset (GSE4757):
+<<eval=FALSE>>=
+report_gtLinker(jobID=1639610, jobName="Alzheimer")
+@
+
+When there many overlapping metagroups, a threshold can be set to filter out some metagroups. By default, this threshold is based on the metagroup/cluster \emph{silhouette} (for GeneTerm Linker), or the \emph{enrichment score} (in case of DAVID). (See following sections for more details).
+<<eval=FALSE>>=
+report_gtLinker(jobID=1639610, jobName="Alzheimer_trh0.2",
+threshold=0.2)
+@
+
+A PDF version of this report is available at the end of this vignette.
+
+For help or more details on any functions or their arguments, just set a ? before its name. i.e. :
+<<eval=FALSE>>=
+?report_gtLinker
+@
+
+\section{Advanced example: modifying default parameters and executing the workflow step by step}
+\label{sec:AdvancedExample}
+
+The report functions are wrappers that include several steps. We will now see each of them:
+ 	\begin{enumerate}
+	\item Query the functional enrichment analysis tool (DAVID or GeneTerm Linker)
+	\item Retrieve the functional enrichment results from the server
+	\item Create the adjacency matrices to build the network
+	\item Build and plot the networks
+\end{enumerate}
+
+The workflows for GeneTermLinker and DAVID are equivalent. They only differ in the two first steps (analysis query and retrieval) since the parameters each of the tools require are different and the results they return are also in different formats.
+To avoid confusion, we will start with an example with GeneTerm Linker and explain the slight differences when using DAVID. An equivalent example with DAVID is available in section \ref{sec:DavidExample}.
+
+\subsection{Step 1: Query the functional enrichment analysis tool}
+\label{sec:Step1}
+To perform the functional enrichment analysis through this package, all is needed is a list of genes.
+In case the functional analysis tool is GeneTerm Linker, it is also possible to specify the organism (Homo Sapiens by default).
+<<eval=FALSE>>=
+genesYeast <- c("ADA2", "APC1", "APC11", "APC2", "APC4", "APC5", "APC9", 
+"CDC16", "CDC23", "CDC26", "CDC27", "CFT1", "CFT2", "DCP1", "DOC1", "FIP1", 
+"GCN5", "GLC7", "HFI1", "KEM1", "LSM1", "LSM2", "LSM3", "LSM4", "LSM5", 
+"LSM6", "LSM7", "LSM8", "MPE1", "NGG1", "PAP1", "PAT1", "PFS2", "PTA1", 
+"PTI1", "REF2", "RNA14", "RPN1", "RPN10", "RPN11", "RPN13", "RPN2", "RPN3",
+"RPN5", "RPN6", "RPN8", "RPT1", "RPT3", "RPT6", "SGF11", "SGF29", "SGF73",
+"SPT20", "SPT3", "SPT7", "SPT8", "TRA1", "YSH1", "YTH1")
+organism <- "Sc"
+jobID <- query_gtLinker(genesYeast, organism=organism)
+@
+
+<<eval=TRUE, echo=FALSE>>=
+	jobID <- 3907019
+@
+
+The annotations spaces to perform the enrichment analysis can also be set. 
+Note the annotation IDs are different for DAVID and GeneTermLinker. DAVID's are available at its API description: \url{http://david.abcc.ncifcrf.gov/content.jsp?file=DAVID\_API.html}. GeneTerm Linker allows these five:
+<<eval=TRUE>>=
+annotations <- c("GO_Biological_Process", 
+"GO_Molecular_Function", 
+"GO_Cellular_Component", 
+"KEGG_Pathways", 
+"InterPro_Motifs")
+@
+
+To perform the analysis through DAVID, use \emph{query\_david} instead. Just note the annotation names are different, there is no need to provide the organism, and it will return the URL to the text file instead of the jobID. 
+<<eval=FALSE>>=
+?query_david
+@
+
+\subsection{Step 2: Get the functional analysis results}
+\label{sec:Step2}
+
+Since the query function only requests the analysis to be performed, now it is needed to download the results of the analysis.
+To do so, it can be used either the \emph{URL} to DAVID's text file, or the \emph{jobID} returned by GeneTerm Linker:
+<<eval=TRUE>>=
+results <- getResults_gtLinker(jobID, jobName="Set4yeast")
+@
+\emph{jobName} allows to set a folder to save the results. In case the analysis results are already downloaded, to draw the network with different parameters, just provide the \emph{jobName} or \emph{path}:
+<<eval=FALSE>>=
+results <- getResults_gtLinker(jobName="Set4yeast", 
+alreadyDownloaded=TRUE)
+@
+
+The variable \emph{results} now contains the raw results from the functional enrichment and clustering:
+<<eval=TRUE>>=
+names(results)
+@
+<<eval=TRUE, results=hide>>=
+head(results$metagroups)
+@
+
+Since DAVID instead of a job ID, returns the txt file with the results, it uses the function \emph{getResults\_david()}:
+<<eval=FALSE>>=
+?getResults_david
+@
+
+\subsection{Step 3: Create the adjacency matrices to build the network}
+\label{sec:Step3}
+
+The raw results can now be transformed into adjacency matrices in order to create the network:
+<<eval=TRUE>>=
+adjMat <- adjMatrix(results$geneTermSets)
+@
+These matrices now contain which genes are in each metagroup or cluster and in each gene-term set:
+<<eval=TRUE>>= 
+head(adjMat$metagroupGenesMatrix)
+adjMat$gtSetGenesMatrix[1:5, 14:18]
+@
+Filtering the metagrops/clusters based on a score threshold can be done in this step. i.e. for filtering metagroups with \emph{silhouette} under 0.2:
+<<eval=TRUE>>=
+adjMatFiltered <- adjMatrix(results$geneTermSets, 
+attribute=results$metagroups[,"Silhouette Width", drop=FALSE], threshold=0.2)
+@
+To see which metagroups/clusters have been filtered out and now are no longer in the adjacency matrices:
+<<eval=TRUE>>=
+adjMatFiltered$filteredOut
+@
+
+\subsection{Step 4: Build and plot the networks}
+\label{sec:Step4}
+
+Once the adjacency matrices are ready, they can be transformed into the network. The function \emph{functionalNetwork()} generates the network and plots it:
+<<fig=TRUE, eval=TRUE>>=
+functionalNetwork(adjMat) 
+@
+
+By setting the parameter \emph{PlotType="dynamic"} instead of an static plot, it will create an interactive one.
+<<eval=FALSE>>=
+functionalNetwork(adjMat, plotType="dynamic") 
+@
+
+By default, \emph{functionalNetwork()} only plots the network. In order to obtain the igraph object with the actual graph/network, set the parameter \emph{returnGraph=TRUE}. 
+<<eval=TRUE>>=
+fNw <- functionalNetwork(adjMat, returnGraph=TRUE, plotType="none") 
+@
+
+Since the returned network is an \emph{iGraph} object, it can be used or analyzed as such:
+<<eval=TRUE>>=
+library(igraph)
+fNw
+@
+<<eval=TRUE, results=hide>>=
+str(fNw)
+@
+<<eval=TRUE>>=
+vcount(fNw)
+ecount(fNw)
+sort(betweenness(fNw), decreasing=TRUE)[1:30]
+@
+Or transformed into other formats...
+<<eval=TRUE>>=
+igraph.to.graphNEL(fNw)
+@
+
+In dynamic plots (tkp plot) it is not possible to draw the metagroup background. However, it is possible to use the \texttt{vLayout} argument to save the current 'dynamic' layout into an static plot: 
+<<eval=FALSE>>=
+functionalNetwork(adjMatFiltered, plotType="dynamic") 
+# Modify the layout...
+saveLayout <- tkplot.getcoords(1)   # tkp.id (ID of the tkplot window)
+functionalNetwork(adjMatFiltered, vLayout=saveLayout)
+@
+
+In addition to the functional network, when there are nodes in several metagroups, the \emph{intersection network} can also be plotted.
+This plot is a simplified functional network, containing only the nodes in several metagroups and the metagroups they belong to. The 'metagroup nodes' are the coloured nodes, which can be seen as a cluster of all the genes/proteins that belong only to that metagroup. 
+By default, the intersection network is plotted automatically when requesting an interactive plot, but it can also be plotted by itself:
+
+<<fig=TRUE, eval=TRUE>>=
+intersectionNetwork(adjMat$metagroupGenesMatrix,
+plotType="static", vLayout="kk")
+@
+
+
+The terms in each metagroup can be seen in the raw \emph{results} data frame or using \emph{getTerms()}:
+<<eval=TRUE>>=
+getTerms(results)[1]
+@
+
+\subsection{Example using DAVID Functional Annotation Clustering Tool}
+\label{sec:DavidExample}
+% glycolysis / gluconeogenesis
+% tryptophan/tyrosine biosynthesis/degradation
+% ergosterol biosynthesis
+
+To generate the functional network with DAVID, the workflow is the same as with GeneTerm Linker. In this example we will use yeast genes from 3 metabolic pathways: \emph{ergosterol biosynthesis}, \emph{glycolysis/gluconeogenesis} and \emph{tryptophan and tyrosine biosynthesis and degradation}. \\
+
+\textbf{Option A)} Generating the report automatically (getting an initial overview of the networks):
+<<eval=TRUE>>=
+genesMetabolism <- c("CDC19", "ENO1", "ENO2", "FBA1", "FBP1", "GPM1", 
+"MAE1", "MDH1", "MDH2", "MDH3", "PCK1", "PFK1", "PFK2", "PGI1", "PGK1", 
+"PYC1", "PYC2", "PYK2", "TDH1", "TDH2", "TDH3", "TPI1", "ADH1", "ADH2",
+"ADH3", "ADH4", "ADH5", "ARO10", "ARO7", "ARO8", "ARO9", "BNA1", "BNA2", 
+"BNA4", "BNA5", "BNA6", "BNA7", "PDC1", "PDC5", "PDC6", "SFA1", "TRP1", 
+"TRP2", "TRP3", "TRP4", "TRP5", "TYR1", "ERG1", "ERG11", "ERG2", 
+"ERG20", "ERG24", "ERG25", "ERG26", "ERG27", "ERG3", "ERG4", "ERG5", 
+"ERG6", "ERG7", "ERG9")
+@
+<<eval=FALSE>>=
+report_david(genesMetabolism)
+@
+
+Or, if the analysis has already been performed at the website (see Section \ref{sec:BasicExample}). This option is recommended for long gene lists (see \emph{?report\_david()} for details):
+<<eval=FALSE>>=
+report_david(inputFileLocation="http://david... .txt")
+@
+
+DAVID usually provides many overlapping clusters. In order to simplify the results or explore the overlap between specific clusters, see the following example.\\
+
+
+\textbf{Option B)} Executing the steps on the workflow one by one (i.e. to personalize the network): 
+<<eval=TRUE>>=
+txtFile <- query_david(genesMetabolism)
+results <- getResults_david(txtFile, jobName="David_Metabolism")
+adjMat <- adjMatrix(results$geneTermSets)
+functionalNetwork(adjMat) 
+@
+
+To see the terms each cluster includes, use \emph{getTerms()}:
+<<eval=TRUE>>=
+getTerms(results)[2]
+@
+
+Since DAVID usually provides many overlapping clusters, it is useful to filter the results or select only a few clusters to plot. 
+
+The filtering can be used to plot the top clusters based on their Enrichment score, the number of genes they contain, or any other parameter we might want to use:\\
+
+a) Filtering based on a \textbf{parameter}:
+<<eval=TRUE>>=
+colnames(results$clusters)
+quantile(results$clusters$EnrichmentScore, c(0.5, 0.75, 0.9))
+@
+<<eval=TRUE, results=hide>>=
+adjMatFiltered <- adjMatrix(results$geneTermSets, 
+attribute=results$clusters[,"EnrichmentScore", drop=FALSE], threshold=7)
+functionalNetwork(adjMatFiltered)
+@
+
+b) Inverse filtering/selection of \textbf{lowest values}. i.e. Overlap between clusters with least genes:
+<<eval=TRUE, results=hide>>=
+quantile(results$clusters$nGenes, c(0.10, 0.25, 0.5, 0.75, 0.9))
+adjMatFiltered <- adjMatrix(results$geneTermSets, 
+attribute=-(results$clusters[,"nGenes", drop=FALSE]), threshold=-10)
+functionalNetwork(adjMatFiltered)
+@
+
+To use any other parameter, add it as column to the to the results\$clusters data frame. Then use it to create the adjacency matrix and the network.\\
+
+c) Selecting \textbf{clusters with specific terms or keywords}:
+<<eval=TRUE, results=hide>>=
+keywords <- c("glycolysis", "ergosterol") 
+selectedClusters <- sapply(getTerms(results), 
+function(x) 
+any(grep(paste("(", paste(keywords, collapse="|") ,")",sep=""), tolower(x))))
+results$clusters <- cbind(results$clusters, 
+selectedKeywords=as.numeric(selectedClusters))
+adjMatSelectedGroups <- adjMatrix(results$geneTermSets, 
+attribute=results$clusters[,"selectedKeywords", drop=FALSE], threshold=1)
+functionalNetwork(adjMatSelectedGroups)
+@
+
+d) Selection of \textbf{specific groups}. i.e. Selecting clusters 1, 3 and 8
+<<fig=TRUE, eval=TRUE>>=
+selectedClusters <- rep(FALSE, nrow(results$clusters))
+selectedClusters[c(1,3,8)] <- TRUE
+
+results$clusters <- cbind(results$clusters, 
+selectedClusters=as.numeric(selectedClusters))
+adjMatSelectedGroups <- adjMatrix(results$geneTermSets, 
+attribute=results$clusters[,"selectedClusters", drop=FALSE], threshold=1)
+functionalNetwork(adjMatSelectedGroups)
+@
+
+
+\begin{thebibliography}{6}  % 100 is a random guess of the total number of references
+
+\bibitem{Huang1} Huang DW, Sherman BT, Lempicki RA. \emph{Systematic and integrative analysis of large gene lists using DAVID Bioinformatics Resources.} Nature Protoc. 2009;4(1):44-57.
+
+\bibitem{Huang2} Huang DW, Sherman BT, Lempicki RA. \emph{Bioinformatics enrichment tools: paths toward the comprehensive functional analysis of large gene lists.} Nucleic Acids Res. 2009;37(1):1-13.
+
+\bibitem{Fontanillo} Fontanillo C, Nogales-Cadenas R, Pascual-Montano A, De Las Rivas J (2011) \emph{Functional Analysis beyond Enrichment: Non-Redundant Reciprocal Linkage of Genes and Biological Terms.} PLoS ONE 6(9): e24289. doi:10.1371/journal.pone.0024289 
+
+%\bibitem{Tabas} Tabas-Madrid D, Nogales-Cadenas R, Pascual-Montano A. \emph{GeneCodis3: a non-redundant and modular enrichment analysis tool for functional genomics.} Nucleic Acids Research 2012; doi: 10.1093/nar/gks402
+
+%\bibitem{Nogales} Nogales-Cadenas R, Carmona-Saez P, Vazquez M, Vicente C, Yang X, Tirado F, Carazo JM, Pascual-Montano A. \emph{GeneCodis: interpreting gene lists through enrichment analysis and integration of diverse biological information.} Nucleic Acids Research 2009; doi: 10.1093/nar/gkp416
+
+%\bibitem{Carmona} Carmona-Saez P, Chagoyen M, Tirado F, Carazo JM, Pascual-Montano A. \emph{GENECODIS: A web-based tool for finding significant concurrent annotations in gene lists.} Genome Biology 2007 8(1):R3
+
+\end{thebibliography}
+
+\begin{figure}[h]
+\centering
+\label{fig:report}
+Automatic HTML report generated by FGNet:
+\includegraphics[width=1.1\textwidth]{Alzheimer_Page1}
+\end{figure}
+
+\begin{figure}[ht]
+\centering
+\includegraphics[width=1\textwidth]{Alzheimer_Page2}
+\end{figure}
+
+\end{document}
