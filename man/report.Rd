@@ -106,5 +106,5 @@ report_gtLinker(genesYeast, annotations=annotations,
 organism=organism, jobName="ExampleYeast")
 
 # David:
-report_david(genesYeast, jobName="ExampleYeast_David")
+report_david(genesYeast[1:15], jobName="ExampleYeast_David")
 }

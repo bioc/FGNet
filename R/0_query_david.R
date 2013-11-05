@@ -47,15 +47,25 @@ query_david <- function(genes, geneIdType="GENE_SYMBOL", annotations=c("GOTERM_B
 	{
 		finalReply <- getURL(getURL, curl = curlHandle)
 	}else
-	{
-		warning("Query URL too long, default annotations might be used.")
-		finalReply <- postForm("http://david.abcc.ncifcrf.gov/term2term.jsp",
-					curl = curlHandle,
-					rowids = replyRowids,
-					annot = replyAnnot)
+	{    
+	  finalReply <- tryCatch({
+		   postForm("http://david.abcc.ncifcrf.gov/term2term.jsp",
+		                         curl = curlHandle,
+		                         rowids = replyRowids,
+		                         annot = replyAnnot)
+		}, error = function(e) {
+		    FALSE
+		})
+     
+    if(finalReply != FALSE) warning("Query URL too long, default annotations might be used.")  
+	  if(finalReply == FALSE) stop("Query URL too long, try with less genes.")  
 	}
-
-	downloadFile <- getContent(finalReply, attribute = '<a href="data/download/')[1]
+  
+	downloadFile <- NULL
+	if(finalReply != FALSE)
+	{
+	  downloadFile <- getContent(finalReply, attribute = '<a href="data/download/')[1]
+	}
 	
 	
 	if(grepl(".txt", downloadFile))
