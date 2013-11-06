@@ -8,7 +8,7 @@ Date: 2013-10-04
 Author: Sara Aibar, Celia Fontanillo, Conrad Droste and Javier De Las Rivas. Bioinformatics and Functional Genomics Group. Cancer Research Center (CiC-IBMCC, CSIC/USAL). Salamanca. Spain.
 Maintainer: Sara Aibar <saibar@usal.es>
 Depends: R (>= 2.15)
-Imports: igraph (>= 0.6), hwriter, R.utils, RCurl, XML
+Imports: BiocGenerics, igraph (>= 0.6), hwriter, R.utils, RCurl, XML
 Enhances: RColorBrewer, png
 License: GPL (>= 2)
 URL: http://gtlinker.cnb.csic.es
