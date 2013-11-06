@@ -53,7 +53,7 @@ query_david <- function(genes, geneIdType="GENE_SYMBOL", annotations=c("GOTERM_B
 		                         curl = curlHandle,
 		                         rowids = replyRowids,
 		                         annot = replyAnnot)
-		}, error = function(e) {
+		}, error = function(e) { 
 		    FALSE
 		})
      

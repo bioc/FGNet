@@ -15,7 +15,7 @@ query_david(genes, geneIdType = "GENE_SYMBOL",
   \item{genes}{
 character vector. List of genes to analyze.
 }
-  \item{geneIdType}{
+  \item{geneIdType}{ 
 character vector. Type of gene id for the genes provided.
 Sample ID types: GENE_SYMBOL, ENSEMBL_GENE_ID, ENTREZ_GENE_ID, UNIPROT_ID. For more, check David's API documentation.
 }
