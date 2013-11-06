@@ -15,7 +15,7 @@ report_gtLinker(genes = NULL, organism = "Hs",
  path = getwd(), jobName = NULL, threshold = 0, 
  serverWeb = "http://gtlinker.cnb.csic.es", 
  serverWS = "http://gtlinker.cnb.csic.es:8182")
- 
+
 report_david(genes = NULL, geneIdType = "GENE_SYMBOL", 
  annotations = c("GOTERM_BP_ALL", "GOTERM_MF_ALL", 
  "GOTERM_CC_ALL", "KEGG_PATHWAY", "INTERPRO"), 
