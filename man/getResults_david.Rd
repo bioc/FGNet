@@ -20,7 +20,7 @@ getResults_david(inputFileLocation, path = getwd(), jobName = "")
   \item{jobName}{
   character. Folder name and prefix for the files.
 }
-} 
+}
 \details{
 \emph{\link[FGNet:query_david]{query_david()}} uses DAVID's API to perform the query, therefore the maximum number of genes is limited to 400 or less depending on the used ID and final URL length. In order to perform analyses with more genes, the web interface can be used (\url{http://david.abcc.ncifcrf.gov/summary.jsp}). Once the 'functional annotation and clustering' is done though the website, to continue the workflow through R just provide as 'inputFileLocation' the URL of the .txt downloadable file.
 }

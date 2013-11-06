@@ -18,7 +18,7 @@
 \marginsize{1in}{1in}{0.5in}{0.5in}
 \setlength{\parindent}{0pt}
 
-\pagestyle{myheadings} 
+\pagestyle{myheadings}
 \markright{FGNet\hfill}
 
 \title{\textit{FGNet}\\ Functional Gene Networks \\ derived from biological enrichment analyses}
@@ -113,7 +113,7 @@ genesYeast <- c("ADA2", "APC1", "APC11", "APC2", "APC4", "APC5", "APC9",
 @
 %DAVID:
 <<eval=FALSE>>=
-report_david(genesYeast)
+report_david(genesYeast[1:15])
 @
 %GeneTerm Linker:
 <<eval=FALSE>>=
