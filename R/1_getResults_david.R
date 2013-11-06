@@ -18,7 +18,7 @@ getResults_david <- function(inputFileLocation, path=getwd(), jobName="")
 
 	if ((!file.exists(folder)) && (!folder=="")){
 		dir.create(file.path(folder))		
-	}
+	} 
 	
 	# Download file
 	if(grepl("http://", inputFileLocation)) 

@@ -18,7 +18,7 @@
 \marginsize{1in}{1in}{0.5in}{0.5in}
 \setlength{\parindent}{0pt}
 
-\pagestyle{myheadings}
+\pagestyle{myheadings} 
 \markright{FGNet\hfill}
 
 \title{\textit{FGNet}\\ Functional Gene Networks \\ derived from biological enrichment analyses}
