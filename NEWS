@@ -1,13 +1,21 @@
+CHANGES IN VERSION 1.2
+------------------------
+NEW FEATURES
+    o Query David through web service (RDAVIDWebService): Avoids limitations of API interface
+    o Added argument KeepColors to functionalNetwork and intersectionNetwork: Keeps the same color for each group even if some are filtered out. 
+    o Added argument geneLabels to getResults_david: Allows to replace the IDs for a gene name/symbol in the plots
+    
+BUG FIXES
+    o Minor bug fixes
+    
 CHANGES IN VERSION 1.1.1
 ------------------------
 BUG FIXES
     o query_david: Checks whether the server accepted the query
     o MAN pages using query_david: Reduced yeast example to 15 genes. In windows, with the whole gene list, the server returns "Error: Expectation failed".
     
-
 CHANGES IN VERSION 1.0.0
 ------------------------
 
 NEW FEATURES
-
     o Package released

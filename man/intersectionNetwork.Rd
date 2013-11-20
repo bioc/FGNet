@@ -9,11 +9,12 @@ Plots a simplified version of the functional network, only with the genes in mor
 \usage{
 intersectionNetwork(metagroupGenesMatrix, plotType = "dynamic", 
 vLayout = "kk", returnGraph = FALSE, vSize = 12, vLabelCex = 2/3, 
-legendMg=NULL, grPrefix="", plotTitle = "Nodes in several metagroups")
+legendMg=NULL, grPrefix="", plotTitle = "Nodes in several metagroups",
+keepColors=TRUE)
 }
 \arguments{
   \item{metagroupGenesMatrix}{
-matrix. \emph{metagroupGenesMatrix} returned by  \code{\link[FGNet:adjMatrix]{adjMatrix}}.
+matrix or list. \emph{$metagroupGenesMatrix} returned by \code{\link[FGNet:adjMatrix]{adjMatrix}}. If raw output (list) from \code{\link[FGNet:adjMatrix]{adjMatrix}}, it will be automatically splitted into $metagroupGenesMatrix and $gtSetGenesMatrix.
 }
   \item{plotType}{
 character "static", "dynamic" or "none". "static" will generate a standard plot. "dynamic" will produce an interactive tkplot (metagroups background cannot be drawn). "none" will not plot the network.
@@ -39,6 +40,9 @@ character. Prefix for the metagroup/cluster.
   \item{plotTitle}{
 character. Title to show on the plot.
 }
+  \item{keepColors}{
+logical. If TRUE, it will keep the same colors for all the plots, independently of the filtered groups. Only available if metagroupGenesMatrix is the raw result from \code{\link[FGNet:adjMatrix]{adjMatrix}}.
+}
 }
 \value{
  Plots the network.
@@ -55,8 +59,8 @@ results <- getResults_gtLinker(jobID, jobName="gtLinkerExample")
 adjMat <- adjMatrix(results$geneTermSets, 
  attribute=results$metagroups[,"Silhouette Width", drop=FALSE], threshold=0)
 
-intersectionNetwork(adjMat$metagroupGenesMatrix)
-intNw <- intersectionNetwork(adjMat$metagroupGenesMatrix, 
+intersectionNetwork(adjMat)
+intNw <- intersectionNetwork(adjMat, 
  vLayout="sugiyama", plotType="static", returnGraph=TRUE) 
 }
 

@@ -1,6 +1,6 @@
 
 #results <- getResults_David (fileName)
-getResults_david <- function(inputFileLocation, path=getwd(), jobName="")
+getResults_david <- function(inputFileLocation, path=getwd(), jobName="", geneLabels=NULL)
 {
 	# Check arguments
 	if(!is.character(inputFileLocation)) stop("inputFileLocation not valid.")
@@ -32,56 +32,71 @@ getResults_david <- function(inputFileLocation, path=getwd(), jobName="")
 		if(jobName!= "")
 		{
 			downloadedFileName <- paste(folder, jobName, "DavidClustering.txt", sep="")
-			file.copy(inputFileLocation, downloadedFileName)
+			file.copy(inputFileLocation, downloadedFileName, overwrite=TRUE)
 			message(paste(inputFileLocation, " copied to ", downloadedFileName, sep=""))
 			inputFileLocation <- downloadedFileName
 		}
 	}
-	
+
 	# Read file & process
 	if (!file.exists(inputFileLocation))
 	{
 		stop("Can't open or download the results file.")
-	}
-	else
+	}	else
 	{
 		inputFile <- file(inputFileLocation, "rt")
-		lineas <- readLines(inputFile) 
-	
-		columns <- c("Cluster", strsplit(lineas[2], "\t", fixed=TRUE)[[1]])
-		tablaGeneTermSets <- matrix(NA, ncol=length(columns), nrow=0, dimnames=list(c(), columns))
-		clusterScore <- NULL
-		cluster <- 0
+			lineas <- readLines(inputFile)
+			if(length(lineas)==0) stop("DAVID returned 0 clusters.")
 		
-		lineas <- lineas[which(lineas != "")]
-		lineas <- lineas[which(lineas != lineas[2])]
-		lineas <- strsplit(lineas, "\t", fixed=TRUE)
-		
-		for(linea in lineas)
-		{
-			if(length(linea)==2)
+			columns <- c("Cluster", strsplit(lineas[2], "\t", fixed=TRUE)[[1]])
+			tablaGeneTermSets <- matrix(NA, ncol=length(columns), nrow=0, dimnames=list(c(), columns))
+			clusterScore <- NULL
+			cluster <- 0
+			
+			lineas <- lineas[which(lineas != "")]
+			lineas <- lineas[which(lineas != lineas[2])]
+			lineas <- strsplit(lineas, "\t", fixed=TRUE)
+			
+			for(linea in lineas)
 			{
-				cluster <- cluster+1
-				clusterScore[[cluster]] <- as.numeric(strsplit(linea[2], ": ", fixed="TRUE")[[1]][2])
-				names(clusterScore)[cluster] <- cluster
+				if(length(linea)==2)
+				{
+					cluster <- cluster+1
+					clusterScore[[cluster]] <- as.numeric(strsplit(linea[2], ": ", fixed="TRUE")[[1]][2])
+					names(clusterScore)[cluster] <- cluster
+				}
+				else 
+				{
+					tablaGeneTermSets <- rbind(tablaGeneTermSets, c(paste(cluster, sep=""), linea))
+				}
 			}
-			else 
-			{
-				tablaGeneTermSets <- rbind(tablaGeneTermSets, c(paste(cluster, sep=""), linea))
-			}
-			linea
-		}
-
 		close(inputFile) 
+		
+		# Replace Gene Names?
+		if(!is.null(geneLabels))
+		{
+			if(length(geneLabels) != length(unique(geneLabels))) stop("geneLabels IDs are not unique.")
+			if(length(geneLabels) != length(unique(names(geneLabels)))) stop("geneLabels names are not unique.")
+			
+			colGenes <- which(colnames(tablaGeneTermSets) == "Genes")
+			tablaGeneTermSets <- tablaGeneTermSets[,c(colnames(tablaGeneTermSets)[-colGenes], "Genes")]
+			tablaGeneTermSets <- cbind(tablaGeneTermSets, GenesIDs=tablaGeneTermSets[,"Genes"])
+			for( i in 1:length(geneLabels))
+			{
+				tablaGeneTermSets[,"Genes"] <- sapply(tablaGeneTermSets[,"Genes"], function(x) sub(geneLabels[i], names(geneLabels[i]), x))
+			}
+		}
 		tablaGeneTermSets <- data.frame(tablaGeneTermSets)
 		
-	
 		# Create clusters table
-		
 		tablaClusters <- NULL
+		# Gene labels & IDS?
+		colGenes <- "Genes"
+		if(!is.null(geneLabels)) colGenes <- c(colGenes, "GenesIDs")
+		
 		for(cluster in names(clusterScore))
 		{
-			tmpTable <- as.matrix(tablaGeneTermSets[which(tablaGeneTermSets[,"Cluster"] == cluster),c("Cluster", "Term", "Category", "Genes")])
+			tmpTable <- as.matrix(tablaGeneTermSets[which(tablaGeneTermSets[,"Cluster"] == cluster),c("Cluster", "Term", "Category", colGenes)])
 			# Kegg
 			keggs <- which(tmpTable[,"Category"] =="KEGG_PATHWAY")
 			tmpTable[keggs, "Term"] <- paste("KEGG:", tmpTable[keggs, "Term"], sep="")				# Used in createHtml
@@ -94,15 +109,23 @@ getResults_david <- function(inputFileLocation, path=getwd(), jobName="")
 			tmpTable[otherAnnot, "Term"] <- sub(";", ". ", tmpTable[otherAnnot, "Term"])
 			tmpTable[otherAnnot, "Term"] <- paste(tmpTable[otherAnnot, "Category"], tmpTable[otherAnnot, "Term"], sep=":")	
 						
-			# All
+			# Genes & terms
 			tmpTerms <- paste(sub("~", ":", tmpTable[,"Term"]), collapse=";")
-			tmpGenes <- unique(unlist(strsplit(as.character(tmpTable[,"Genes"]), split=", ")))
-			nGenes <- length(tmpGenes)
-			tmpGenes <- paste(tmpGenes, collapse=",")
+			tmpGenes <- list()
+			for(i in 1:length(colGenes))
+			{
+				tmpGenes[[i]] <- unique(unlist(strsplit(as.character(tmpTable[,colGenes[i]]), split=", ")))
+				nGenes <- length(tmpGenes[[i]])
+				tmpGenes[[i]] <- paste(tmpGenes[[i]], collapse=",")
+			}
+			tmpGenes <- unlist(tmpGenes)
+			
 			tablaClusters <- rbind(tablaClusters, c(cluster, clusterScore[cluster], nGenes, tmpGenes, tmpTerms))
 		}
-		colnames(tablaClusters) <- c("Cluster", "EnrichmentScore", "nGenes", "Genes", "Terms")
-		tablaClusters <- data.frame(Cluster=tablaClusters[,"Cluster"], EnrichmentScore=as.numeric(tablaClusters[,"EnrichmentScore"]), nGenes=as.numeric(tablaClusters[,"nGenes"]), Genes=tablaClusters[,"Genes"], Terms=tablaClusters[,"Terms"], stringsAsFactors = FALSE)
+		colnames(tablaClusters) <- c("Cluster", "EnrichmentScore", "nGenes", colGenes, "Terms")
+		tablaClusters <- data.frame(Cluster=tablaClusters[,"Cluster"], EnrichmentScore=as.numeric(tablaClusters[,"EnrichmentScore"]), nGenes=as.numeric(tablaClusters[,"nGenes"]), tablaClusters[,c(colGenes, "Terms"), drop=FALSE], stringsAsFactors = FALSE)
+		rownames(tablaClusters) <- tablaClusters[,"Cluster"]
 	}
+	
 	return(list(clusters=tablaClusters, geneTermSets=tablaGeneTermSets, fileName=inputFileLocation))
 }

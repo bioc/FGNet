@@ -1,8 +1,8 @@
 
-# Returns color by order of metagroup (first color = first metagroup in matrix...)
-setColors <- function(mgMatrix, transparency=0)
+# Returns color by order of metagroup (first color = first metagroup in list...)
+setColors <- function(namesMg, transparency=0)
 {
-	nMetagroups <- dim(mgMatrix)[2]
+	nMetagroups <- length(namesMg)
 	mgAlpha <- 1-transparency
 	if(nMetagroups <5)
 	{	
@@ -22,8 +22,7 @@ setColors <- function(mgMatrix, transparency=0)
 		colores <- rainbow(n1, end=0.3, s=1, v=1, alpha=mgAlpha)
 		colores <- c(colores, rainbow(n2, start=secondStart, end=0.85, s=1, v=1, alpha=mgAlpha))
 	}
-	
-	names(colores) <- colnames(mgMatrix)
+	names(colores) <- namesMg
 	
 	return(colores)
 }

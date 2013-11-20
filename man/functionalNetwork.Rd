@@ -7,11 +7,14 @@ Create and plot the functional gene network.
 Plots the gene network. Edges join nodes with  common gene-term sets. Background and node color represent metagroup/clusters. White nodes are in several metagroups/clusters.
 }
 \usage{
+
 functionalNetwork(metagroupGenesMatrix, gtSetGenesMatrix=NULL, 
-plotType = "static", returnGraph = FALSE, vSize = 12, 
-vLabelCex = 3/4, vLayout = NULL, bgTransparency = 0.4, 
-legendMg=NULL, plotTitle = "Functional Network")
+plotType="static", returnGraph=FALSE,
+plotTitle="Functional Network", vSize=12, vLabelCex=3/4, 
+vLayout=NULL, bgTransparency=0.4, legendMg=NULL, keepColors=TRUE)
 }
+
+
 
 
 \arguments{
@@ -26,6 +29,9 @@ character "static", "dynamic" or "none". "static" will generate a standard plot.
 }
   \item{returnGraph}{
 logical. If TRUE, the igraph object containing the network is returned.
+}
+  \item{plotTitle}{
+character. Title to show on the plot.
 }
   \item{vSize}{
 numeric. Vertex size.
@@ -42,8 +48,8 @@ numeric. Value between 0 and 1 for the transparency of the metagroups background
   \item{legendMg}{
 character. Label to show next to the metagroup/cluster id in the legend. If FALSE, legend is not shown.
 }
-  \item{plotTitle}{
-character. Title to show on the plot.
+  \item{keepColors}{
+logical. If TRUE, it will keep the same colors for all the plots, independently of the filtered groups. Only available if metagroupGenesMatrix is the raw result from \code{\link[FGNet:adjMatrix]{adjMatrix}}.
 }
 }
 
