@@ -9,7 +9,7 @@
 test_getResults_david <- function()
 {
 	
-	genesYeast <- c("ADA2", "APC1", "APC11")
+	genesYeast <- c("YBL084C", "YDL008W", "YDR118W", "YDR301W")
 	txtFile <- query_david(genesYeast)
 	result <- getResults_david(txtFile)
 	

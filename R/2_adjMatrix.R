@@ -8,12 +8,13 @@ adjMatrix <- function(geneTermSets, attribute=NULL, threshold=0)
 {
 	# Check arguments
 	if(!is.data.frame(geneTermSets)) stop("geneTermSets should be the data.frame returned by getResults_gtLinker().")
+	if(dim(geneTermSets)[1] == 0) stop("0 gene term sets.")
 	if(!is.numeric(threshold)) stop("threshold should be a number.")
 	if(!is.null(attribute) && !is.data.frame(attribute)) stop("attribute should be the data.frame returned by getResults...().")	
 		if(is.null(attribute) && threshold!=0) stop("To filter provide an attribute.")
-	 	
+	 
 	cols <- which(colnames(geneTermSets) %in% c("Cluster", "Metagroup", "Genes"))
-	geneTermSets <- as.matrix(geneTermSets[,cols]) # Group & Genes
+	geneTermSets <- as.matrix(geneTermSets[,cols, drop=FALSE]) # Group & Genes
 	
 	# Filter & sort by attribute	
 	filtrar <- NULL

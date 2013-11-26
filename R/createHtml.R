@@ -84,7 +84,7 @@ representativeTerm <- function(termsDescriptions)
 		sortedFreq <- sort(table(tolower(splittedTerms)), decreasing=TRUE)
 
 		commonWords <- sortedFreq[sortedFreq >= quantile(sortedFreq, 0.9)]
-		commonWords <- commonWords[grepl("[:alnum:]", names(commonWords))]
+		commonWords <- commonWords[grepl("[[:alnum:]]", names(commonWords))]
 		
 		selectedTerm <- NULL
 		if(any(tolower(termsMg) %in% names(commonWords)))
@@ -175,7 +175,8 @@ createHtml <- function(htmlFileName, results, tables, metagroupAttributeName, th
 	nRawMg <- dim(rawMetagroups)[1]
 	
 	# Get metagroup colors
-	colores <- setColors(tables$metagroupGenesMatrix)
+	colores <- setColors(as.character(sort(as.numeric(c(colnames(tables$metagroupGenesMatrix), filteredOut)))))[colnames(tables$metagroupGenesMatrix)]
+	#setColors(names(tables$metagroupGenesMatrix))
 	
 	globalMetagroups <- rawMetagroups[colnames(tables$metagroupGenesMatrix),]
 
@@ -245,18 +246,18 @@ createHtml <- function(htmlFileName, results, tables, metagroupAttributeName, th
 	}	
 	
 	png(networkPlot, width = 800, height = 800)
-	iGraph <- functionalNetwork(tables$metagroupGenesMatrix, tables$gtSetGenesMatrix, plotType="static", vSize=vSize, vLabelCex=vLabelCex, returnGraph=TRUE, legendMg=legendMg)
+	iGraph <- functionalNetwork(tables, plotType="static", vSize=vSize, vLabelCex=vLabelCex, returnGraph=TRUE, legendMg=legendMg)
 	dev.off()
 	png(networkPlot2a, width = 800, height = 800)
-	intersectionGraph <- intersectionNetwork(tables$metagroupGenesMatrix, vLayout=c("kk"), plotType="static", vSize=vSize, vLabelCex=vLabelCex, grPrefix=grPrefix, returnGraph=TRUE)
+	intersectionGraph <- intersectionNetwork(tables, vLayout=c("kk"), plotType="static", vSize=vSize, vLabelCex=vLabelCex, grPrefix=grPrefix, returnGraph=TRUE)
 	dev.off()
 	if(!is.null(intersectionGraph))
 	{
 		png(networkPlot2b, width = 800, height = 800)
-		intersectionNetwork(tables$metagroupGenesMatrix, vLayout=c("circle"), plotType="static",  vSize=vSize, vLabelCex=vLabelCex, grPrefix=grPrefix)
+		intersectionNetwork(tables, vLayout=c("circle"), plotType="static",  vSize=vSize, vLabelCex=vLabelCex, grPrefix=grPrefix)
 		dev.off()
 		png(networkPlot2c, width = 800, height = 800)
-		intersectionNetwork(tables$metagroupGenesMatrix, vLayout=c("sugiyama"), plotType="static",  vSize=vSize, vLabelCex=vLabelCex, grPrefix=grPrefix)
+		intersectionNetwork(tables, vLayout=c("sugiyama"), plotType="static",  vSize=vSize, vLabelCex=vLabelCex, grPrefix=grPrefix)
 		dev.off()
 	}
 	
@@ -384,13 +385,15 @@ createHtml <- function(htmlFileName, results, tables, metagroupAttributeName, th
 		}		
 					 
 		linkGenes <- paste("Num genes: ", '<a href="#" title="', sort(gsub(",", " ", globalMetagroups[mg, "Genes"])),'" class="tooltip"><span title="Genes">', globalMetagroups[mg, "nGenes"], '</span></a>',sep="")			 
+		txtGenes <- paste(globalMetagroups[mg, "nGenes"], " genes: ", sort(gsub(",", " ", globalMetagroups[mg, "Genes"])), sep="")
+		attrsTxt <- c(attrs, txtGenes)
 		attrs <- c(attrs, linkGenes)					 
 		
 		terms <- rbind(termsTables[[mg]], if(!is.na(goLinks[names(termsTables)[mg]])) cbind("", paste("<a href='",goLinks[names(termsTables)[mg]],"'' target='_blank' class='goLink'>[GO terms tree]</a>", sep="")))
 		
 		termsTable <- c(termsTable, hwrite(c(mgName, attrs), class='mgAttr', table=TRUE, border=0), 
 										hwrite(terms, table=TRUE, col.class=list("termsRow", "annotRow")))
-		txtTermsTable <- rbind(txtTermsTable, paste(c(names(termsTables)[mg], attrs), collapse="\t"), rbind(mgTerms$termsDescriptions[[mg]])[, "Description", drop=FALSE])
+		txtTermsTable <- rbind(txtTermsTable, paste(c(names(termsTables)[mg], attrsTxt), collapse="\t"), rbind(mgTerms$termsDescriptions[[mg]])[, "Description", drop=FALSE])
 													 #cbind(mgTerms$termsDescriptions[[mg]][,"Description"]))
 	}
 	

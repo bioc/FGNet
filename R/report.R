@@ -4,9 +4,9 @@ report_gtLinker <- function(genes=NULL, organism="Hs", annotations=c("GO_Biologi
 {
 	return( fnReport(tool="gtLinker", organism=organism, genes=genes, annotations=annotations, minSupport=minSupport, jobID=jobID, alreadyDownloaded=alreadyDownloaded, path=path, jobName=jobName, threshold=threshold, serverWeb=serverWeb, serverWS=serverWS))
 }
-report_david <- function(genes=NULL, geneIdType="GENE_SYMBOL", annotations=c("GOTERM_BP_ALL", "GOTERM_MF_ALL", "GOTERM_CC_ALL", "KEGG_PATHWAY", "INTERPRO"), inputFileLocation=NULL, path=getwd(), jobName=NULL, threshold=0)
+report_david <- function(genes=NULL, geneIdType="ENSEMBL_GENE_ID", annotations=c("GOTERM_BP_ALL", "GOTERM_MF_ALL", "GOTERM_CC_ALL", "KEGG_PATHWAY", "INTERPRO"), email=NULL,  argsWS = c(overlap=4L, initialSeed=4L, finalSeed=4L, linkage=0.5, kappa=35L), inputFileLocation=NULL, path=getwd(), jobName=NULL, threshold=0, geneLabels=NULL)
 {
-	return( fnReport(tool="David", genes=genes, geneIdType=geneIdType, annotations=annotations, inputFileLocation=inputFileLocation, alreadyDownloaded=FALSE, path=path, jobName=jobName, threshold=threshold) )
+	return( fnReport(tool="David", genes=genes, geneIdType=geneIdType, annotations=annotations, email=email, inputFileLocation=inputFileLocation, alreadyDownloaded=FALSE, path=path, jobName=jobName, threshold=threshold, argsWS = argsWS, geneLabels=geneLabels))
 }
 
 ### Common arguments
@@ -29,10 +29,10 @@ report_david <- function(genes=NULL, geneIdType="GENE_SYMBOL", annotations=c("GO
 # geneIdType
 # inputFileLocation
 
-fnReport <- function (tool, organism=NULL, geneIdType=NULL, genes=NULL, annotations=NULL, minSupport=3, jobID=NULL, inputFileLocation=NULL, alreadyDownloaded=FALSE, path=NULL, jobName=NULL,  threshold=0, serverWeb=NULL, serverWS=NULL)
+fnReport <- function (tool, organism=NULL, geneIdType=NULL, genes=NULL, annotations=NULL, email=NULL, minSupport=3, jobID=NULL, inputFileLocation=NULL, alreadyDownloaded=FALSE, path=NULL, jobName=NULL,  threshold=0, serverWeb=NULL, serverWS=NULL, argsWS = NULL, geneLabels=geneLabels)
 {
 	#####################################################################################################
-	####################################   Check arguments   ############################################.
+	####################################   Check arguments   ############################################
 	if(tool == "gtLinker")
 	{
 		if(is.null(jobID))
@@ -65,16 +65,20 @@ fnReport <- function (tool, organism=NULL, geneIdType=NULL, genes=NULL, annotati
 			if(!is.null(inputFileLocation) && !is.null(genes))  stop("Either an inputFileLocation *OR* a query (genes and annotations) should be provided.")
 		}else
 		{
-			stop("Not valid 'tool'.")
+			stop("'tool' not valid.")
 		}
 	}
 	
 	if(!is.null(genes) && !is.character(genes)) stop("Genes should be a character vector containing the names of the genes.")
 	
-	if(tool == "gtLinker")	allowedAnnotations <- c("GO_Biological_Process","GO_Molecular_Function", "GO_Cellular_Component", "KEGG_Pathways", "InterPro_Motifs")
-	if(tool == "David") 		allowedAnnotations <- c("GOTERM_BP_ALL", "GOTERM_MF_ALL", "GOTERM_CC_ALL", "GOTERM_BP_FAT", "GOTERM_CC_FAT", "GOTERM_MF_FAT", "INTERPRO", "PIR_SUPERFAMILY", "SMART", "BBID", "BIOCARTA", "KEGG_PATHWAY", "COG_ONTOLOGY", "SP_PIR_KEYWORDS", "UP_SEQ_FEATURE", "GENETIC_ASSOCIATION_DB_DISEASE", "OMIM_DISEASE")
-	if(!is.character(annotations)) stop("Not valid annotations.")
-	if (any(!tolower(annotations) %in% tolower(allowedAnnotations))) warning(paste("Some of the provided annotations are not recognized. Example of available annotations: ", allowedAnnotations, sep=""))	
+	if(tool == "gtLinker")
+	{
+			allowedAnnotations <- c("GO_Biological_Process","GO_Molecular_Function", "GO_Cellular_Component", "KEGG_Pathways", "InterPro_Motifs")
+			if (any(!tolower(annotations) %in% tolower(allowedAnnotations))) warning(paste("Some of the provided annotations are not recognized. Example of available annotations: ", paste(allowedAnnotations, collapse=", "), sep=""))	
+	}
+	
+	if(!is.character(annotations)) stop("Annotations should be a charater vector.")
+
 	if(!is.logical(alreadyDownloaded)) stop("alreadyDownloaded should be logical.")
 	if(!file.exists(path)) stop("The given path does not exist.")
 	if(!is.null(jobName) && !is.character(jobName)) stop("jobName should be character.")
@@ -115,6 +119,7 @@ fnReport <- function (tool, organism=NULL, geneIdType=NULL, genes=NULL, annotati
 		}
 		if(is.null(jobName)) jobName <- paste("FunctionalNetwork_", jobID, "_thr", threshold, sep="")
 		results <- getResults_gtLinker(jobID=jobID, keepTrying=TRUE, path=path, jobName=jobName, alreadyDownloaded=alreadyDownloaded, serverWeb=serverWeb)		
+		if(is.null(results)) stop("GtLinked does not return any results.")
 	}
 	
 	# David
@@ -125,7 +130,7 @@ fnReport <- function (tool, organism=NULL, geneIdType=NULL, genes=NULL, annotati
 		
 		if(is.null(inputFileLocation))
 		{
-			inputFileLocation <- query_david(genes=genes, geneIdType=geneIdType, annotations=annotations)			
+			inputFileLocation <- query_david(genes=genes, geneIdType=geneIdType, annotations=annotations, email=email, argsWS=argsWS)
 		}
 		if(is.null(jobName))
 		{
@@ -146,7 +151,12 @@ fnReport <- function (tool, organism=NULL, geneIdType=NULL, genes=NULL, annotati
 			sufix <- paste("_thr", threshold, sep="")
 			jobName <- paste(prefix, sufix, sep="")
 		}
-		results <- getResults_david(inputFileLocation=inputFileLocation, path=path, jobName=jobName)
+		if(!is.null(geneLabels) && is.null(names(geneLabels)))
+		{
+			warning("geneLabels not valid.")
+			geneLabels <- NULL
+		}
+		results <- getResults_david(inputFileLocation=inputFileLocation, path=path, jobName=jobName, geneLabels=geneLabels)
 		if(is.null(annotations)) annotations <- levels(results$geneTermSets$Category)
 	}
 	

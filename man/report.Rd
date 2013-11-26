@@ -16,10 +16,13 @@ report_gtLinker(genes = NULL, organism = "Hs",
  serverWeb = "http://gtlinker.cnb.csic.es", 
  serverWS = "http://gtlinker.cnb.csic.es:8182")
 
-report_david(genes = NULL, geneIdType = "GENE_SYMBOL", 
+report_david(genes = NULL, geneIdType = "ENSEMBL_GENE_ID", 
  annotations = c("GOTERM_BP_ALL", "GOTERM_MF_ALL", 
  "GOTERM_CC_ALL", "KEGG_PATHWAY", "INTERPRO"), 
- inputFileLocation = NULL, path = getwd(), jobName = NULL, threshold = 0)
+ email=NULL,
+ argsWS = c(overlap=4L, initialSeed=4L, finalSeed=4L, linkage=0.5, kappa=35L),
+ inputFileLocation = NULL, path = getwd(), jobName = NULL, 
+ threshold = 0, geneLabels=NULL)
 }
 
 \arguments{
@@ -30,7 +33,7 @@ report_david(genes = NULL, geneIdType = "GENE_SYMBOL",
 	\item{annotations}{
 	character vector. Annotation spaces used for the functional analysis. \cr
 	Available spaces for GtLinker: "GO_Biological_Process","GO_Molecular_Function", "GO_Cellular_Component", "KEGG_Pathways", "InterPro_Motifs". \cr
-	Examples for DAVID: "GOTERM_BP_ALL", "GOTERM_MF_ALL", "GOTERM_CC_ALL", "KEGG_PATHWAY", "INTERPRO".
+	Examples for DAVID: "GOTERM_BP_ALL", "GOTERM_MF_ALL", "GOTERM_CC_ALL", "KEGG_PATHWAY", "INTERPRO"... For more, see \code{\link[FGNet:query_david]{query_david()}}.\cr
 	}
 	\item{path}{
 	character. Directory in which to save the files.
@@ -54,7 +57,7 @@ report_david(genes = NULL, geneIdType = "GENE_SYMBOL",
 	numeric. ID of the job/analysis in GeneTerm Linker (from \code{\link[FGNet:query_gtLinker]{query_gtLinker}} or the ID from a query in the web).
 	}
 	\item{alreadyDownloaded}{
-	%%     ~~Describe \code{alreadyDownloaded} here~~
+	logical. If the files have already been downloaded, these will be read. Make sure to use the appropiate jobID and job name.
 	}
 	\item{serverWS}{
 	character. GeneTerm Linker webservice server.
@@ -68,28 +71,37 @@ report_david(genes = NULL, geneIdType = "GENE_SYMBOL",
 \bold{Specific for DAVID:}
 	\item{geneIdType}{
 	character vector. Type of gene id for the genes provided.
-	Sample ID types: GENE_SYMBOL, ENSEMBL_GENE_ID, ENTREZ_GENE_ID, UNIPROT_ID. For more, check David's API documentation.
+	Sample ID types: GENE_SYMBOL, ENSEMBL_GENE_ID, ENTREZ_GENE_ID, UNIPROT_ID. For more, see \code{\link[FGNet:query_david]{query_david()}}.\cr
 	}
 	\item{inputFileLocation}{
 	character. URL of the file to download, or local file if already downloaded.
 	}
+	  \item{email}{
+character. If provided, the query will be performed though DAVID's Web Service (recommended). Requires registration at \url{http://david.abcc.ncifcrf.gov/webservice/register.htm}.
+}
+  \item{argsWS}{
+named integer vector. Additional arguments for the clustering. Only available using the web service. 
+}
+  \item{geneLabels}{
+  named character vector. Gene name or label to show in the plots. The vector name should contain the label to show in the plot and the content the ID used in the query.
+}
 }
 
 \details{
-The repot functions are wrappers that includes the following steps: \cr
+The report functions are wrappers that includes the following steps: \cr
  1. - Query (optional): Performs the analysis through GeneTerm Linker or David. \code{\link[FGNet:query_gtLinker]{query_gtLinker()}} returns the analysis jobID and \code{\link[FGNet:query_david]{query_david()}} the \emph{.txt file} with the raw David results.\cr
  2. - Get results: Retrieve the metagroups/clusters and gene-term sets from the server. This is done through the functions \code{\link[FGNet:getResults_gtLinker]{getResults_gtLinker()}} and \code{\link[FGNet:getResults_gtLinker]{getResults_gtLinker()}}\cr 
  3. - Transform into adjacency matrices (\code{\link[FGNet:adjMatrix]{adjMatrix()}}): Transforms the metagroups and gene-term sets (gtset) into genes-metagroups and genes-gtset adjacency matrices. \cr
  4. - Generate the HTML report, which includes the functional network (\code{\link[FGNet:functionalNetwork]{functionalNetwork()}}). \cr 
- \cr
-David's query function uses David's API. More details and full list of available parameters (gene ID types and annotations) are available at: 
-\url{http://david.abcc.ncifcrf.gov/content.jsp?file=DAVID_API.html}. This API limits the maximum number of genes to 400 (or less depending on the ID's). In order to perform analyses with more genes, the web interface can be used (\url{http://david.abcc.ncifcrf.gov/summary.jsp}). Once the 'functional annotation and clustering' is done though the web, to continue the workflow through R just use the URL of the .txt downloadable file.
 }
 \seealso{
 	Full description of the package:
 		\code{\link[FGNet:FGNet-package]{FGNet}}
 }
 \examples{
+##### Runs analysis and generates HTML report:
+
+# GtLinker:
 genesYeast <- c("ADA2", "APC1", "APC11", "APC2", "APC4", "APC5", "APC9", 
 "CDC16", "CDC23", "CDC26", "CDC27", "CFT1", "CFT2", "DCP1", "DOC1", "FIP1", 
 "GCN5", "GLC7", "HFI1", "KEM1", "LSM1", "LSM2", "LSM3", "LSM4", "LSM5", 
@@ -97,14 +109,22 @@ genesYeast <- c("ADA2", "APC1", "APC11", "APC2", "APC4", "APC5", "APC9",
 "PTI1", "REF2", "RNA14", "RPN1", "RPN10", "RPN11", "RPN13", "RPN2", "RPN3", 
 "RPN5", "RPN6", "RPN8", "RPT1", "RPT3", "RPT6", "SGF11", "SGF29", "SGF73", 
 "SPT20", "SPT3", "SPT7", "SPT8", "TRA1", "YSH1", "YTH1")
-
-##### Run analysis and generate HTML report:
-# GtLinker:
 organism <- "Sc"
 annotations <- c("KEGG_Pathways")
+
 report_gtLinker(genesYeast, annotations=annotations, 
 organism=organism, jobName="ExampleYeast")
 
 # David:
-report_david(genesYeast[1:15], jobName="ExampleYeast_David")
+genesYeast <- c("YBL084C", "YDL008W", "YDR118W", "YDR301W", "YDR448W", 
+"YFR036W", "YGL240W", "YHR166C", "YKL022C", "YLR102C", "YLR115W", "YLR127C",
+"YNL172W", "YOL149W", "YOR249C")
+report_david(genesYeast, jobName="ExampleYeast_David") #add: email="your@email.com"
+
+library(org.Sc.sgd.db)
+geneLabels <- unlist(as.list(org.Sc.sgdGENENAME)[genesYeast])
+names(genesYeast) <- geneLabels 
+report_david(genesYeast, geneLabels=genesYeast,  
+ annotations = c("GOTERM_BP_ALL", "GOTERM_MF_ALL", "KEGG_PATHWAY", "INTERPRO"))
+
 }

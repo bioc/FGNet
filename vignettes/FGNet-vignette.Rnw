@@ -97,9 +97,7 @@ In addition, it may also use \emph{RColorBrewer} and \emph{png}. These libraries
 \section{Basic example: network from a list of genes/proteins}
 \label{sec:BasicExample}
 
-FGNet can automatically generate an HTML report with the functional analysis and network directly from a gene list. To do so, just load the library, the gene list, and call either \emph{report\_david()} or \emph{report\_gtLinker()}.
-
-In this example we will use the sample yeast dataset provided by GeneTerm Linker:
+FGNet can automatically generate an HTML report with the functional analysis and network directly from a gene list. To do so, just load the library, the gene list, and call either \emph{report\_david()} or \emph{report\_gtLinker()}:
 
 <<eval=TRUE>>=
 library(FGNet)
@@ -111,10 +109,12 @@ genesYeast <- c("ADA2", "APC1", "APC11", "APC2", "APC4", "APC5", "APC9",
 "RPN5", "RPN6", "RPN8", "RPT1", "RPT3", "RPT6", "SGF11", "SGF29", "SGF73",
 "SPT20", "SPT3", "SPT7", "SPT8", "TRA1", "YSH1", "YTH1")
 @
+
 %DAVID:
 <<eval=FALSE>>=
-report_david(genesYeast[1:15])
+report_david(genesYeast[1:15], geneIdType="GENE_SYMBOL")
 @
+
 %GeneTerm Linker:
 <<eval=FALSE>>=
 report_gtLinker(genesYeast, organism = "Sc")
@@ -174,7 +174,7 @@ The report functions are wrappers that include several steps. We will now see ea
 \end{enumerate}
 
 The workflows for GeneTermLinker and DAVID are equivalent. They only differ in the two first steps (analysis query and retrieval) since the parameters each of the tools require are different and the results they return are also in different formats.
-To avoid confusion, we will start with an example with GeneTerm Linker and explain the slight differences when using DAVID. An equivalent example with DAVID is available in section \ref{sec:DavidExample}.
+To avoid confusion, we will start with an example with GeneTerm Linker and explain the slight differences when using DAVID. An equivalent example using DAVID is available in section \ref{sec:DavidExample}.
 
 \subsection{Step 1: Query the functional enrichment analysis tool}
 \label{sec:Step1}
@@ -296,7 +296,7 @@ Or transformed into other formats...
 igraph.to.graphNEL(fNw)
 @
 
-In dynamic plots (tkp plot) it is not possible to draw the metagroup background. However, it is possible to use the \texttt{vLayout} argument to save the current 'dynamic' layout into an static plot: 
+In dynamic plots (tkplot) it is not possible to draw the metagroup background. To save a dinamically modified network into a static plot with metagroup backgrounds use the \texttt{vLayout}. This argument allows to transfer the current layout of a tk plot to a static plot: 
 <<eval=FALSE>>=
 functionalNetwork(adjMatFiltered, plotType="dynamic") 
 # Modify the layout...
@@ -309,8 +309,8 @@ This plot is a simplified functional network, containing only the nodes in sever
 By default, the intersection network is plotted automatically when requesting an interactive plot, but it can also be plotted by itself:
 
 <<fig=TRUE, eval=TRUE>>=
-intersectionNetwork(adjMat$metagroupGenesMatrix,
-plotType="static", vLayout="kk")
+intersectionNetwork(adjMat, 
+ plotType="static", vLayout="kk")
 @
 
 
@@ -321,68 +321,93 @@ getTerms(results)[1]
 
 \subsection{Example using DAVID Functional Annotation Clustering Tool}
 \label{sec:DavidExample}
-% glycolysis / gluconeogenesis
-% tryptophan/tyrosine biosynthesis/degradation
-% ergosterol biosynthesis
 
-To generate the functional network with DAVID, the workflow is the same as with GeneTerm Linker. In this example we will use yeast genes from 3 metabolic pathways: \emph{ergosterol biosynthesis}, \emph{glycolysis/gluconeogenesis} and \emph{tryptophan and tyrosine biosynthesis and degradation}. \\
+To generate the functional network with DAVID, the workflow is the same as with GeneTerm Linker. In this example we will use yeast genes from 2 metabolic pathways: \emph{ergosterol biosynthesis} and \emph{sphingolipid metabolism}: \\
 
-\textbf{Option A)} Generating the report automatically (getting an initial overview of the networks):
 <<eval=TRUE>>=
-genesMetabolism <- c("CDC19", "ENO1", "ENO2", "FBA1", "FBP1", "GPM1", 
-"MAE1", "MDH1", "MDH2", "MDH3", "PCK1", "PFK1", "PFK2", "PGI1", "PGK1", 
-"PYC1", "PYC2", "PYK2", "TDH1", "TDH2", "TDH3", "TPI1", "ADH1", "ADH2",
-"ADH3", "ADH4", "ADH5", "ARO10", "ARO7", "ARO8", "ARO9", "BNA1", "BNA2", 
-"BNA4", "BNA5", "BNA6", "BNA7", "PDC1", "PDC5", "PDC6", "SFA1", "TRP1", 
-"TRP2", "TRP3", "TRP4", "TRP5", "TYR1", "ERG1", "ERG11", "ERG2", 
-"ERG20", "ERG24", "ERG25", "ERG26", "ERG27", "ERG3", "ERG4", "ERG5", 
-"ERG6", "ERG7", "ERG9")
-@
-<<eval=FALSE>>=
-report_david(genesMetabolism)
+genesMetabolism <- c("YGR175C", "YHR007C", "YMR202W", "YJL167W", 
+"YNL280C", "YGR060W", "YGL001C", "YLR100W", "YLR056W", "YGL012W", 
+"YMR015C", "YML008C", "YHR072W", "YHR190W", "YKL004W", "YBR036C", 
+"YDR294C", "YDR072C", "YKL008C", "YHL003C", "YMR296C", "YDR062W", 
+"YJL134W", "YOR171C", "YLR260W", "YMR298W", "YMR272C", "YPL057C",
+"YDR297W", "YBR265W", "YPL087W", "YBR183W", "YKR053C")
+# To add the gene label/symbol for the plots...
+library(org.Sc.sgd.db)
+geneLabels <- unlist(as.list(org.Sc.sgdGENENAME)[genesMetabolism])
+names(genesMetabolism) <- geneLabels 
 @
 
-Or, if the analysis has already been performed at the website (see Section \ref{sec:BasicExample}). This option is recommended for long gene lists (see \emph{?report\_david()} for details):
+\textbf{Option A)} Generating the report automatically (getting an initial overview of the networks):\\
+
+If the analysis has already been performed at the website, it is possible to provide directly the URL or file of the analysis (see Section \ref{sec:BasicExample}):
 <<eval=FALSE>>=
 report_david(inputFileLocation="http://david... .txt")
 @
 
+To analyze a new gene list just provide the list and user email:
+<<eval=FALSE>>=
+report_david(genesMetabolism, email="...", geneLabels=genesMetabolism)
+@ 
+
+Registration is required to use DAVID's web service (\url{http://david.abcc.ncifcrf.gov/webservice/register.htm}). If the email is not provided, the query will be performed through DAVID's API. The API is limited to 400 genes and does not allow to personalize the clustering arguments (see \emph{?report\_david()} for details):
+<<eval=FALSE>>=
+report_david(genesMetabolism)
+@
+
 DAVID usually provides many overlapping clusters. In order to simplify the results or explore the overlap between specific clusters, see the following example.\\
 
-
 \textbf{Option B)} Executing the steps on the workflow one by one (i.e. to personalize the network): 
-<<eval=TRUE>>=
-txtFile <- query_david(genesMetabolism)
-results <- getResults_david(txtFile, jobName="David_Metabolism")
+
+<<eval=TRUE, echo=FALSE>>=
+txtFile <- query_david(genesMetabolism, email="FGNet.pkg@email.com")
+results <- getResults_david(txtFile, jobName="David_Metabolism",
+ geneLabels=genesMetabolism)
 adjMat <- adjMatrix(results$geneTermSets)
 functionalNetwork(adjMat) 
 @
-
-To see the terms each cluster includes, use \emph{getTerms()}:
-<<eval=TRUE>>=
-getTerms(results)[2]
+<<eval=FALSE>>=
+txtFile <- query_david(genesMetabolism, email="...")
+results <- getResults_david(txtFile, jobName="David_Metabolism", geneLabels=genesMetabolism)
+adjMat <- adjMatrix(results$geneTermSets)
+#functionalNetwork(adjMat) 
 @
 
-Since DAVID usually provides many overlapping clusters, it is useful to filter the results or select only a few clusters to plot. 
+The default gene IDs are Ensembl IDs. The argument \emph{geneLabels} allows to specify an alternative name (i.e. gene symbol) to show in the plots.
+The full list of annotation cattegories and IDs for the API is available in \url{http://david.abcc.ncifcrf.gov/content.jsp?file=DAVID_API.html} and for the web service:
+<<eval=FALSE>>=
+getAllAnnotationCategoryNames(DAVIDWebService$new(email="..."))
+getIdTypes(DAVIDWebService$new(email="..."))
+@
 
-The filtering can be used to plot the top clusters based on their Enrichment score, the number of genes they contain, or any other parameter we might want to use:\\
+To see the terms in each cluster use \emph{getTerms()}:
+<<eval=TRUE>>=
+getTerms(results)[5]
+@
+
+DAVID usually provides many overlapping clusters. \emph{plotMetagroupsDistance()} allows to explore the overlap between groups.
+<<eval=TRUE, fig=TRUE>>=
+distMat <- plotMetagroupsDistance(adjMat$metagroupGenesMatrix)
+@
+
+When there are many overlapping clusters it is useful to filter the results or select only a few clusters to plot.
+The clusters to plot can be selected/filtered based on their Enrichment score, the number of genes they contain, or any other parameter:\\
 
 a) Filtering based on a \textbf{parameter}:
 <<eval=TRUE>>=
 colnames(results$clusters)
-quantile(results$clusters$EnrichmentScore, c(0.5, 0.75, 0.9))
+quantile(results$clusters$EnrichmentScore, c(0.10, 0.25, 0.5, 0.75, 0.9))
 @
 <<eval=TRUE, results=hide>>=
 adjMatFiltered <- adjMatrix(results$geneTermSets, 
-attribute=results$clusters[,"EnrichmentScore", drop=FALSE], threshold=7)
+ attribute=results$clusters[,"EnrichmentScore", drop=FALSE], threshold=10)
 functionalNetwork(adjMatFiltered)
 @
 
-b) Inverse filtering/selection of \textbf{lowest values}. i.e. Overlap between clusters with least genes:
+b) Inverse filtering, selection of \textbf{lowest values}. i.e. Overlap between clusters with least genes:
 <<eval=TRUE, results=hide>>=
 quantile(results$clusters$nGenes, c(0.10, 0.25, 0.5, 0.75, 0.9))
 adjMatFiltered <- adjMatrix(results$geneTermSets, 
-attribute=-(results$clusters[,"nGenes", drop=FALSE]), threshold=-10)
+ attribute=-(results$clusters[,"nGenes", drop=FALSE]), threshold=-15)
 functionalNetwork(adjMatFiltered)
 @
 
@@ -390,31 +415,36 @@ To use any other parameter, add it as column to the to the results\$clusters dat
 
 c) Selecting \textbf{clusters with specific terms or keywords}:
 <<eval=TRUE, results=hide>>=
-keywords <- c("glycolysis", "ergosterol") 
+keywords <- c("sphingolipid") 
 selectedClusters <- sapply(getTerms(results), 
-function(x) 
-any(grep(paste("(", paste(keywords, collapse="|") ,")",sep=""), tolower(x))))
-results$clusters <- cbind(results$clusters, 
-selectedKeywords=as.numeric(selectedClusters))
-adjMatSelectedGroups <- adjMatrix(results$geneTermSets, 
-attribute=results$clusters[,"selectedKeywords", drop=FALSE], threshold=1)
+ function(x) 
+ any(grep(paste("(", paste(keywords, collapse="|") ,")",sep=""), tolower(x))))
+resultsSclusters <- results
+resultsSclusters$clusters <- cbind(resultsSclusters$clusters, 
+ selectedKeywords=as.numeric(selectedClusters))
+adjMatSelectedGroups <- adjMatrix(resultsSclusters$geneTermSets, 
+ attribute=resultsSclusters$clusters[,"selectedKeywords", drop=FALSE], 
+ threshold=1)
 functionalNetwork(adjMatSelectedGroups)
+getTerms(results)[selectedClusters]
 @
 
-d) Selection of \textbf{specific groups}. i.e. Selecting clusters 1, 3 and 8
+d) Selection of \textbf{specific groups}. i.e. Selecting clusters 2, 9 and 11:
 <<fig=TRUE, eval=TRUE>>=
 selectedClusters <- rep(FALSE, nrow(results$clusters))
-selectedClusters[c(1,3,8)] <- TRUE
+selectedClusters[c(2,9,11)] <- TRUE
 
-results$clusters <- cbind(results$clusters, 
-selectedClusters=as.numeric(selectedClusters))
-adjMatSelectedGroups <- adjMatrix(results$geneTermSets, 
-attribute=results$clusters[,"selectedClusters", drop=FALSE], threshold=1)
+resultsSclusters <- results
+resultsSclusters$clusters <- cbind(resultsSclusters$clusters, 
+ selectedClusters=as.numeric(selectedClusters))
+adjMatSelectedGroups <- adjMatrix(resultsSclusters$geneTermSets, 
+ attribute=resultsSclusters$clusters[,"selectedClusters", drop=FALSE], 
+ threshold=1)
 functionalNetwork(adjMatSelectedGroups)
 @
 
 
-\begin{thebibliography}{6}  % 100 is a random guess of the total number of references
+\begin{thebibliography}{6} 
 
 \bibitem{Huang1} Huang DW, Sherman BT, Lempicki RA. \emph{Systematic and integrative analysis of large gene lists using DAVID Bioinformatics Resources.} Nature Protoc. 2009;4(1):44-57.
 

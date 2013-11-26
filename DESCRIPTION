@@ -1,17 +1,16 @@
 Package: FGNet
 Type: Package
-Title: Functional gene networks derived from biological enrichment
-        analyses
+Title: Functional gene networks derived from biological enrichment analyses
 Description: Build and visualize functional gene networks from clustering of enrichment analyses in multiple annotation spaces. The package includes an interface to perform the analysis through David and GeneTerm Linker.
-Version: 1.0.1
+Version: 1.2.0
 Date: 2013-10-04
 Author: Sara Aibar, Celia Fontanillo, Conrad Droste and Javier De Las Rivas. Bioinformatics and Functional Genomics Group. Cancer Research Center (CiC-IBMCC, CSIC/USAL). Salamanca. Spain.
 Maintainer: Sara Aibar <saibar@usal.es>
 Depends: R (>= 2.15)
-Imports: BiocGenerics, igraph (>= 0.6), hwriter, R.utils, RCurl, XML
-Enhances: RColorBrewer, png
+Imports: igraph (>= 0.6), RCurl, hwriter, R.utils, XML
+Enhances: RColorBrewer, png, RDAVIDWebService
+Suggests: RUnit, BiocGenerics, org.Sc.sgd.db
 License: GPL (>= 2)
 URL: http://gtlinker.cnb.csic.es
 LazyLoad: yes
-biocViews: Visualization, Annotation, GO, Pathways, GeneSetEnrichment,
-        Networks, NetworkVisualization
+biocViews: Annotation, GO, Pathways, GeneSetEnrichment, Networks, NetworkVisualization

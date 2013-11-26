@@ -1,11 +1,18 @@
 
-intersectionNetwork <- function(metagroupGenesMatrix, plotType="dynamic", vLayout="kk", returnGraph=FALSE, vSize=12, vLabelCex=2/3, legendMg=NULL, grPrefix="", plotTitle="Nodes in several metagroups")
+intersectionNetwork <- function(metagroupGenesMatrix, plotType="dynamic", vLayout="kk", returnGraph=FALSE, vSize=12, vLabelCex=2/3, legendMg=NULL, grPrefix="", plotTitle="Nodes in several metagroups", keepColors=TRUE)
 {
 	# Libraries
 	# if (!library(igraph, logical.return=TRUE)) stop("Library igraph is required to plot the networks.")
 
 	#################################### Check arguments ################################################
-	if(!is.matrix(metagroupGenesMatrix))  stop("metagroupGenesMatrix should be the matrix returned by toTables_gtLinker().")
+	filteredOut <- NULL
+	if(is.list(metagroupGenesMatrix) && (all(names(metagroupGenesMatrix %in% c("metagroupGenesMatrix", "gtSetGenesMatrix", "filteredOut")))))
+	{
+		gtSetGenesMatrix <- metagroupGenesMatrix$gtSetGenesMatrix
+		filteredOut <- metagroupGenesMatrix$filteredOut
+		metagroupGenesMatrix <- metagroupGenesMatrix$metagroupGenesMatrix
+	}
+	if(!is.matrix(metagroupGenesMatrix))  stop("metagroupGenesMatrix should be the result returned by adjMatrix().")
 	
 	if(!is.character(plotType))  stop('plotType should be either "static", "dynamic" or "none".') 
 	plotType <- tolower(plotType)
@@ -33,9 +40,16 @@ intersectionNetwork <- function(metagroupGenesMatrix, plotType="dynamic", vLayou
 	}
 	
 	# Initialize
-	colnames(metagroupGenesMatrix) <- paste(grPrefix, colnames(metagroupGenesMatrix), sep=" ")
 	nMetagroups <- dim(metagroupGenesMatrix)[2]
-	colores <- setColors(metagroupGenesMatrix)
+	######## Set colors
+	if(keepColors==TRUE)
+	{
+		colores <- setColors(as.character(sort(as.numeric(c(colnames(metagroupGenesMatrix), filteredOut)))))[colnames(metagroupGenesMatrix)]
+	}else
+	{
+		colores <- setColors(colnames(metagroupGenesMatrix))
+	}
+	colnames(metagroupGenesMatrix) <- paste(grPrefix, colnames(metagroupGenesMatrix), sep=" ")
 
 	#####################################################################################################
 	#################################### Create Matrices  ###############################################	
@@ -115,6 +129,8 @@ intersectionNetwork <- function(metagroupGenesMatrix, plotType="dynamic", vLayou
 	
 	if(returnGraph) return(mgJoinedGraph)
 }
+
+
 
 
 

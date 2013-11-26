@@ -16,9 +16,8 @@ plotMetagroupsDistance <- function(metagroupGenesMatrix)
 		
 		# Plot dendogram
 		par(mar = c(0,3,1,1))
-		plot(clustering,  ann=FALSE)
+		plot(clustering,  ann=FALSE, axes=FALSE)
 		title("Metagroups distance")
-		
 		
 		#Recolocar:
 		mxDistancias <- mxDistancias[clustering$order, rev(clustering$order)]
@@ -61,7 +60,12 @@ plotMetagroupsDistance <- function(metagroupGenesMatrix)
 		box()
 	  axis(2, at=seq(0,1, by=1/(length(levs)-1)), labels= labs, cex.axis=0.8)
 
- 		#par(mar= c(5, 4, 4, 2) + 0.1)  #- reset to default
+		# Reset layout
+		nf <- layout(matrix(1), widths=1, heights=1, TRUE)
+		#layout.show(nf)
+		par(mar = c(1,1,1,1))
+		#par(mar= c(5, 4, 4, 2) + 0.1)  #- reset to default
+		
 		mxDistancias <- mxDistancias[,rev(colnames(mxDistancias))]
 	}
 	return(mxDistancias)

@@ -42,6 +42,7 @@ getResults_gtLinker <- function(jobID=NULL,  path=getwd(), jobName="", alreadyDo
 	# 	info(jobID) # Provides any error messages there might have been during the analisys.
 	
 	jobReady <- FALSE
+	firstAttempt <- TRUE
 	count <- 0
 	if(!is.null(jobID))
 	{
@@ -53,7 +54,11 @@ getResults_gtLinker <- function(jobID=NULL,  path=getwd(), jobName="", alreadyDo
 			reply <- SOAPQuery(status_envelope_body, serverWS)
 
 			# Ready
-			if(reply$statusResponse == 0) jobReady <- TRUE
+			if(reply$statusResponse == 0) 
+			{
+				jobReady <- TRUE
+				if(!firstAttempt) Sys.sleep(5) # To allow the server producing the files 
+			}	
 			
 			# Error
 			if(reply$statusResponse == -1)
@@ -69,19 +74,17 @@ getResults_gtLinker <- function(jobID=NULL,  path=getwd(), jobName="", alreadyDo
 			if(reply$statusResponse == 1) 
 			{
 				count <- count + 1
+				firstAttempt <- FALSE
 				if(count == 10) keepTrying <- FALSE
 				Sys.sleep(10) 
 			}
 		}
-	}
-	if(!jobReady) message("The analysis has not finished yet or the jobID does not exist.")
-								
+	}								
 								
 	###############################
 	# Download results (jobID)
 	###############################
-	if(jobReady)
-	{
+	downAttempt <- tryCatch({
 		# Global
 		inputFileName <- paste(folder, jobName,"global_overview.txt", sep="")
 		if(!alreadyDownloaded) 
@@ -111,5 +114,14 @@ getResults_gtLinker <- function(jobID=NULL,  path=getwd(), jobName="", alreadyDo
 			
 		if(!alreadyDownloaded) message(paste("Results downloaded to ", folder, sep=""))
 		return(list(metagroups=globalMetagroups, geneTermSets=tablaGeneTermSets, fileName=inputFileName))
+	}, error = function(e) {
+		FALSE
+	})
+	
+	if(downAttempt == FALSE) 	
+	{
+		if(!jobReady) message("The analysis has not finished yet or the jobID does not exist.")
+	} else {
+		return (downAttempt)
 	}
 }

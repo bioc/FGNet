@@ -7,7 +7,7 @@
 
 
 # Quitar: metagroupAttribute=NULL --> columnas en MetagroupGenesMatrix: ordenadas por el atributo
-functionalNetwork <- function(metagroupGenesMatrix, gtSetGenesMatrix=NULL, plotType="static", returnGraph=FALSE, vSize=12, vLabelCex=3/4, vLayout=NULL, bgTransparency=0.4, legendMg=NULL, plotTitle="Functional Network")
+functionalNetwork <- function(metagroupGenesMatrix, gtSetGenesMatrix=NULL, plotType="static", returnGraph=FALSE, plotTitle="Functional Network", vSize=12, vLabelCex=3/4, vLayout=NULL, bgTransparency=0.4, legendMg=NULL, keepColors=TRUE)
 {
 	# Libraries
 	# require(igraph)
@@ -15,13 +15,15 @@ functionalNetwork <- function(metagroupGenesMatrix, gtSetGenesMatrix=NULL, plotT
 
 	#####################################################################################################
 	#################################### Check arguments ################################################
+	filteredOut <- NULL
 	if(is.list(metagroupGenesMatrix) && (all(names(metagroupGenesMatrix %in% c("metagroupGenesMatrix", "gtSetGenesMatrix", "filteredOut")))))
 	{
 		gtSetGenesMatrix <- metagroupGenesMatrix$gtSetGenesMatrix
+		filteredOut <- metagroupGenesMatrix$filteredOut
 		metagroupGenesMatrix <- metagroupGenesMatrix$metagroupGenesMatrix
 	}
-	if(!is.matrix(metagroupGenesMatrix))  stop("metagroupGenesMatrix should be the matrix returned by toTables_gtLinker().")
-	if(!is.matrix(gtSetGenesMatrix))  stop("gtSetGenesMatrix should be the matrix returned by toTables_gtLinker().")
+	if(!is.matrix(metagroupGenesMatrix))  stop("metagroupGenesMatrix should be the result returned by adjMatrix().")
+	if(!is.matrix(gtSetGenesMatrix))  stop("gtSetGenesMatrix should be the result returned by adjMatrix().")
 
 	if(!is.character(plotType))  stop('plotType should be either "static", "dynamic" or "none".') 
 	   plotType <- tolower(plotType)
@@ -55,8 +57,6 @@ functionalNetwork <- function(metagroupGenesMatrix, gtSetGenesMatrix=NULL, plotT
 	
 	#####################################################################################################
 	#################################### Create Matrices  ###############################################
-	
-	
 	# Gene - Gene edges 
 	nCommonGTsets <- matrix(ncol=nGenes, nrow=nGenes, data=0)
 	rownames(nCommonGTsets) <- rownames(metagroupGenesMatrix)
@@ -80,8 +80,15 @@ functionalNetwork <- function(metagroupGenesMatrix, gtSetGenesMatrix=NULL, plotT
 	adjCommonEdges <- graph.adjacency(nCommonGTsets, weighted=TRUE,   mode="undirected", diag=FALSE) 
 	
 	######## Set colors
-	colores <- setColors(metagroupGenesMatrix)
-	trCols <- setColors(metagroupGenesMatrix, transparency=bgTransparency)
+	if(keepColors==TRUE)
+	{
+		colores <- setColors(as.character(sort(as.numeric(c(colnames(metagroupGenesMatrix), filteredOut)))))[colnames(metagroupGenesMatrix)]
+		trCols <- setColors(as.character(sort(as.numeric(c(colnames(metagroupGenesMatrix), filteredOut)))), transparency=bgTransparency)[colnames(metagroupGenesMatrix)]
+	}else
+		{
+		colores <- setColors(colnames(metagroupGenesMatrix))
+		trCols <- setColors(colnames(metagroupGenesMatrix), transparency=bgTransparency)
+	}
 	
 	# Nodes in only a group 
 	vColor <- apply(metagroupGenesMatrix, 1, function(x) {

@@ -7,7 +7,8 @@ Get results from an analysis with David.
 Retrieves the clustering results from David. The .txt file URL can be obtained from \link[FGNet:query_david]{query_david} or from a analysis performed directly at David (http://david.abcc.ncifcrf.gov/summary.jsp) . 
 }
 \usage{
-getResults_david(inputFileLocation, path = getwd(), jobName = "")
+getResults_david(inputFileLocation, path = getwd(), 
+ jobName = "", geneLabels=NULL)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -19,6 +20,9 @@ getResults_david(inputFileLocation, path = getwd(), jobName = "")
 }
   \item{jobName}{
   character. Folder name and prefix for the files.
+}
+  \item{geneLabels}{
+  named character vector. Gene name or label to show in the plots. The vector name should contain the label to show in the plot and the content the ID used in the query.
 }
 }
 \details{
@@ -61,8 +65,9 @@ List:\cr
 }
 
 \examples{
-genesYeast <- c("ADA2", "APC1", "APC11", "APC2", "APC4", "APC5", "APC9",
- "CDC16", "CDC23", "CDC26", "CDC27", "CFT1", "CFT2", "DCP1", "DOC1")
+genesYeast <- c("YBL084C", "YDL008W", "YDR118W", "YDR301W", "YDR448W", 
+"YFR036W", "YGL240W", "YHR166C", "YKL022C", "YLR102C", "YLR115W", "YLR127C",
+"YNL172W", "YOL149W", "YOR249C")
 
 txtFile <- query_david(genesYeast)
 
@@ -70,4 +75,10 @@ results <- getResults_david(txtFile)
 
 # If the analysis results are already in a local txt file:
 # getResults_david(".../DavidClustering.txt")
+
+# To add a gene label/symbol to the plots...
+library(org.Sc.sgd.db)
+geneLabels <- unlist(as.list(org.Sc.sgdGENENAME)[genesYeast])
+names(genesYeast) <- geneLabels 
+results <- getResults_david(txtFile, geneLabels=genesYeast)
 }

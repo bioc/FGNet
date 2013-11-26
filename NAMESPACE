@@ -12,8 +12,8 @@ export(getTerms)
 
 
 import(igraph)
-import(hwriter)
 import(RCurl)
+import(hwriter)
 importFrom(R.utils, capitalize)
 importFrom(R.utils, decapitalize)
 importFrom(XML, xmlToDataFrame)
