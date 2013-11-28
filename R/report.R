@@ -127,10 +127,13 @@ fnReport <- function (tool, organism=NULL, geneIdType=NULL, genes=NULL, annotati
 	{
 		metagroupAttributeName <- "EnrichmentScore"
 		serverWeb <- "http://david.abcc.ncifcrf.gov/summary.jsp"
-		
+	
 		if(is.null(inputFileLocation))
 		{
 			inputFileLocation <- query_david(genes=genes, geneIdType=geneIdType, annotations=annotations, email=email, argsWS=argsWS)
+			fileProvided <- FALSE
+		}else{
+			fileProvided <- TRUE
 		}
 		if(is.null(jobName))
 		{
@@ -149,7 +152,12 @@ fnReport <- function (tool, organism=NULL, geneIdType=NULL, genes=NULL, annotati
 				prefix <- substring(inputFileLocation, first=first, last=last) # Location (Folder)
 			}
 			sufix <- paste("_thr", threshold, sep="")
-			jobName <- paste(prefix, sufix, sep="")
+			if(!fileProvided)
+			{
+				jobName <- paste(prefix, sufix, sep="")
+			}else{
+				jobName <- ""
+			}
 		}
 		if(!is.null(geneLabels) && is.null(names(geneLabels)))
 		{
