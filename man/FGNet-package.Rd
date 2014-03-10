@@ -51,7 +51,8 @@ report_gtLinker(genesYeast, annotations=annotations,
 organism=organism, jobName="ExampleYeast")
 
 # More examples in:
-vignette("FGNet-vignette")
+if (interactive())
+    vignette("FGNet-vignette")
 }
 
 \keyword{ package }

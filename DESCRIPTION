@@ -6,7 +6,7 @@ Description: Build and visualize functional gene networks from
         clustering of enrichment analyses in multiple annotation
         spaces. The package includes an interface to perform the
         analysis through David and GeneTerm Linker.
-Version: 1.2.1
+Version: 1.3.2
 Date: 2013-10-04
 Author: Sara Aibar, Celia Fontanillo, Conrad Droste and Javier De Las
         Rivas. Bioinformatics and Functional Genomics Group. Cancer
