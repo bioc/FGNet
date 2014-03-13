@@ -25,6 +25,9 @@ errorMsgDavid <- function(errorMsg)
 # Maximum gene ids: 400
 query_david <- function(genes, geneIdType="ENSEMBL_GENE_ID", annotations=c("GOTERM_BP_ALL", "GOTERM_MF_ALL", "GOTERM_CC_ALL", "KEGG_PATHWAY", "INTERPRO"), email=NULL, argsWS = c(overlap=4L, initialSeed=4L, finalSeed=4L, linkage=0.5, kappa=35L))
 {	
+	# Check arguments
+	if(!is.character(genes)) stop("genes should be a character vector.")
+		
 	functionCall <- match.call()
 	if(!is.null(email))
 	{

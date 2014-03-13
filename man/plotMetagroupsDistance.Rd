@@ -11,7 +11,7 @@ plotMetagroupsDistance(metagroupGenesMatrix)
 }
 \arguments{
   \item{metagroupGenesMatrix}{
-  \emph{$metagroupGenesMatrix} returned by  \code{\link[FGNet:adjMatrix]{adjMatrix()}}.
+  \emph{$metagroupGenesMatrix} returned by  \code{\link[FGNet:toMatrix]{toMatrix()}}.
 }
 }
 \value{
@@ -23,8 +23,8 @@ plotMetagroupsDistance(metagroupGenesMatrix)
 }
 \examples{
 results <- getResults_gtLinker(jobID=1963186, jobName="gtLinker_ej")
-adjMat <- adjMatrix(results$geneTermSets,
+incidMat <- toMatrix(results$geneTermSets,
  attribute=results$metagroups[,"Silhouette Width", drop=FALSE])
-plotMetagroupsDistance(adjMat$metagroupGenesMatrix)
+plotMetagroupsDistance(incidMat$metagroupGenesMatrix)
 }
 

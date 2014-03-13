@@ -57,9 +57,9 @@ genesYeast <- c("ADA2", "APC1", "APC11", "APC2", "APC4", "APC5", "APC9",
 "RPN5", "RPN6", "RPN8", "RPT1", "RPT3", "RPT6", "SGF11", "SGF29", "SGF73", 
 "SPT20", "SPT3", "SPT7", "SPT8", "TRA1", "YSH1", "YTH1")
 
-jobID <- query_gtLinker(genesYeast, organism = "Sc")
+# jobID <- query_gtLinker(genesYeast, organism = "Sc")
 
-jobID <- query_gtLinker(genesYeast, organism = "Sc",
-annotations = c("KEGG_Pathways"), minSupport = 3)
+# jobID <- query_gtLinker(genesYeast, organism = "Sc",
+# annotations = c("KEGG_Pathways"), minSupport = 3)
 
 }

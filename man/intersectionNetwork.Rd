@@ -14,7 +14,7 @@ keepColors=TRUE)
 }
 \arguments{
   \item{metagroupGenesMatrix}{
-matrix or list. \emph{$metagroupGenesMatrix} returned by \code{\link[FGNet:adjMatrix]{adjMatrix}}. If raw output (list) from \code{\link[FGNet:adjMatrix]{adjMatrix}}, it will be automatically splitted into $metagroupGenesMatrix and $gtSetGenesMatrix.
+matrix or list. \emph{$metagroupGenesMatrix} returned by \code{\link[FGNet:toMatrix]{toMatrix}}. If raw output (list) from \code{\link[FGNet:toMatrix]{toMatrix}}, it will be automatically splitted into $metagroupGenesMatrix and $gtSetGenesMatrix.
 }
   \item{plotType}{
 character "static", "dynamic" or "none". "static" will generate a standard plot. "dynamic" will produce an interactive tkplot (metagroups background cannot be drawn). "none" will not plot the network.
@@ -41,7 +41,7 @@ character. Prefix for the metagroup/cluster.
 character. Title to show on the plot.
 }
   \item{keepColors}{
-logical. If TRUE, it will keep the same colors for all the plots, independently of the filtered groups. Only available if metagroupGenesMatrix is the raw result from \code{\link[FGNet:adjMatrix]{adjMatrix}}.
+logical. If TRUE, it will keep the same colors for all the plots, independently of the filtered groups. Only available if metagroupGenesMatrix is the raw result from \code{\link[FGNet:toMatrix]{toMatrix}}.
 }
 }
 \value{
@@ -56,11 +56,11 @@ logical. If TRUE, it will keep the same colors for all the plots, independently 
 \examples{
 jobID <- 3907019
 results <- getResults_gtLinker(jobID, jobName="gtLinkerExample")
-adjMat <- adjMatrix(results$geneTermSets, 
+incidMat <- toMatrix(results$geneTermSets, 
  attribute=results$metagroups[,"Silhouette Width", drop=FALSE], threshold=0)
 
-intersectionNetwork(adjMat)
-intNw <- intersectionNetwork(adjMat, 
+intersectionNetwork(incidMat)
+intNw <- intersectionNetwork(incidMat, 
  vLayout="sugiyama", plotType="static", returnGraph=TRUE) 
 }
 

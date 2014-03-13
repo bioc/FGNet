@@ -2,10 +2,22 @@
 
 report_gtLinker <- function(genes=NULL, organism="Hs", annotations=c("GO_Biological_Process","GO_Molecular_Function", "GO_Cellular_Component", "KEGG_Pathways", "InterPro_Motifs"), minSupport=4, jobID=NULL, alreadyDownloaded=FALSE, path=getwd(), jobName=NULL, threshold=0, serverWeb="http://gtlinker.cnb.csic.es", serverWS="http://gtlinker.cnb.csic.es:8182")
 {
+	if(!is.null(jobID))
+	{
+		organism <- NULL
+		annotations <- NULL
+		minSupport <- NULL		
+	}
 	return( fnReport(tool="gtLinker", organism=organism, genes=genes, annotations=annotations, minSupport=minSupport, jobID=jobID, alreadyDownloaded=alreadyDownloaded, path=path, jobName=jobName, threshold=threshold, serverWeb=serverWeb, serverWS=serverWS))
 }
 report_david <- function(genes=NULL, geneIdType="ENSEMBL_GENE_ID", annotations=c("GOTERM_BP_ALL", "GOTERM_MF_ALL", "GOTERM_CC_ALL", "KEGG_PATHWAY", "INTERPRO"), email=NULL,  argsWS = c(overlap=4L, initialSeed=4L, finalSeed=4L, linkage=0.5, kappa=35L), inputFileLocation=NULL, path=getwd(), jobName=NULL, threshold=0, geneLabels=NULL)
 {
+	if(!is.null(inputFileLocation))
+	{
+		geneIdType <- NULL
+		annotations <- NULL
+		argsWS  <- NULL
+	}
 	return( fnReport(tool="David", genes=genes, geneIdType=geneIdType, annotations=annotations, email=email, inputFileLocation=inputFileLocation, alreadyDownloaded=FALSE, path=path, jobName=jobName, threshold=threshold, argsWS = argsWS, geneLabels=geneLabels))
 }
 
@@ -38,14 +50,19 @@ fnReport <- function (tool, organism=NULL, geneIdType=NULL, genes=NULL, annotati
 		if(is.null(jobID))
 		{
 			if(is.null(genes) && !alreadyDownloaded) stop("If the analisys is not already downloaded, either a jobID or a query (organism, genes and annotations) should be provided.")
-						
-			if(!is.character(organism)) stop("Organism should be either 'Hs' (Homo sapiens) or 'Sc' (Saccharomyces cerevisiae). ")
-				organism <- tolower(organism) 
-				if (!(organism %in% c("sc","hs"))) stop("Organism should be either 'Hs' (Homo sapiens) or 'Sc' (Saccharomyces cerevisiae).")
 
+			if(!is.character(organism)) stop("Organism should be either 'Hs' (Homo sapiens) or 'Sc' (Saccharomyces cerevisiae). ")
+			organism <- tolower(organism) 
+			if(!(organism %in% c("sc","hs"))) stop("Organism should be either 'Hs' (Homo sapiens) or 'Sc' (Saccharomyces cerevisiae).")
+			
+			allowedAnnotations <- c("GO_Biological_Process","GO_Molecular_Function", "GO_Cellular_Component", "KEGG_Pathways", "InterPro_Motifs")
+			if(any(!tolower(annotations) %in% tolower(allowedAnnotations))) warning(paste("Some of the provided annotations are not recognized. Example of available annotations: ", paste(allowedAnnotations, collapse=", "), sep=""))	
+			if(!is.character(annotations)) stop("Annotations should be a charater vector.")
+			
 			if(!is.numeric(minSupport)) stop("minSupport should be a number.")		
-				minSupport <- as.integer(minSupport)
-				if(minSupport<2 || minSupport>100) stop("minSupport should be more than 1.")		
+			minSupport <- as.integer(minSupport)
+			if(minSupport<2 || minSupport>100) stop("minSupport should be more than 1.")		
+			
 		} else 
 		{
 			if(!is.null(genes)) stop("Either a jobID *OR* a query (organism, genes and annotations) should be provided.")
@@ -55,29 +72,23 @@ fnReport <- function (tool, organism=NULL, geneIdType=NULL, genes=NULL, annotati
 		
 		if(!is.character(serverWS)) stop("Webservice server url not valid.")
 		if(!is.character(serverWeb)) stop("Web server url not valid.")
+		
 	} else 
 	{
 		if(tool == "David") 
 		{
-			if(!is.character(geneIdType)) stop("geneIdType not valid.") # List of available ones in David API
 			if(!is.null(inputFileLocation) && !is.character(inputFileLocation)) stop("inputFileLocation not valid.")
 			if(is.null(inputFileLocation) && is.null(genes))  stop("Either a inputFileLocation a query (organism, genes and annotations) should be provided.")
 			if(!is.null(inputFileLocation) && !is.null(genes))  stop("Either an inputFileLocation *OR* a query (genes and annotations) should be provided.")
+			if(is.null(inputFileLocation) && !is.character(geneIdType)) stop("geneIdType not valid.") # List of available ones in David API
+			if(is.null(inputFileLocation) && !is.character(annotations)) stop("Annotations should be a charater vector.")
+			#argsWS?
 		}else
 		{
 			stop("'tool' not valid.")
 		}
 	}
-	
 	if(!is.null(genes) && !is.character(genes)) stop("Genes should be a character vector containing the names of the genes.")
-	
-	if(tool == "gtLinker")
-	{
-			allowedAnnotations <- c("GO_Biological_Process","GO_Molecular_Function", "GO_Cellular_Component", "KEGG_Pathways", "InterPro_Motifs")
-			if (any(!tolower(annotations) %in% tolower(allowedAnnotations))) warning(paste("Some of the provided annotations are not recognized. Example of available annotations: ", paste(allowedAnnotations, collapse=", "), sep=""))	
-	}
-	
-	if(!is.character(annotations)) stop("Annotations should be a charater vector.")
 
 	if(!is.logical(alreadyDownloaded)) stop("alreadyDownloaded should be logical.")
 	if(!file.exists(path)) stop("The given path does not exist.")
@@ -170,7 +181,7 @@ fnReport <- function (tool, organism=NULL, geneIdType=NULL, genes=NULL, annotati
 	
 	# Common to both tools
 	attribute <- results[[1]][,metagroupAttributeName, drop=FALSE]   # $metagroups or $cluster (first in list)
-	tables <- adjMatrix(results$geneTermSets, attribute = attribute, threshold=threshold)
+	tables <- toMatrix(results$geneTermSets, attribute = attribute, threshold=threshold)
 
 	#####################################################################################################
 	####################################   Generate  HTML    ############################################

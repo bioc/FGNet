@@ -16,14 +16,22 @@ functionalNetwork <- function(metagroupGenesMatrix, gtSetGenesMatrix=NULL, plotT
 	#####################################################################################################
 	#################################### Check arguments ################################################
 	filteredOut <- NULL
-	if(is.list(metagroupGenesMatrix) && (all(names(metagroupGenesMatrix %in% c("metagroupGenesMatrix", "gtSetGenesMatrix", "filteredOut")))))
+	
+	if(is.matrix(metagroupGenesMatrix) && is.null(gtSetGenesMatrix))
+	{
+			gtSetGenesMatrix <- metagroupGenesMatrix
+			filteredOut <- NULL
+			warning("Only metagroupGenesMatrix provided.")
+	}
+	
+	if(is.list(metagroupGenesMatrix) && (all(names(metagroupGenesMatrix) %in% c("metagroupGenesMatrix", "gtSetGenesMatrix", "filteredOut"))))
 	{
 		gtSetGenesMatrix <- metagroupGenesMatrix$gtSetGenesMatrix
 		filteredOut <- metagroupGenesMatrix$filteredOut
 		metagroupGenesMatrix <- metagroupGenesMatrix$metagroupGenesMatrix
 	}
-	if(!is.matrix(metagroupGenesMatrix))  stop("metagroupGenesMatrix should be the result returned by adjMatrix().")
-	if(!is.matrix(gtSetGenesMatrix))  stop("gtSetGenesMatrix should be the result returned by adjMatrix().")
+	if(!is.matrix(metagroupGenesMatrix))  stop("metagroupGenesMatrix should be the result returned by toMatrix().")
+	if(!is.matrix(gtSetGenesMatrix))  stop("gtSetGenesMatrix should be the result returned by toMatrix().")
 
 	if(!is.character(plotType))  stop('plotType should be either "static", "dynamic" or "none".') 
 	   plotType <- tolower(plotType)
@@ -82,8 +90,15 @@ functionalNetwork <- function(metagroupGenesMatrix, gtSetGenesMatrix=NULL, plotT
 	######## Set colors
 	if(keepColors==TRUE)
 	{
-		colores <- setColors(as.character(sort(as.numeric(c(colnames(metagroupGenesMatrix), filteredOut)))))[colnames(metagroupGenesMatrix)]
-		trCols <- setColors(as.character(sort(as.numeric(c(colnames(metagroupGenesMatrix), filteredOut)))), transparency=bgTransparency)[colnames(metagroupGenesMatrix)]
+		if(all(!is.na(as.numeric(colnames(metagroupGenesMatrix)))))
+		{
+			allMgSorted <- as.character(sort(as.numeric(c(colnames(metagroupGenesMatrix), filteredOut))))
+		} else {
+			allMgSorted <- sort(as.character(c(colnames(metagroupGenesMatrix), filteredOut)))
+		}
+
+		colores <- setColors(allMgSorted)[colnames(metagroupGenesMatrix)]
+		trCols <- setColors(allMgSorted, transparency=bgTransparency)[colnames(metagroupGenesMatrix)]
 	}else
 		{
 		colores <- setColors(colnames(metagroupGenesMatrix))
@@ -111,7 +126,7 @@ functionalNetwork <- function(metagroupGenesMatrix, gtSetGenesMatrix=NULL, plotT
 	if(is.null(vertexLayout))
 	{
 		graph4layout <- graph.adjacency(nCommonMgroups, weighted=NULL,   mode="undirected", diag=FALSE) 
-		if(all(vColor=="#FFFFFF")>0)
+		if(all(vColor=="#FFFFFF"))
 		{
 			# Parecido a fruchterman reingold, pero apelotona un poco menos los nodos comunes
 			vertexLayout <- layout.kamada.kawai(graph4layout)	
@@ -130,7 +145,7 @@ functionalNetwork <- function(metagroupGenesMatrix, gtSetGenesMatrix=NULL, plotT
 		require(png)		
 		png("nwPreview.png", width = 800, height = 800)
 		plot(adjCommonEdges, layout=vertexLayout, edge.width=1, edge.color=eColor, vertex.label=V(adjCommonEdges)$name, vertex.color=vColor, vertex.frame.color="#555555", vertex.size=vSize, vertex.label.color="#000000", vertex.label.cex=vLabelCex, mark.groups=markGroup, mark.col=trCols, mark.border=colores)#,  ,  mark.expand=2, , mark.shape=1)			
-		if(plotLegend) legend(-1.2, -1.2, legend=paste("Mg", names(colores), legendMg, sep=""), fill=colores, bty="n", xjust=0, yjust=0)
+		if(plotLegend) legend(-1.2, -1.2, legend=paste("Mg", names(colores), legendMg, sep="")[order(names(colores))], fill=colores[order(names(colores))], bty="n", xjust=0, yjust=0)
 		dev.off()
 	}
 	
@@ -144,7 +159,7 @@ functionalNetwork <- function(metagroupGenesMatrix, gtSetGenesMatrix=NULL, plotT
 		if(plotType !="none")
 		{
 			plot(adjCommonEdges, layout=vertexLayout, edge.width=1, edge.color=eColor, vertex.label=V(adjCommonEdges)$name, vertex.color=vColor, vertex.frame.color="#555555", vertex.size=vSize, vertex.label.color="#000000", vertex.label.cex=vLabelCex, mark.groups=markGroup, mark.col=trCols, mark.border=colores)#,  ,  mark.expand=2, , mark.shape=1)		
-			if(plotLegend) legend(-1.2, -1.2, legend=paste("Mg", names(colores), legendMg, sep=""), fill=colores, bty="n", xjust=0, yjust=0)
+			if(plotLegend) legend(-1.2, -1.2, legend=paste("Mg", names(colores)[order(names(colores))], legendMg, sep=""), fill=colores[order(names(colores))], bty="n", xjust=0, yjust=0)
 			title(plotTitle)
 		}
 	}

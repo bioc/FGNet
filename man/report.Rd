@@ -91,7 +91,7 @@ named integer vector. Additional arguments for the clustering. Only available us
 The report functions are wrappers that includes the following steps: \cr
  1. - Query (optional): Performs the analysis through GeneTerm Linker or David. \code{\link[FGNet:query_gtLinker]{query_gtLinker()}} returns the analysis jobID and \code{\link[FGNet:query_david]{query_david()}} the \emph{.txt file} with the raw David results.\cr
  2. - Get results: Retrieve the metagroups/clusters and gene-term sets from the server. This is done through the functions \code{\link[FGNet:getResults_gtLinker]{getResults_gtLinker()}} and \code{\link[FGNet:getResults_gtLinker]{getResults_gtLinker()}}\cr 
- 3. - Transform into adjacency matrices (\code{\link[FGNet:adjMatrix]{adjMatrix()}}): Transforms the metagroups and gene-term sets (gtset) into genes-metagroups and genes-gtset adjacency matrices. \cr
+ 3. - Transform into incidence matrices (\code{\link[FGNet:toMatrix]{toMatrix()}}): Transforms the metagroups and gene-term sets (gtset) into genes-metagroups and genes-gtset incidence matrices. \cr
  4. - Generate the HTML report, which includes the functional network (\code{\link[FGNet:functionalNetwork]{functionalNetwork()}}). \cr 
 }
 \seealso{
@@ -112,8 +112,11 @@ genesYeast <- c("ADA2", "APC1", "APC11", "APC2", "APC4", "APC5", "APC9",
 organism <- "Sc"
 annotations <- c("KEGG_Pathways")
 
-report_gtLinker(genesYeast, annotations=annotations, 
-organism=organism, jobName="ExampleYeast")
+# report_gtLinker(genesYeast, annotations=annotations, 
+# organism=organism, jobName="ExampleYeast")
+
+# or, for an already executed query:
+# report_gtLinker(jobID="3907019", jobName="ExampleYeast")
 
 # David:
 genesYeast <- c("YBL084C", "YDL008W", "YDR118W", "YDR301W", "YDR448W", 
@@ -124,7 +127,7 @@ report_david(genesYeast, jobName="ExampleYeast_David") #add: email="your@email.c
 library(org.Sc.sgd.db)
 geneLabels <- unlist(as.list(org.Sc.sgdGENENAME)[genesYeast])
 names(genesYeast) <- geneLabels 
-report_david(genesYeast, geneLabels=genesYeast,  
- annotations = c("GOTERM_BP_ALL", "GOTERM_MF_ALL", "KEGG_PATHWAY", "INTERPRO"))
+# report_david(genesYeast, geneLabels=genesYeast,  
+# annotations = c("GOTERM_BP_ALL", "GOTERM_MF_ALL", "KEGG_PATHWAY", "INTERPRO"))
 
 }

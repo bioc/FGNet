@@ -19,10 +19,10 @@ vLayout=NULL, bgTransparency=0.4, legendMg=NULL, keepColors=TRUE)
 
 \arguments{
  \item{metagroupGenesMatrix}{
-matrix or list. \emph{$metagroupGenesMatrix} (matrix) returned by \code{\link[FGNet:adjMatrix]{adjMatrix}}. If raw output (list) from \code{\link[FGNet:adjMatrix]{adjMatrix}}, it will be automatically splitted into $metagroupGenesMatrix and $gtSetGenesMatrix.
+matrix or list. \emph{$metagroupGenesMatrix} (matrix) returned by \code{\link[FGNet:toMatrix]{toMatrix}}. If raw output (list) from \code{\link[FGNet:toMatrix]{toMatrix}}, it will be automatically splitted into $metagroupGenesMatrix and $gtSetGenesMatrix.
 }
   \item{gtSetGenesMatrix}{
-matrix. \emph{$gtSetGenesMatrix} returned by \code{\link[FGNet:adjMatrix]{adjMatrix}}.
+matrix. \emph{$gtSetGenesMatrix} returned by \code{\link[FGNet:toMatrix]{toMatrix}}.
 }
   \item{plotType}{
 character "static", "dynamic" or "none". "static" will generate a standard plot. "dynamic" will produce an interactive tkplot. In the interactive plot metagroups background cannot be drawn, instead the intersection network will also be shown. "none" will not plot the network.
@@ -49,7 +49,7 @@ numeric. Value between 0 and 1 for the transparency of the metagroups background
 character. Label to show next to the metagroup/cluster id in the legend. If FALSE, legend is not shown.
 }
   \item{keepColors}{
-logical. If TRUE, it will keep the same colors for all the plots, independently of the filtered groups. Only available if metagroupGenesMatrix is the raw result from \code{\link[FGNet:adjMatrix]{adjMatrix}}.
+logical. If TRUE, it will keep the same colors for all the plots, independently of the filtered groups. Only available if metagroupGenesMatrix is the raw result from \code{\link[FGNet:toMatrix]{toMatrix}}.
 }
 }
 
@@ -68,20 +68,20 @@ logical. If TRUE, it will keep the same colors for all the plots, independently 
 \examples{
 jobID <- 3907019
 results <- getResults_gtLinker(jobID, jobName="gtLinkerExample")
-adjMat <- adjMatrix(results$geneTermSets, 
+incidMat <- toMatrix(results$geneTermSets, 
 										attribute=results$metagroups[,"Silhouette Width", drop=FALSE], threshold=0)
 
-functionalNetwork(adjMat) 
-functionalNetwork(adjMat, plotType="dynamic") 
+functionalNetwork(incidMat) 
+functionalNetwork(incidMat, plotType="dynamic") 
 getTerms(results)
 
 # To modify the layout and plot as static network (with metagroup background)...
 library(igraph)
 saveLayout <- tkplot.getcoords(1)   # tkp.id (ID of the tkplot window)
-functionalNetwork(adjMat, vLayout=saveLayout)
+functionalNetwork(incidMat, vLayout=saveLayout)
 
 # Only return the network, without plotting
-fNw <- functionalNetwork(adjMat, plotType="none", returnGraph=TRUE) 
+fNw <- functionalNetwork(incidMat, plotType="none", returnGraph=TRUE) 
 class(fNw)
 betweenness(fNw)
 igraph.to.graphNEL(fNw)

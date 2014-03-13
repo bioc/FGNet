@@ -34,7 +34,7 @@ getMGTerms <- function(globalMetagroups, grType, org=NULL)
 						link <- paste("http://www.ebi.ac.uk/interpro/entry/", x[1], sep="")
 						annot <- "InterPro"
 					}
-					
+								
 					# Kegg
 					# David: 			K:xtr04330:Notch signaling pathway 
 					if(x[1] == "KEGG") link <- paste("http://www.genome.jp/kegg-bin/show_pathway?org_name=", substring(x[2], 1, 3), "&mapno=", substring(x[2], 4, nchar(x[2])), sep="") 
@@ -44,14 +44,18 @@ getMGTerms <- function(globalMetagroups, grType, org=NULL)
 					
 					# SMART (Appears in david even if it was not explicitly requested)
 					# David:			SM00181:EGF
-					if(substring(x[1], 1, 3) == "SM0") link <- paste("http://smart.embl.de/smart/do_annotation.pl?DOMAIN=", x[1], sep="")					
+					if(substring(x[1], 1, 3) == "SM0") link <- paste("http://smart.embl.de/smart/do_annotation.pl?DOMAIN=", x[1], sep="")			
+					
+					### NUEVOS
+					if(length(grep("REACT", x[1]))>0) link <- paste("http://www.reactome.org/cgi-bin/link?SOURCE=Reactome&ID=", sub("REACT_", "REACT:", x[1]), sep="")	
+					
 					
 					return (c(annot, descr, link))
 			}))
 		
 		colnames(descripciones) <- c("Annotation", "Description", "Link")
 		
-		descripciones <- descripciones[order(descripciones[,1]),]
+		descripciones <- descripciones[order(descripciones[,"Description"]),]
 		termsDescriptions[[mgName]] <- descripciones
 		
 		# GO
@@ -104,6 +108,7 @@ representativeTerm <- function(termsDescriptions)
 		}
 		
 		reprTerms[index] <- selectedTerm
+		if(nchar(reprTerms[index])>30) reprTerms[index] <- paste(substr(reprTerms[index], 1, 30), "-", sep="")
 	}
 	return(reprTerms)
 }
@@ -136,12 +141,18 @@ buildTermsTable <- function(termsDescriptions)
 
 
 # Returns the link to the ontology tree for each metagroup go terms
-creteGoLinks <- function(goIds)
+creteGoLinks <- function(goIds, folder)
 {
   goTerms <- sapply(goIds, function(x) paste("%22GO%3A", x,"%22%3A{%22fill%22%3A%22%23ccccff%22}", sep="",collapse=","))
 	goLinks <- paste("http://amigo.geneontology.org/cgi-bin/amigo/visualize?mode=advanced&term_data={",goTerms ,"}&term_data_type=json&format=png", sep="")
   names(goLinks) <- names(goIds)
-  return(goLinks)
+  
+  fileNames <- paste(folder, paste("GO_", gsub("s ","_",names(goIds)),".png", sep=""),sep="")
+  names(fileNames) <- names(goIds)
+  
+  for(i in 1:length(goLinks)) download.file(url=goLinks[i], destfile=fileNames[i], quiet=TRUE)
+  
+  return(fileNames)
 }
 
 
@@ -180,13 +191,6 @@ createHtml <- function(htmlFileName, results, tables, metagroupAttributeName, th
 	
 	globalMetagroups <- rawMetagroups[colnames(tables$metagroupGenesMatrix),]
 
-	# Get metagroup terms
-	mgTerms <- getMGTerms(globalMetagroups, grType, organism)
-	termsTables <- buildTermsTable(mgTerms$termsDescriptions)
-	
-	goIds <- mgTerms$goIds
-	goLinks <- creteGoLinks(goIds)																					
-										
 	#### Set locations
 	# Folter to save images etc: Same as downloaded results	
 	rawResults <- results$fileName # Whole path
@@ -205,6 +209,13 @@ createHtml <- function(htmlFileName, results, tables, metagroupAttributeName, th
 		folder <- substring(folder, first=attr(folderInRoot, "match.length")+1)
 	}	
 	
+	# Get metagroup terms
+	mgTerms <- getMGTerms(globalMetagroups, grType, organism)
+	termsTables <- buildTermsTable(mgTerms$termsDescriptions)
+	
+	goIds <- mgTerms$goIds
+	goLinks <- creteGoLinks(goIds,folder)																					
+		
 	# Copiar CSS a la carpeta actual...
 	cssDir <- file.path(system.file('css', package='FGNet'))
 	cssFile <- paste(cssDir, "functionalNetworks.css", sep="/")

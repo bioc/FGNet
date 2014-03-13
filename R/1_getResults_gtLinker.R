@@ -53,6 +53,7 @@ getResults_gtLinker <- function(jobID=NULL,  path=getwd(), jobName="", alreadyDo
 		{
 			reply <- SOAPQuery(status_envelope_body, serverWS)
 
+			print(reply$statusResponse)
 			# Ready
 			if(reply$statusResponse == 0) 
 			{
@@ -66,10 +67,10 @@ getResults_gtLinker <- function(jobID=NULL,  path=getwd(), jobName="", alreadyDo
 				info_envelope_body <-	 paste('<info xmlns="urn:gtLinkerWS">',
 																			 '<job_id xsi:type="xsd:string">',jobID ,'</job_id></info>', sep="")
 				reply <- SOAPQuery(info_envelope_body, serverWS)$infoResponse
-				stop(paste("Message from server:", reply, sep=""))
+				stop(paste("Message from server: ", reply, sep=""))
 			}
 			
-			# Not ready:
+			# Still analyzing:
 			if(!keepTrying) break()
 			if(reply$statusResponse == 1) 
 			{
@@ -84,44 +85,51 @@ getResults_gtLinker <- function(jobID=NULL,  path=getwd(), jobName="", alreadyDo
 	###############################
 	# Download results (jobID)
 	###############################
-	downAttempt <- tryCatch({
-		# Global
-		inputFileName <- paste(folder, jobName,"global_overview.txt", sep="")
-		if(!alreadyDownloaded) 
-		{
-			fileURL <- paste(serverWeb, "/jobs/",jobID,"/global_hash", sep="")
-			if(!url.exists(fileURL)) warning("Server/URL does not seem to be correct, trying anyway...")
-			download.file(url=fileURL, destfile=inputFileName)
-		}
-		globalMetagroups <- read.table( paste(folder, jobName, "global_overview.txt", sep="") ,skip=2, header=F, sep="\t", quote = "")
-		colnames(globalMetagroups) <- c("Size","Diameter","Similarity","Silhouette Width","Genes","nGenes","nref_list","pValue","Terms")
-		nMetaGroups <- dim(globalMetagroups)[1]
-		
-		globalMetagroups[, "nGenes"] <- as.numeric(sapply(strsplit(as.character(globalMetagroups[, "nGenes"]), split="(", fixed=TRUE), function(x) x[1]))
-		globalMetagroups[, "nref_list"] <- sapply(strsplit(as.character(globalMetagroups[, "nref_list"]), split="(", fixed=TRUE), function(x) x[1])
-		
-		# Download Metagroups
-		if(!alreadyDownloaded) for (mg in 1:nMetaGroups) download.file(quiet=TRUE, url=paste(serverWeb, "/jobs/",jobID,"/", mg-1,"_hash", sep=""), destfile=paste(folder, jobName,"metagroup_", mg,".txt", sep=""))
-		
-		# Leer termSets
-		tablaGeneTermSets <- NULL
-		for(mg in rownames(globalMetagroups)) 
-		{
-			metagrupo <-  read.table(paste(folder, jobName, "metagroup_", mg, ".txt", sep=""),skip=1, header=F, sep="\t", quote = "")
-			tablaGeneTermSets <- rbind(tablaGeneTermSets,cbind(cbind(gtSet=paste(mg, sep=""), metagrupo))) #, cbind(gtSet=paste("Mg", mg,"_gtSet", 1:dim(metagrupo)[1], sep=""), metagrupo))
-		}
-		colnames(tablaGeneTermSets) <- c("Metagroup", "Genes","nGenes","nref_list","pValue","Terms")
-			
-		if(!alreadyDownloaded) message(paste("Results downloaded to ", folder, sep=""))
-		return(list(metagroups=globalMetagroups, geneTermSets=tablaGeneTermSets, fileName=inputFileName))
-	}, error = function(e) {
-		FALSE
-	})
-	
-	if(downAttempt == FALSE) 	
+	if(!jobReady) 
 	{
-		if(!jobReady) message("The analysis has not finished yet or the jobID does not exist.")
-	} else {
-		return (downAttempt)
+		warning("The analysis has not finished yet or the jobID does not exist.")
+		return(NULL)
+	}
+	if(jobReady)
+	{
+		downAttempt <- tryCatch({
+			# Global
+			inputFileName <- paste(folder, jobName,"global_overview.txt", sep="")
+			if(!alreadyDownloaded) 
+			{
+				fileURL <- paste(serverWeb, "/jobs/",jobID,"/global_hash", sep="")
+				if(!url.exists(fileURL)) warning("Server/URL does not seem to be correct, trying anyway...")
+				download.file(url=fileURL, destfile=inputFileName)
+			}
+			globalMetagroups <- read.table( paste(folder, jobName, "global_overview.txt", sep="") ,skip=2, header=F, sep="\t", quote = "")
+			colnames(globalMetagroups) <- c("Size","Diameter","Similarity","Silhouette Width","Genes","nGenes","nref_list","pValue","Terms")
+			nMetaGroups <- dim(globalMetagroups)[1]
+		
+			globalMetagroups[, "nGenes"] <- as.numeric(sapply(strsplit(as.character(globalMetagroups[, "nGenes"]), split="(", fixed=TRUE), function(x) x[1]))
+			globalMetagroups[, "nref_list"] <- sapply(strsplit(as.character(globalMetagroups[, "nref_list"]), split="(", fixed=TRUE), function(x) x[1])
+		
+			# Download Metagroups
+			if(!alreadyDownloaded) for (mg in 1:nMetaGroups) download.file(quiet=TRUE, url=paste(serverWeb, "/jobs/",jobID,"/", mg-1,"_hash", sep=""), destfile=paste(folder, jobName,"metagroup_", mg,".txt", sep=""))
+		
+			# Leer termSets
+			tablaGeneTermSets <- NULL
+			for(mg in rownames(globalMetagroups)) 
+			{
+				metagrupo <-  read.table(paste(folder, jobName, "metagroup_", mg, ".txt", sep=""),skip=1, header=F, sep="\t", quote = "")
+				tablaGeneTermSets <- rbind(tablaGeneTermSets,cbind(cbind(gtSet=paste(mg, sep=""), metagrupo))) #, cbind(gtSet=paste("Mg", mg,"_gtSet", 1:dim(metagrupo)[1], sep=""), metagrupo))
+			}
+			colnames(tablaGeneTermSets) <- c("Metagroup", "Genes","nGenes","nref_list","pValue","Terms")
+			
+			if(!alreadyDownloaded) message(paste("Results downloaded to ", folder, sep=""))
+			return(list(metagroups=globalMetagroups, geneTermSets=tablaGeneTermSets, fileName=inputFileName))
+		}, error = function(e) {
+			FALSE
+		})
+		if(downAttempt == FALSE) 	
+		{
+			if(!jobReady) message("The analysis has not finished yet or the jobID does not exist.")
+		} else {
+			return (downAttempt)
+		}
 	}
 }

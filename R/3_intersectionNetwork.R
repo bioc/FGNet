@@ -12,7 +12,7 @@ intersectionNetwork <- function(metagroupGenesMatrix, plotType="dynamic", vLayou
 		filteredOut <- metagroupGenesMatrix$filteredOut
 		metagroupGenesMatrix <- metagroupGenesMatrix$metagroupGenesMatrix
 	}
-	if(!is.matrix(metagroupGenesMatrix))  stop("metagroupGenesMatrix should be the result returned by adjMatrix().")
+	if(!is.matrix(metagroupGenesMatrix))  stop("metagroupGenesMatrix should be the result returned by toMatrix().")
 	
 	if(!is.character(plotType))  stop('plotType should be either "static", "dynamic" or "none".') 
 	plotType <- tolower(plotType)

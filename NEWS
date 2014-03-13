@@ -1,3 +1,13 @@
+CHANGES IN VERSION 1.2.1
+------------------------
+NEW FEATURES
+    o adjMatrix() has been renamed to toMatrix()
+    o GO png trees are now automatically downloaded when generating the report
+    o Legend metagroup/cluster order in  has been changed to alphabetical
+    
+BUG FIXES
+    o Minor bug fixes
+    
 CHANGES IN VERSION 1.2
 ------------------------
 NEW FEATURES

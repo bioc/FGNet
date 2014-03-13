@@ -1,5 +1,5 @@
 % -*- mode: noweb; noweb-default-code-mode: R-mode; -*-
-%\VignetteIndexEntry{FGNet}
+%\VignetteIndexEntry{FGNet-vignette}
 %\VignetteKeywords{Visualization, Annotation, GO, Pathways, GeneSetEnrichment, Networks, NetworkVisualization}
 %\VignetteDepends{FGNet}
 %\VignettePackage{FGNet}
@@ -169,7 +169,7 @@ The report functions are wrappers that include several steps. We will now see ea
  	\begin{enumerate}
 	\item Query the functional enrichment analysis tool (DAVID or GeneTerm Linker)
 	\item Retrieve the functional enrichment results from the server
-	\item Create the adjacency matrices to build the network
+	\item Create the incidence matrices to build the network
 	\item Build and plot the networks
 \end{enumerate}
 
@@ -238,44 +238,44 @@ Since DAVID instead of a job ID, returns the txt file with the results, it uses 
 ?getResults_david
 @
 
-\subsection{Step 3: Create the adjacency matrices to build the network}
+\subsection{Step 3: Create the incidence matrices to build the network}
 \label{sec:Step3}
 
-The raw results can now be transformed into adjacency matrices in order to create the network:
+The raw results can now be transformed into incidence matrices in order to create the network:
 <<eval=TRUE>>=
-adjMat <- adjMatrix(results$geneTermSets)
+incidMat <- toMatrix(results$geneTermSets)
 @
 These matrices now contain which genes are in each metagroup or cluster and in each gene-term set:
 <<eval=TRUE>>= 
-head(adjMat$metagroupGenesMatrix)
-adjMat$gtSetGenesMatrix[1:5, 14:18]
+head(incidMat$metagroupGenesMatrix)
+incidMat$gtSetGenesMatrix[1:5, 14:18]
 @
 Filtering the metagrops/clusters based on a score threshold can be done in this step. i.e. for filtering metagroups with \emph{silhouette} under 0.2:
 <<eval=TRUE>>=
-adjMatFiltered <- adjMatrix(results$geneTermSets, 
+incidMatFiltered <- toMatrix(results$geneTermSets, 
 attribute=results$metagroups[,"Silhouette Width", drop=FALSE], threshold=0.2)
 @
-To see which metagroups/clusters have been filtered out and now are no longer in the adjacency matrices:
+To see which metagroups/clusters have been filtered out and now are no longer in the incidence matrices:
 <<eval=TRUE>>=
-adjMatFiltered$filteredOut
+incidMatFiltered$filteredOut
 @
 
 \subsection{Step 4: Build and plot the networks}
 \label{sec:Step4}
 
-Once the adjacency matrices are ready, they can be transformed into the network. The function \emph{functionalNetwork()} generates the network and plots it:
+Once the incidence matrices are ready, they can be transformed into the network. The function \emph{functionalNetwork()} generates the network and plots it:
 <<fig=TRUE, eval=TRUE>>=
-functionalNetwork(adjMat) 
+functionalNetwork(incidMat) 
 @
 
 By setting the parameter \emph{PlotType="dynamic"} instead of an static plot, it will create an interactive one.
 <<eval=FALSE>>=
-functionalNetwork(adjMat, plotType="dynamic") 
+functionalNetwork(incidMat, plotType="dynamic") 
 @
 
 By default, \emph{functionalNetwork()} only plots the network. In order to obtain the igraph object with the actual graph/network, set the parameter \emph{returnGraph=TRUE}. 
 <<eval=TRUE>>=
-fNw <- functionalNetwork(adjMat, returnGraph=TRUE, plotType="none") 
+fNw <- functionalNetwork(incidMat, returnGraph=TRUE, plotType="none") 
 @
 
 Since the returned network is an \emph{iGraph} object, it can be used or analyzed as such:
@@ -298,10 +298,10 @@ igraph.to.graphNEL(fNw)
 
 In dynamic plots (tkplot) it is not possible to draw the metagroup background. To save a dinamically modified network into a static plot with metagroup backgrounds use the \texttt{vLayout}. This argument allows to transfer the current layout of a tk plot to a static plot: 
 <<eval=FALSE>>=
-functionalNetwork(adjMatFiltered, plotType="dynamic") 
+functionalNetwork(incidMatFiltered, plotType="dynamic") 
 # Modify the layout...
 saveLayout <- tkplot.getcoords(1)   # tkp.id (ID of the tkplot window)
-functionalNetwork(adjMatFiltered, vLayout=saveLayout)
+functionalNetwork(incidMatFiltered, vLayout=saveLayout)
 @
 
 In addition to the functional network, when there are nodes in several metagroups, the \emph{intersection network} can also be plotted.
@@ -309,7 +309,7 @@ This plot is a simplified functional network, containing only the nodes in sever
 By default, the intersection network is plotted automatically when requesting an interactive plot, but it can also be plotted by itself:
 
 <<fig=TRUE, eval=TRUE>>=
-intersectionNetwork(adjMat, 
+intersectionNetwork(incidMat, 
  plotType="static", vLayout="kk")
 @
 
@@ -359,17 +359,16 @@ DAVID usually provides many overlapping clusters. In order to simplify the resul
 \textbf{Option B)} Executing the steps on the workflow one by one (i.e. to personalize the network): 
 
 <<eval=TRUE, echo=FALSE>>=
-txtFile <- query_david(genesMetabolism, email="FGNet.pkg@email.com")
-results <- getResults_david(txtFile, jobName="David_Metabolism",
- geneLabels=genesMetabolism)
-adjMat <- adjMatrix(results$geneTermSets)
-functionalNetwork(adjMat) 
+txtFile <- paste(file.path(system.file('examples', package='FGNet')), "David_Metabolism.txt", sep="/")
+results <- getResults_david(txtFile, jobName="David_Metabolism", geneLabels=genesMetabolism)
+incidMat <- toMatrix(results$geneTermSets)
+functionalNetwork(incidMat) 
 @
 <<eval=FALSE>>=
 txtFile <- query_david(genesMetabolism, email="...")
 results <- getResults_david(txtFile, jobName="David_Metabolism", geneLabels=genesMetabolism)
-adjMat <- adjMatrix(results$geneTermSets)
-#functionalNetwork(adjMat) 
+incidMat <- toMatrix(results$geneTermSets)
+#functionalNetwork(incidMat) 
 @
 
 The default gene IDs are Ensembl IDs. The argument \emph{geneLabels} allows to specify an alternative name (i.e. gene symbol) to show in the plots.
@@ -386,7 +385,7 @@ getTerms(results)[5]
 
 DAVID usually provides many overlapping clusters. \emph{plotMetagroupsDistance()} allows to explore the overlap between groups.
 <<eval=TRUE, fig=TRUE>>=
-distMat <- plotMetagroupsDistance(adjMat$metagroupGenesMatrix)
+distMat <- plotMetagroupsDistance(incidMat$metagroupGenesMatrix)
 @
 
 When there are many overlapping clusters it is useful to filter the results or select only a few clusters to plot.
@@ -398,20 +397,20 @@ colnames(results$clusters)
 quantile(results$clusters$EnrichmentScore, c(0.10, 0.25, 0.5, 0.75, 0.9))
 @
 <<eval=TRUE, results=hide>>=
-adjMatFiltered <- adjMatrix(results$geneTermSets, 
+incidMatFiltered <- toMatrix(results$geneTermSets, 
  attribute=results$clusters[,"EnrichmentScore", drop=FALSE], threshold=10)
-functionalNetwork(adjMatFiltered)
+functionalNetwork(incidMatFiltered)
 @
 
 b) Inverse filtering, selection of \textbf{lowest values}. i.e. Overlap between clusters with least genes:
 <<eval=TRUE, results=hide>>=
 quantile(results$clusters$nGenes, c(0.10, 0.25, 0.5, 0.75, 0.9))
-adjMatFiltered <- adjMatrix(results$geneTermSets, 
+incidMatFiltered <- toMatrix(results$geneTermSets, 
  attribute=-(results$clusters[,"nGenes", drop=FALSE]), threshold=-15)
-functionalNetwork(adjMatFiltered)
+functionalNetwork(incidMatFiltered)
 @
 
-To use any other parameter, add it as column to the to the results\$clusters data frame. Then use it to create the adjacency matrix and the network.\\
+To use any other parameter, add it as column to the to the results\$clusters data frame. Then use it to create the incidence matrix and the network.\\
 
 c) Selecting \textbf{clusters with specific terms or keywords}:
 <<eval=TRUE, results=hide>>=
@@ -422,10 +421,10 @@ selectedClusters <- sapply(getTerms(results),
 resultsSclusters <- results
 resultsSclusters$clusters <- cbind(resultsSclusters$clusters, 
  selectedKeywords=as.numeric(selectedClusters))
-adjMatSelectedGroups <- adjMatrix(resultsSclusters$geneTermSets, 
+incidMatSelectedGroups <- toMatrix(resultsSclusters$geneTermSets, 
  attribute=resultsSclusters$clusters[,"selectedKeywords", drop=FALSE], 
  threshold=1)
-functionalNetwork(adjMatSelectedGroups)
+functionalNetwork(incidMatSelectedGroups)
 getTerms(results)[selectedClusters]
 @
 
@@ -437,10 +436,10 @@ selectedClusters[c(2,9,11)] <- TRUE
 resultsSclusters <- results
 resultsSclusters$clusters <- cbind(resultsSclusters$clusters, 
  selectedClusters=as.numeric(selectedClusters))
-adjMatSelectedGroups <- adjMatrix(resultsSclusters$geneTermSets, 
+incidMatSelectedGroups <- toMatrix(resultsSclusters$geneTermSets, 
  attribute=resultsSclusters$clusters[,"selectedClusters", drop=FALSE], 
  threshold=1)
-functionalNetwork(adjMatSelectedGroups)
+functionalNetwork(incidMatSelectedGroups)
 @
 
 

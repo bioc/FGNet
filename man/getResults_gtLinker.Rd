@@ -66,7 +66,7 @@ List:\cr
 }
 \seealso{
 	Next step in the workflow: 
-		\code{\link[FGNet:adjMatrix]{adjMatrix()}}\cr
+		\code{\link[FGNet:toMatrix]{toMatrix()}}\cr
 		
 	Previous step in the workflow: 
 		\code{\link[FGNet:query_gtLinker]{query_gtLinker()}}\cr
