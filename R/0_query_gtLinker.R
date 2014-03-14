@@ -12,22 +12,22 @@ query_gtLinker <- function(genes, organism="Hs", annotations=c("GO_Biological_Pr
 {	
 	# Check arguments
 	if(!is.character(organism)) stop("Organism should be either 'Hs' (Homo sapiens) or 'Sc' (Saccharomyces cerevisiae). ")
-		organism <- tolower(organism) 
-		if (!(organism %in% c("sc","hs"))) stop("Organism should be either 'Hs' (Homo sapiens) or 'Sc' (Saccharomyces cerevisiae).")
-		
+	organism <- tolower(organism) 
+	if (!(organism %in% c("sc","hs"))) stop("Organism should be either 'Hs' (Homo sapiens) or 'Sc' (Saccharomyces cerevisiae).")
+	
 	if(!is.character(genes)) stop("Genes should be a character vector containing the names of the genes.")
 	
 	if(!is.character(annotations)) stop()
-		annotations <- tolower(annotations)
-		allowedAnnotations <- c("GO_Biological_Process","GO_Molecular_Function", "GO_Cellular_Component", "KEGG_Pathways", "InterPro_Motifs")
-		if (! all(annotations %in% tolower(allowedAnnotations))) stop(paste("Available annotations: ", allowedAnnotations, sep=""))		
-
+	annotations <- tolower(annotations)
+	allowedAnnotations <- c("GO_Biological_Process","GO_Molecular_Function", "GO_Cellular_Component", "KEGG_Pathways", "InterPro_Motifs")
+	if (! all(annotations %in% tolower(allowedAnnotations))) stop(paste("Available annotations: ", allowedAnnotations, sep=""))		
+	
 	if(!is.numeric(minSupport)) stop("minSupport should be a number.")		
 	minSupport <- as.integer(minSupport)
 	if(minSupport<2 || minSupport>100) stop("minSupport should be more than 1.")		
 	
 	if(!is.character(serverWS)) stop("Webservice server url not valid.")
-
+	
 	analyze_envelope_body <-	 paste('<analyze xmlns="urn:gtLinkerWS">',
 																	'<org xsi:type="xsd:string">', organism,'</org>',
 																	'<genelist xsi:type="SOAP-ENC:Array" SOAP-ENC:arrayType="xsd:string[', length(genes),']">',
@@ -39,7 +39,7 @@ query_gtLinker <- function(genes, organism="Hs", annotations=c("GO_Biological_Pr
 																	'<minsupport>', minSupport, '</minsupport></analyze>', sep="")
 	
 	reply <- SOAPQuery(analyze_envelope_body, serverWS)
-
+	
 	jobID <- reply$analyzeResponse
 	if (jobID=="") jobID <- as.character(-1)
 	return(as.character(jobID))

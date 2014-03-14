@@ -24,7 +24,7 @@ Author:  Sara Aibar, Celia Fontanillo and Javier De Las Rivas. Bioinformatics an
 The workflow to generate the functional networks include the following steps:\cr
  1. - Query/Analize (optional): Performs the analysis through GeneTerm Linker [1] or DAVID [2].  \code{\link[FGNet:query_gtLinker]{query_gtLinker()}} returns the analysis jobID and \code{\link[FGNet:query_david]{query_david()}} the url of the .txt file with the results.\cr
  2. - Get results: Retrieves the analysis results (metagroups/clusters and gene-term sets) from the server and formats them. This can be done through \code{\link[FGNet:getResults_gtLinker]{getResults_gtLinker()}} and \code{\link[FGNet:getResults_david]{getResults_david()}}\cr 
- 3. - Transform into andjacency matrices: \code{\link[FGNet:adjMatrix]{adjMatrix()}} transforms the metagroups and gene-term sets (gtset) into genes-metagroups and genes-gtsets matrices.\cr
+ 3. - Transform into incidence matrices: \code{\link[FGNet:toMatrix]{toMatrix()}} transforms the metagroups and gene-term sets (gtset) into genes-metagroups and genes-gtsets matrices.\cr
  4. - Plot the functional gene network: Network representing the common functions of the genes. \cr
  The main function is \code{\link[FGNet:functionalNetwork]{functionalNetwork()}}), but \code{\link[FGNet:intersectionNetwork]{intersectionNetwork()}} \cr 
  and \code{\link[FGNet:plotMetagroupsDistance]{plotMetagroupsDistance()}} are also available.\cr    
@@ -45,10 +45,9 @@ genesYeast <- c("ADA2", "APC1", "APC11", "APC2", "APC4", "APC5", "APC9",
 
 # Run analysis and generate HTML report:
 # GtLinker:
-organism <- "Sc"
-annotations <- c("KEGG_Pathways")
-report_gtLinker(genesYeast, annotations=annotations, 
-organism=organism, jobName="ExampleYeast")
+org <- "Sc"
+annots <- c("KEGG_Pathways")
+# report_gtLinker(genesYeast, annotations=annots, organism=org, jobName="ExampleYeast")
 
 # More examples in:
 if (interactive())
@@ -66,4 +65,3 @@ if (interactive())
 \keyword{ GeneSet enrichment }
 \keyword{ Networks }
 \keyword{ Functional analysis }
-

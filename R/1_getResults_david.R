@@ -15,10 +15,10 @@ getResults_david <- function(inputFileLocation, path=getwd(), jobName="", geneLa
 		folder <- paste(path, jobName, "/", sep="")	
 		jobName <- paste(jobName, "_", sep="")
 	}
-
+	
 	if ((!file.exists(folder)) && (!folder=="")){
 		dir.create(file.path(folder))		
-	} 
+	}
 	
 	# Download file
 	if(grepl("http://", inputFileLocation)) 
@@ -37,7 +37,7 @@ getResults_david <- function(inputFileLocation, path=getwd(), jobName="", geneLa
 			inputFileLocation <- downloadedFileName
 		}
 	}
-
+	
 	# Read file & process
 	if (!file.exists(inputFileLocation))
 	{
@@ -45,31 +45,31 @@ getResults_david <- function(inputFileLocation, path=getwd(), jobName="", geneLa
 	}	else
 	{
 		inputFile <- file(inputFileLocation, "rt")
-			lineas <- readLines(inputFile)
-			if(length(lineas)==0) stop("DAVID returned 0 clusters.")
+		lineas <- readLines(inputFile)
+		if(length(lineas)==0) stop("DAVID returned 0 clusters.")
 		
-			columns <- c("Cluster", strsplit(lineas[2], "\t", fixed=TRUE)[[1]])
-			tablaGeneTermSets <- matrix(NA, ncol=length(columns), nrow=0, dimnames=list(c(), columns))
-			clusterScore <- NULL
-			cluster <- 0
-			
-			lineas <- lineas[which(lineas != "")]
-			lineas <- lineas[which(lineas != lineas[2])]
-			lineas <- strsplit(lineas, "\t", fixed=TRUE)
-			
-			for(linea in lineas)
+		columns <- c("Cluster", strsplit(lineas[2], "\t", fixed=TRUE)[[1]])
+		tablaGeneTermSets <- matrix(NA, ncol=length(columns), nrow=0, dimnames=list(c(), columns))
+		clusterScore <- NULL
+		cluster <- 0
+		
+		lineas <- lineas[which(lineas != "")]
+		lineas <- lineas[which(lineas != lineas[2])]
+		lineas <- strsplit(lineas, "\t", fixed=TRUE)
+		
+		for(linea in lineas)
+		{
+			if(length(linea)==2)
 			{
-				if(length(linea)==2)
-				{
-					cluster <- cluster+1
-					clusterScore[[cluster]] <- as.numeric(strsplit(linea[2], ": ", fixed="TRUE")[[1]][2])
-					names(clusterScore)[cluster] <- cluster
-				}
-				else 
-				{
-					tablaGeneTermSets <- rbind(tablaGeneTermSets, c(paste(cluster, sep=""), linea))
-				}
+				cluster <- cluster+1
+				clusterScore[[cluster]] <- as.numeric(strsplit(linea[2], ": ", fixed="TRUE")[[1]][2])
+				names(clusterScore)[cluster] <- cluster
 			}
+			else 
+			{
+				tablaGeneTermSets <- rbind(tablaGeneTermSets, c(paste(cluster, sep=""), linea))
+			}
+		}
 		close(inputFile) 
 		
 		# Replace Gene Names?
@@ -98,17 +98,25 @@ getResults_david <- function(inputFileLocation, path=getwd(), jobName="", geneLa
 		{
 			tmpTable <- as.matrix(tablaGeneTermSets[which(tablaGeneTermSets[,"Cluster"] == cluster),c("Cluster", "Term", "Category", colGenes)])
 			# Kegg
-			keggs <- which(tmpTable[,"Category"] =="KEGG_PATHWAY")
+			keggs <- which(tmpTable[,"Category"] == "KEGG_PATHWAY")
 			tmpTable[keggs, "Term"] <- paste("KEGG:", tmpTable[keggs, "Term"], sep="")				# Used in createHtml
-				
-			# Not Kegg or GO
+			
+			# Reactome
+			reactomes <- grep("REACTOME_PATHWAY", tmpTable[,"Category"]) 
+			tmpTable[reactomes, "Term"] <- sub("REACT_", "REACT:", tmpTable[reactomes, "Term"])
+			# Not Kegg or GO or...
 			gos <- grep("GOTERM", tmpTable[,"Category"])
-			iprs <- grep("INTERPRO", tmpTable[,"Category"])
-			otherAnnot <- which(!(1:dim(tmpTable)[1] %in% c(keggs, gos, iprs)))
-			tmpTable[otherAnnot, "Term"] <- sub(":", ". ", tmpTable[otherAnnot, "Term"])
-			tmpTable[otherAnnot, "Term"] <- sub(";", ". ", tmpTable[otherAnnot, "Term"])
-			tmpTable[otherAnnot, "Term"] <- paste(tmpTable[otherAnnot, "Category"], tmpTable[otherAnnot, "Term"], sep=":")	
-						
+			iprs <- grep("INTERPRO", tmpTable[,"Category"])		
+			
+			otherAnnot <- which(!(1:dim(tmpTable)[1] %in% c(keggs, gos, iprs, reactomes)))
+			if (length(otherAnnot) > 0)
+			{
+				#tmpTable[otherAnnot, "Term"] <- gsub(":", ". ", tmpTable[otherAnnot, "Term"]) -> Pasar el codigo al final con parentesis
+				tmpTable[otherAnnot, "Term"] <- sapply(strsplit(tmpTable[otherAnnot, "Term"], split=":"), function(x) paste(x[-1], " (ID ", x[1], ")", sep=""))
+				tmpTable[otherAnnot, "Term"] <- paste(tmpTable[otherAnnot, "Category"], tmpTable[otherAnnot, "Term"], sep=":")	
+			}
+			tmpTable[, "Term"] <- gsub(";", ". ", tmpTable[, "Term"])
+			
 			# Genes & terms
 			tmpTerms <- paste(sub("~", ":", tmpTable[,"Term"]), collapse=";")
 			tmpGenes <- list()

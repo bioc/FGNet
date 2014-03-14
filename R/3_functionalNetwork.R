@@ -12,23 +12,31 @@ functionalNetwork <- function(metagroupGenesMatrix, gtSetGenesMatrix=NULL, plotT
 	# Libraries
 	# require(igraph)
 	# if (!library(igraph, logical.return=TRUE)) stop("Library igraph is required to plot the networks.")
-
+	
 	#####################################################################################################
 	#################################### Check arguments ################################################
 	filteredOut <- NULL
-	if(is.list(metagroupGenesMatrix) && (all(names(metagroupGenesMatrix %in% c("metagroupGenesMatrix", "gtSetGenesMatrix", "filteredOut")))))
+	
+	if(is.matrix(metagroupGenesMatrix) && is.null(gtSetGenesMatrix))
+	{
+		gtSetGenesMatrix <- metagroupGenesMatrix
+		filteredOut <- NULL
+		warning("Only metagroupGenesMatrix provided.")
+	}
+	
+	if(is.list(metagroupGenesMatrix) && (all(names(metagroupGenesMatrix) %in% c("metagroupGenesMatrix", "gtSetGenesMatrix", "filteredOut"))))
 	{
 		gtSetGenesMatrix <- metagroupGenesMatrix$gtSetGenesMatrix
 		filteredOut <- metagroupGenesMatrix$filteredOut
 		metagroupGenesMatrix <- metagroupGenesMatrix$metagroupGenesMatrix
 	}
-	if(!is.matrix(metagroupGenesMatrix))  stop("metagroupGenesMatrix should be the result returned by adjMatrix().")
-	if(!is.matrix(gtSetGenesMatrix))  stop("gtSetGenesMatrix should be the result returned by adjMatrix().")
-
+	if(!is.matrix(metagroupGenesMatrix))  stop("metagroupGenesMatrix should be the result returned by toMatrix().")
+	if(!is.matrix(gtSetGenesMatrix))  stop("gtSetGenesMatrix should be the result returned by toMatrix().")
+	
 	if(!is.character(plotType))  stop('plotType should be either "static", "dynamic" or "none".') 
-	   plotType <- tolower(plotType)
-	   if(!plotType %in% c("static", "dynamic", "withpng", "none")) stop('plotType should be in "static", "dynamic" or "none".') 
-
+	plotType <- tolower(plotType)
+	if(!plotType %in% c("static", "dynamic", "withpng", "none")) stop('plotType should be in "static", "dynamic" or "none".') 
+	
 	if(!is.logical(returnGraph)) stop("returnGraph should be TRUE or FALSE.")
 	
 	if(!is.numeric(vSize))  stop("vSize should be numeric.")
@@ -63,13 +71,13 @@ functionalNetwork <- function(metagroupGenesMatrix, gtSetGenesMatrix=NULL, plotT
 	colnames(nCommonGTsets) <- rownames(metagroupGenesMatrix)
 	# Counts
 	nCommonMgroups<- nCommonGTsets
-  # Fill:
+	# Fill:
 	for(gen1 in rownames(metagroupGenesMatrix))
-	for(gen2 in rownames(metagroupGenesMatrix))
-	{
-	 if(gen1!=gen2) nCommonMgroups[gen1, gen2] <- sum(metagroupGenesMatrix[gen1,] + metagroupGenesMatrix[gen2,]==2)
-	 if(gen1!=gen2) nCommonGTsets[gen1, gen2] <- sum(gtSetGenesMatrix[gen1,] + gtSetGenesMatrix[gen2,]==2)
-	}
+		for(gen2 in rownames(metagroupGenesMatrix))
+		{
+			if(gen1!=gen2) nCommonMgroups[gen1, gen2] <- sum(metagroupGenesMatrix[gen1,] + metagroupGenesMatrix[gen2,]==2)
+			if(gen1!=gen2) nCommonGTsets[gen1, gen2] <- sum(gtSetGenesMatrix[gen1,] + gtSetGenesMatrix[gen2,]==2)
+		}
 	#if(gen1!=gen2) edgeMatrix[gen1, gen2] <- any(abs(metagroupGenesMatrix[gen1,] + metagroupGenesMatrix[gen2,])==2) + any(abs(gtSetGenesMatrix[gen1,] + gtSetGenesMatrix[gen2,])==2)	
 	
 	#####################################################################################################
@@ -82,22 +90,29 @@ functionalNetwork <- function(metagroupGenesMatrix, gtSetGenesMatrix=NULL, plotT
 	######## Set colors
 	if(keepColors==TRUE)
 	{
-		colores <- setColors(as.character(sort(as.numeric(c(colnames(metagroupGenesMatrix), filteredOut)))))[colnames(metagroupGenesMatrix)]
-		trCols <- setColors(as.character(sort(as.numeric(c(colnames(metagroupGenesMatrix), filteredOut)))), transparency=bgTransparency)[colnames(metagroupGenesMatrix)]
-	}else
+		if(all(!is.na(as.numeric(colnames(metagroupGenesMatrix)))))
 		{
+			allMgSorted <- as.character(sort(as.numeric(c(colnames(metagroupGenesMatrix), filteredOut))))
+		} else {
+			allMgSorted <- sort(as.character(c(colnames(metagroupGenesMatrix), filteredOut)))
+		}
+		
+		colores <- setColors(allMgSorted)[colnames(metagroupGenesMatrix)]
+		trCols <- setColors(allMgSorted, transparency=bgTransparency)[colnames(metagroupGenesMatrix)]
+	}else
+	{
 		colores <- setColors(colnames(metagroupGenesMatrix))
 		trCols <- setColors(colnames(metagroupGenesMatrix), transparency=bgTransparency)
 	}
 	
 	# Nodes in only a group 
 	vColor <- apply(metagroupGenesMatrix, 1, function(x) {
-										if (sum(x) != 1)  return("#FFFFFF")
-										else
-										{
-											return(colores[which(x ==1)])
-										}
-										})
+		if (sum(x) != 1)  return("#FFFFFF")
+		else
+		{
+			return(colores[which(x ==1)])
+		}
+	})
 	# Metagroup Color
 	markGroup <- apply(metagroupGenesMatrix, 2, function(x) which(x==1))	
 	if(!is.list(markGroup)) markGroup <- split(markGroup, rep(1:ncol(markGroup), each = nrow(markGroup))) #in case of same number of vertex in each group...
@@ -111,7 +126,7 @@ functionalNetwork <- function(metagroupGenesMatrix, gtSetGenesMatrix=NULL, plotT
 	if(is.null(vertexLayout))
 	{
 		graph4layout <- graph.adjacency(nCommonMgroups, weighted=NULL,   mode="undirected", diag=FALSE) 
-		if(all(vColor=="#FFFFFF")>0)
+		if(all(vColor=="#FFFFFF"))
 		{
 			# Parecido a fruchterman reingold, pero apelotona un poco menos los nodos comunes
 			vertexLayout <- layout.kamada.kawai(graph4layout)	
@@ -130,7 +145,7 @@ functionalNetwork <- function(metagroupGenesMatrix, gtSetGenesMatrix=NULL, plotT
 		require(png)		
 		png("nwPreview.png", width = 800, height = 800)
 		plot(adjCommonEdges, layout=vertexLayout, edge.width=1, edge.color=eColor, vertex.label=V(adjCommonEdges)$name, vertex.color=vColor, vertex.frame.color="#555555", vertex.size=vSize, vertex.label.color="#000000", vertex.label.cex=vLabelCex, mark.groups=markGroup, mark.col=trCols, mark.border=colores)#,  ,  mark.expand=2, , mark.shape=1)			
-		if(plotLegend) legend(-1.2, -1.2, legend=paste("Mg", names(colores), legendMg, sep=""), fill=colores, bty="n", xjust=0, yjust=0)
+		if(plotLegend) legend(-1.2, -1.2, legend=paste("Mg", names(colores), legendMg, sep="")[order(names(colores))], fill=colores[order(names(colores))], bty="n", xjust=0, yjust=0)
 		dev.off()
 	}
 	
@@ -144,7 +159,7 @@ functionalNetwork <- function(metagroupGenesMatrix, gtSetGenesMatrix=NULL, plotT
 		if(plotType !="none")
 		{
 			plot(adjCommonEdges, layout=vertexLayout, edge.width=1, edge.color=eColor, vertex.label=V(adjCommonEdges)$name, vertex.color=vColor, vertex.frame.color="#555555", vertex.size=vSize, vertex.label.color="#000000", vertex.label.cex=vLabelCex, mark.groups=markGroup, mark.col=trCols, mark.border=colores)#,  ,  mark.expand=2, , mark.shape=1)		
-			if(plotLegend) legend(-1.2, -1.2, legend=paste("Mg", names(colores), legendMg, sep=""), fill=colores, bty="n", xjust=0, yjust=0)
+			if(plotLegend) legend(-1.2, -1.2, legend=paste("Mg", names(colores)[order(names(colores))], legendMg, sep=""), fill=colores[order(names(colores))], bty="n", xjust=0, yjust=0)
 			title(plotTitle)
 		}
 	}
@@ -152,4 +167,4 @@ functionalNetwork <- function(metagroupGenesMatrix, gtSetGenesMatrix=NULL, plotT
 	if(returnGraph) return(adjCommonEdges)
 }
 
- 	
+

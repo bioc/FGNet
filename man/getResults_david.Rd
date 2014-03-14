@@ -52,7 +52,7 @@ List:\cr
 
 \seealso{
 	Next step in the workflow: 
-		\code{\link[FGNet:adjMatrix]{adjMatrix()}}\cr
+		\code{\link[FGNet:toMatrix]{toMatrix()}}\cr
 	
 	Previous step in the workflow: 
 		\code{\link[FGNet:query_david]{query_david()}}\cr
@@ -82,3 +82,4 @@ geneLabels <- unlist(as.list(org.Sc.sgdGENENAME)[genesYeast])
 names(genesYeast) <- geneLabels 
 results <- getResults_david(txtFile, geneLabels=genesYeast)
 }
+
