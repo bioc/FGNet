@@ -143,15 +143,22 @@ buildTermsTable <- function(termsDescriptions)
 # Returns the link to the ontology tree for each metagroup go terms
 creteGoLinks <- function(goIds, folder)
 {
-	goTerms <- sapply(goIds, function(x) paste("%22GO%3A", x,"%22%3A{%22fill%22%3A%22%23ccccff%22}", sep="",collapse=","))
+	goTerms <- sapply(goIds, function(x) if(length(x)>0) paste("%22GO%3A", x,"%22%3A{%22fill%22%3A%22%23ccccff%22}", sep="",collapse=","))
 	goLinks <- paste("http://amigo.geneontology.org/cgi-bin/amigo/visualize?mode=advanced&term_data={",goTerms ,"}&term_data_type=json&format=png", sep="")
 	names(goLinks) <- names(goIds)
 	
 	fileNames <- paste(folder, paste("GO_", gsub("s ","_",names(goIds)),".png", sep=""),sep="")
 	names(fileNames) <- names(goIds)
 	
-	for(i in 1:length(goLinks)) download.file(url=goLinks[i], destfile=fileNames[i], quiet=TRUE)
-	
+	for(i in 1:length(goLinks)) 
+	{
+		fileNames[i] <- tryCatch({
+				download.file(url=goLinks[i], destfile=fileNames[i], quiet=TRUE)
+				return(fileNames[i]) # se ha descargado bien: linkar
+		}, error = function(e) {
+			  return(goLinks[i]) # No se ha podido descargar. Link a la url
+		})
+	}
 	return(fileNames)
 }
 
