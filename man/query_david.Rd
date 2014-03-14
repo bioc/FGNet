@@ -66,6 +66,7 @@ More details and full list of gene ID types and annotations are available at:
 		\code{\link[FGNet:FGNet-package]{FGNet}}
 }
 \examples{
+\dontrun{
 genesYeast <- c("YBL084C", "YDL008W", "YDR118W", "YDR301W", "YDR448W", 
 "YFR036W", "YGL240W", "YHR166C", "YKL022C", "YLR102C", "YLR115W", "YLR127C",
 "YNL172W", "YOL149W", "YOR249C")
@@ -74,7 +75,6 @@ genesYeast <- c("YBL084C", "YDL008W", "YDR118W", "YDR301W", "YDR448W",
 txtFile <- query_david(genesYeast)
 
 # Web service (requires email):
-\dontrun{
 txtFile_ws <- query_david(genesYeast, email="example@email.com")
 
 # The API has different default arguments than the web service.
