@@ -1,13 +1,14 @@
-\name{adjMatrix}
+\name{toMatrix}
+\alias{toMatrix}
 \alias{adjMatrix}
 \title{
-Transforms into group-genes adjacency matrices.
+Transforms into group-genes incidence matrices.
 }
 \description{
-Transforms the raw results from GeneTermLinker or DAVID into genes-metagroups and genes-gtsets adjacency matrices. 
+Transforms the raw results from GeneTermLinker or DAVID into genes-metagroups and genes-gtsets incidence matrices. 
 }
 \usage{
-adjMatrix(geneTermSets, attribute = NULL, threshold = 0)
+toMatrix(geneTermSets, attribute = NULL, threshold = 0)
 }
 \arguments{
   \item{geneTermSets}{
@@ -24,7 +25,7 @@ numeric. Metagroups/cluster with \emph{attribute} lower than this threshold will
 List: 
 \item{metagroupGenesMatrix }{Table 'Genes - Metagroups' or 'Genes - Clusters'.}
 \item{gtSetGenesMatrix }{Table 'Genes - Gene-Term sets'.}
-\item{filteredOut }{Metagroups/clusters which where filtered out and therefore not included in the adjacency matrices. NULL if none.}
+\item{filteredOut }{Metagroups/clusters which where filtered out and therefore not included in the incidence matrices. NULL if none.}
 }
 \seealso{
 	Next step in the workflow: 
@@ -39,17 +40,17 @@ List:
 \examples{
 jobID <- 3907019
 results <- getResults_gtLinker(jobID)
-adjMat <- adjMatrix(results$geneTermSets)
+incidMat <- toMatrix(results$geneTermSets)
 
 # Filtering (threshold)
-adjMat <- adjMatrix(results$geneTermSets, 
+incidMat <- toMatrix(results$geneTermSets, 
  attribute=results$metagroups[,"Silhouette Width", drop=FALSE], threshold=0.2)
 
-adjMat$filteredOut
-head(adjMat$metagroupGenesMatrix)
-head(adjMat$gtSetGenesMatrix)
+incidMat$filteredOut
+head(incidMat$metagroupGenesMatrix)
+head(incidMat$gtSetGenesMatrix)
 
-functionalNetwork(adjMat)
+functionalNetwork(incidMat)
 
 # Filtering (keyword)
 keywords <- c("rna")
@@ -61,8 +62,8 @@ resultsCbind <- results
 resultsCbind$metagroups <- cbind(results$metagroups,
  selectedKeywords=as.numeric(selectedGroups))
  
-adjMatSelectedGroups <- adjMatrix(resultsCbind$geneTermSets,
+matSelectedGroups <- toMatrix(resultsCbind$geneTermSets,
  attribute=resultsCbind$metagroups[,"selectedKeywords", drop=FALSE], threshold=1)
  
-functionalNetwork(adjMatSelectedGroups)
+functionalNetwork(matSelectedGroups)
 }
