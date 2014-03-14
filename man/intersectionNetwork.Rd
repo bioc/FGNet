@@ -63,4 +63,3 @@ intersectionNetwork(incidMat)
 intNw <- intersectionNetwork(incidMat, 
  vLayout="sugiyama", plotType="static", returnGraph=TRUE) 
 }
-

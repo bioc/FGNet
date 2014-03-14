@@ -49,6 +49,7 @@ Returns jobID, the ID of the analysis, which will be required for the next steps
 		\code{\link[FGNet:FGNet-package]{FGNet}}
 }
 \examples{
+\dontrun{
 genesYeast <- c("ADA2", "APC1", "APC11", "APC2", "APC4", "APC5", "APC9", 
 "CDC16", "CDC23", "CDC26", "CDC27", "CFT1", "CFT2", "DCP1", "DOC1", "FIP1", 
 "GCN5", "GLC7", "HFI1", "KEM1", "LSM1", "LSM2", "LSM3", "LSM4", "LSM5", 
@@ -59,7 +60,7 @@ genesYeast <- c("ADA2", "APC1", "APC11", "APC2", "APC4", "APC5", "APC9",
 
 # jobID <- query_gtLinker(genesYeast, organism = "Sc")
 
-# jobID <- query_gtLinker(genesYeast, organism = "Sc",
-# annotations = c("KEGG_Pathways"), minSupport = 3)
-
+jobID <- query_gtLinker(genesYeast, organism = "Sc",
+ annotations = c("KEGG_Pathways"), minSupport = 3)
+}
 }

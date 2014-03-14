@@ -50,7 +50,7 @@ fnReport <- function (tool, organism=NULL, geneIdType=NULL, genes=NULL, annotati
 		if(is.null(jobID))
 		{
 			if(is.null(genes) && !alreadyDownloaded) stop("If the analisys is not already downloaded, either a jobID or a query (organism, genes and annotations) should be provided.")
-
+			
 			if(!is.character(organism)) stop("Organism should be either 'Hs' (Homo sapiens) or 'Sc' (Saccharomyces cerevisiae). ")
 			organism <- tolower(organism) 
 			if(!(organism %in% c("sc","hs"))) stop("Organism should be either 'Hs' (Homo sapiens) or 'Sc' (Saccharomyces cerevisiae).")
@@ -89,7 +89,7 @@ fnReport <- function (tool, organism=NULL, geneIdType=NULL, genes=NULL, annotati
 		}
 	}
 	if(!is.null(genes) && !is.character(genes)) stop("Genes should be a character vector containing the names of the genes.")
-
+	
 	if(!is.logical(alreadyDownloaded)) stop("alreadyDownloaded should be logical.")
 	if(!file.exists(path)) stop("The given path does not exist.")
 	if(!is.null(jobName) && !is.character(jobName)) stop("jobName should be character.")
@@ -118,7 +118,7 @@ fnReport <- function (tool, organism=NULL, geneIdType=NULL, genes=NULL, annotati
 		metagroupAttributeName <- "Silhouette Width"
 		
 		if(alreadyDownloaded && (is.null(jobID) && is.null(jobName))) stop("If the analysis is already downloaded, please provide the jobID or jobName (folder).") #Enough??
-				
+		
 		if(is.null(jobID) && !alreadyDownloaded)
 		{
 			jobID <- query_gtLinker(genes=genes, organism=organism, annotations=annotations, minSupport=minSupport, serverWS=serverWS)
@@ -138,7 +138,7 @@ fnReport <- function (tool, organism=NULL, geneIdType=NULL, genes=NULL, annotati
 	{
 		metagroupAttributeName <- "EnrichmentScore"
 		serverWeb <- "http://david.abcc.ncifcrf.gov/summary.jsp"
-	
+		
 		if(is.null(inputFileLocation))
 		{
 			inputFileLocation <- query_david(genes=genes, geneIdType=geneIdType, annotations=annotations, email=email, argsWS=argsWS)
@@ -158,7 +158,7 @@ fnReport <- function (tool, organism=NULL, geneIdType=NULL, genes=NULL, annotati
 				annotations <- NULL
 				first <- gregexpr("./.", inputFileLocation)[[1]]
 				first <- first[length(first)]+2
-			
+				
 				last <- gregexpr(".txt", inputFileLocation)[[1]][1]-1
 				prefix <- substring(inputFileLocation, first=first, last=last) # Location (Folder)
 			}
@@ -182,7 +182,7 @@ fnReport <- function (tool, organism=NULL, geneIdType=NULL, genes=NULL, annotati
 	# Common to both tools
 	attribute <- results[[1]][,metagroupAttributeName, drop=FALSE]   # $metagroups or $cluster (first in list)
 	tables <- toMatrix(results$geneTermSets, attribute = attribute, threshold=threshold)
-
+	
 	#####################################################################################################
 	####################################   Generate  HTML    ############################################
 	
@@ -190,7 +190,6 @@ fnReport <- function (tool, organism=NULL, geneIdType=NULL, genes=NULL, annotati
 	
 	createHtml(htmlFileName=htmlFileName, results=results, tables=tables, metagroupAttributeName=metagroupAttributeName, threshold=threshold,
 						 organism=organism, annotations=annotations, genes=genes, serverWeb=serverWeb, jobID=jobID)
-
+	
 	#return (jobID)
 }
-

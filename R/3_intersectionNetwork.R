@@ -3,7 +3,7 @@ intersectionNetwork <- function(metagroupGenesMatrix, plotType="dynamic", vLayou
 {
 	# Libraries
 	# if (!library(igraph, logical.return=TRUE)) stop("Library igraph is required to plot the networks.")
-
+	
 	#################################### Check arguments ################################################
 	filteredOut <- NULL
 	if(is.list(metagroupGenesMatrix) && (all(names(metagroupGenesMatrix %in% c("metagroupGenesMatrix", "gtSetGenesMatrix", "filteredOut")))))
@@ -35,7 +35,7 @@ intersectionNetwork <- function(metagroupGenesMatrix, plotType="dynamic", vLayou
 	
 	if(!is.null(legendMg))
 	{
-	 	if(!is.character(legendMg)) stop("legendMg should be the metagroups legend (i.e. main function).")
+		if(!is.character(legendMg)) stop("legendMg should be the metagroups legend (i.e. main function).")
 		if(dim(metagroupGenesMatrix)[2] != length(legendMg)) stop("The number of metagroups in the matrix and the legend do not match.")
 	}
 	
@@ -50,7 +50,7 @@ intersectionNetwork <- function(metagroupGenesMatrix, plotType="dynamic", vLayou
 		colores <- setColors(colnames(metagroupGenesMatrix))
 	}
 	colnames(metagroupGenesMatrix) <- paste(grPrefix, colnames(metagroupGenesMatrix), sep=" ")
-
+	
 	#####################################################################################################
 	#################################### Create Matrices  ###############################################	
 	genesInManyMg <- which(apply(metagroupGenesMatrix, 1, sum)>1)
@@ -75,7 +75,7 @@ intersectionNetwork <- function(metagroupGenesMatrix, plotType="dynamic", vLayou
 		# Create adjacency matrix (add nodes and mg to both, columns and rows)
 		mgXmg <- matrix(data=0, ncol=dim(mgJoined)[2], nrow=dim(mgJoined)[2])
 		rownames(mgXmg) <- colnames(mgJoined)
-																
+		
 		genXgen <- matrix(data=0, ncol=dim(mgJoined)[1], nrow=dim(mgJoined)[1]+dim(mgJoined)[2])
 		colnames(genXgen) <- rownames(mgJoined)
 		
@@ -87,7 +87,7 @@ intersectionNetwork <- function(metagroupGenesMatrix, plotType="dynamic", vLayou
 		
 		# Create graph
 		mgJoinedGraph <- graph.adjacency(mgJoined, weighted=TRUE,   mode="undirected", diag=FALSE) 
-
+		
 		for(layoutName in vLayout)
 		{
 			if(!is.matrix(layoutName)) 
@@ -112,7 +112,7 @@ intersectionNetwork <- function(metagroupGenesMatrix, plotType="dynamic", vLayou
 				vertexLayout <- layoutName
 				layoutName <- "Personalized"
 			}
-					
+			
 			if(plotType =="dynamic")	
 			{
 				tkplot(mgJoinedGraph, layout=vertexLayout, vertex.color=vCols2, edge.color=colores[E(mgJoinedGraph)$weight], edge.width=2, vertex.size=vSize, vertex.label.cex=vLabelCex)
@@ -129,16 +129,3 @@ intersectionNetwork <- function(metagroupGenesMatrix, plotType="dynamic", vLayou
 	
 	if(returnGraph) return(mgJoinedGraph)
 }
-
-
-
-
-
-
-
-
-
-
-
-
-

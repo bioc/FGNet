@@ -12,16 +12,16 @@ functionalNetwork <- function(metagroupGenesMatrix, gtSetGenesMatrix=NULL, plotT
 	# Libraries
 	# require(igraph)
 	# if (!library(igraph, logical.return=TRUE)) stop("Library igraph is required to plot the networks.")
-
+	
 	#####################################################################################################
 	#################################### Check arguments ################################################
 	filteredOut <- NULL
 	
 	if(is.matrix(metagroupGenesMatrix) && is.null(gtSetGenesMatrix))
 	{
-			gtSetGenesMatrix <- metagroupGenesMatrix
-			filteredOut <- NULL
-			warning("Only metagroupGenesMatrix provided.")
+		gtSetGenesMatrix <- metagroupGenesMatrix
+		filteredOut <- NULL
+		warning("Only metagroupGenesMatrix provided.")
 	}
 	
 	if(is.list(metagroupGenesMatrix) && (all(names(metagroupGenesMatrix) %in% c("metagroupGenesMatrix", "gtSetGenesMatrix", "filteredOut"))))
@@ -32,11 +32,11 @@ functionalNetwork <- function(metagroupGenesMatrix, gtSetGenesMatrix=NULL, plotT
 	}
 	if(!is.matrix(metagroupGenesMatrix))  stop("metagroupGenesMatrix should be the result returned by toMatrix().")
 	if(!is.matrix(gtSetGenesMatrix))  stop("gtSetGenesMatrix should be the result returned by toMatrix().")
-
+	
 	if(!is.character(plotType))  stop('plotType should be either "static", "dynamic" or "none".') 
-	   plotType <- tolower(plotType)
-	   if(!plotType %in% c("static", "dynamic", "withpng", "none")) stop('plotType should be in "static", "dynamic" or "none".') 
-
+	plotType <- tolower(plotType)
+	if(!plotType %in% c("static", "dynamic", "withpng", "none")) stop('plotType should be in "static", "dynamic" or "none".') 
+	
 	if(!is.logical(returnGraph)) stop("returnGraph should be TRUE or FALSE.")
 	
 	if(!is.numeric(vSize))  stop("vSize should be numeric.")
@@ -71,13 +71,13 @@ functionalNetwork <- function(metagroupGenesMatrix, gtSetGenesMatrix=NULL, plotT
 	colnames(nCommonGTsets) <- rownames(metagroupGenesMatrix)
 	# Counts
 	nCommonMgroups<- nCommonGTsets
-  # Fill:
+	# Fill:
 	for(gen1 in rownames(metagroupGenesMatrix))
-	for(gen2 in rownames(metagroupGenesMatrix))
-	{
-	 if(gen1!=gen2) nCommonMgroups[gen1, gen2] <- sum(metagroupGenesMatrix[gen1,] + metagroupGenesMatrix[gen2,]==2)
-	 if(gen1!=gen2) nCommonGTsets[gen1, gen2] <- sum(gtSetGenesMatrix[gen1,] + gtSetGenesMatrix[gen2,]==2)
-	}
+		for(gen2 in rownames(metagroupGenesMatrix))
+		{
+			if(gen1!=gen2) nCommonMgroups[gen1, gen2] <- sum(metagroupGenesMatrix[gen1,] + metagroupGenesMatrix[gen2,]==2)
+			if(gen1!=gen2) nCommonGTsets[gen1, gen2] <- sum(gtSetGenesMatrix[gen1,] + gtSetGenesMatrix[gen2,]==2)
+		}
 	#if(gen1!=gen2) edgeMatrix[gen1, gen2] <- any(abs(metagroupGenesMatrix[gen1,] + metagroupGenesMatrix[gen2,])==2) + any(abs(gtSetGenesMatrix[gen1,] + gtSetGenesMatrix[gen2,])==2)	
 	
 	#####################################################################################################
@@ -96,23 +96,23 @@ functionalNetwork <- function(metagroupGenesMatrix, gtSetGenesMatrix=NULL, plotT
 		} else {
 			allMgSorted <- sort(as.character(c(colnames(metagroupGenesMatrix), filteredOut)))
 		}
-
+		
 		colores <- setColors(allMgSorted)[colnames(metagroupGenesMatrix)]
 		trCols <- setColors(allMgSorted, transparency=bgTransparency)[colnames(metagroupGenesMatrix)]
 	}else
-		{
+	{
 		colores <- setColors(colnames(metagroupGenesMatrix))
 		trCols <- setColors(colnames(metagroupGenesMatrix), transparency=bgTransparency)
 	}
 	
 	# Nodes in only a group 
 	vColor <- apply(metagroupGenesMatrix, 1, function(x) {
-										if (sum(x) != 1)  return("#FFFFFF")
-										else
-										{
-											return(colores[which(x ==1)])
-										}
-										})
+		if (sum(x) != 1)  return("#FFFFFF")
+		else
+		{
+			return(colores[which(x ==1)])
+		}
+	})
 	# Metagroup Color
 	markGroup <- apply(metagroupGenesMatrix, 2, function(x) which(x==1))	
 	if(!is.list(markGroup)) markGroup <- split(markGroup, rep(1:ncol(markGroup), each = nrow(markGroup))) #in case of same number of vertex in each group...
@@ -167,4 +167,4 @@ functionalNetwork <- function(metagroupGenesMatrix, gtSetGenesMatrix=NULL, plotT
 	if(returnGraph) return(adjCommonEdges)
 }
 
- 	
+

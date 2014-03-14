@@ -82,3 +82,4 @@ geneLabels <- unlist(as.list(org.Sc.sgdGENENAME)[genesYeast])
 names(genesYeast) <- geneLabels 
 results <- getResults_david(txtFile, geneLabels=genesYeast)
 }
+
