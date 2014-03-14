@@ -99,7 +99,6 @@ The report functions are wrappers that includes the following steps: \cr
 		\code{\link[FGNet:FGNet-package]{FGNet}}
 }
 \examples{
-\dontrun{
 ##### Runs analysis and generates HTML report:
 
 # GtLinker:
@@ -114,10 +113,10 @@ organism <- "Sc"
 annotations <- c("KEGG_Pathways")
 
 # report_gtLinker(genesYeast, annotations=annotations, 
-  organism=organism, jobName="ExampleYeast")
+# organism=organism, jobName="ExampleYeast")
 
 # or, for an already executed query:
-report_gtLinker(jobID="3907019", jobName="ExampleYeast")
+# report_gtLinker(jobID="3907019", jobName="ExampleYeast")
 
 # David:
 genesYeast <- c("YBL084C", "YDL008W", "YDR118W", "YDR301W", "YDR448W", 
@@ -125,12 +124,10 @@ genesYeast <- c("YBL084C", "YDL008W", "YDR118W", "YDR301W", "YDR448W",
 "YNL172W", "YOL149W", "YOR249C")
 report_david(genesYeast, jobName="ExampleYeast_David") #add: email="your@email.com"
 
-# Add gene labels (i.e. Gene symbol to show instead of ID)
 library(org.Sc.sgd.db)
 geneLabels <- unlist(as.list(org.Sc.sgdGENENAME)[genesYeast])
 names(genesYeast) <- geneLabels 
-report_david(genesYeast, geneLabels=genesYeast,  
- annotations = c("GOTERM_BP_ALL", "GOTERM_MF_ALL", "KEGG_PATHWAY", "INTERPRO"))
+# report_david(genesYeast, geneLabels=genesYeast,  
+# annotations = c("GOTERM_BP_ALL", "GOTERM_MF_ALL", "KEGG_PATHWAY", "INTERPRO"))
 
-}
 }

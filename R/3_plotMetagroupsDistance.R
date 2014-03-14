@@ -21,7 +21,7 @@ plotMetagroupsDistance <- function(metagroupGenesMatrix)
 		
 		#Recolocar:
 		mxDistancias <- mxDistancias[clustering$order, rev(clustering$order)]
-		
+
 		# Plot "image"		
 		minDist <- unique(sort(mxDistancias))[2] #[1] = 0		
 		if(minDist > 0)
@@ -37,7 +37,7 @@ plotMetagroupsDistance <- function(metagroupGenesMatrix)
 			mxPlot[uno] <- 10
 			
 		} else mxPlot <- mxDistancias
-		
+
 		par(mar = c(3,3,1,1))
 		
 		if (library(RColorBrewer, logical.return=TRUE))
@@ -52,14 +52,14 @@ plotMetagroupsDistance <- function(metagroupGenesMatrix)
 		axis(1, at=seq(0,1, by=1/(length(colnames(mxPlot))-1)), labels = rownames(mxPlot))
 		axis(2, at=seq(0,1, by=1/(length(colnames(mxPlot))-1)), labels = colnames(mxPlot))
 		
-		# Leyenda
-		levs <- unique(sort(mxPlot))
-		labs <- sapply(lapply(levs, function(x) which(mxPlot %in% x)), function(x) round(mean(mxDistancias[x]), digits=2))
-		par(mar = c(3,1,15,0.5))
-		image(t(as.matrix(levs)),  col=colors, axes=FALSE)
+ 		# Leyenda
+ 		levs <- unique(sort(mxPlot))
+ 		labs <- sapply(lapply(levs, function(x) which(mxPlot %in% x)), function(x) round(mean(mxDistancias[x]), digits=2))
+ 		par(mar = c(3,1,15,0.5))
+ 		image(t(as.matrix(levs)),  col=colors, axes=FALSE)
 		box()
-		axis(2, at=seq(0,1, by=1/(length(levs)-1)), labels= labs, cex.axis=0.8)
-		
+	  axis(2, at=seq(0,1, by=1/(length(levs)-1)), labels= labs, cex.axis=0.8)
+
 		# Reset layout
 		nf <- layout(matrix(1), widths=1, heights=1, TRUE)
 		#layout.show(nf)

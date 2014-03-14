@@ -15,7 +15,7 @@ getResults_david <- function(inputFileLocation, path=getwd(), jobName="", geneLa
 		folder <- paste(path, jobName, "/", sep="")	
 		jobName <- paste(jobName, "_", sep="")
 	}
-	
+
 	if ((!file.exists(folder)) && (!folder=="")){
 		dir.create(file.path(folder))		
 	}
@@ -37,7 +37,7 @@ getResults_david <- function(inputFileLocation, path=getwd(), jobName="", geneLa
 			inputFileLocation <- downloadedFileName
 		}
 	}
-	
+
 	# Read file & process
 	if (!file.exists(inputFileLocation))
 	{
@@ -45,31 +45,31 @@ getResults_david <- function(inputFileLocation, path=getwd(), jobName="", geneLa
 	}	else
 	{
 		inputFile <- file(inputFileLocation, "rt")
-		lineas <- readLines(inputFile)
-		if(length(lineas)==0) stop("DAVID returned 0 clusters.")
+			lineas <- readLines(inputFile)
+			if(length(lineas)==0) stop("DAVID returned 0 clusters.")
 		
-		columns <- c("Cluster", strsplit(lineas[2], "\t", fixed=TRUE)[[1]])
-		tablaGeneTermSets <- matrix(NA, ncol=length(columns), nrow=0, dimnames=list(c(), columns))
-		clusterScore <- NULL
-		cluster <- 0
-		
-		lineas <- lineas[which(lineas != "")]
-		lineas <- lineas[which(lineas != lineas[2])]
-		lineas <- strsplit(lineas, "\t", fixed=TRUE)
-		
-		for(linea in lineas)
-		{
-			if(length(linea)==2)
+			columns <- c("Cluster", strsplit(lineas[2], "\t", fixed=TRUE)[[1]])
+			tablaGeneTermSets <- matrix(NA, ncol=length(columns), nrow=0, dimnames=list(c(), columns))
+			clusterScore <- NULL
+			cluster <- 0
+			
+			lineas <- lineas[which(lineas != "")]
+			lineas <- lineas[which(lineas != lineas[2])]
+			lineas <- strsplit(lineas, "\t", fixed=TRUE)
+			
+			for(linea in lineas)
 			{
-				cluster <- cluster+1
-				clusterScore[[cluster]] <- as.numeric(strsplit(linea[2], ": ", fixed="TRUE")[[1]][2])
-				names(clusterScore)[cluster] <- cluster
+				if(length(linea)==2)
+				{
+					cluster <- cluster+1
+					clusterScore[[cluster]] <- as.numeric(strsplit(linea[2], ": ", fixed="TRUE")[[1]][2])
+					names(clusterScore)[cluster] <- cluster
+				}
+				else 
+				{
+					tablaGeneTermSets <- rbind(tablaGeneTermSets, c(paste(cluster, sep=""), linea))
+				}
 			}
-			else 
-			{
-				tablaGeneTermSets <- rbind(tablaGeneTermSets, c(paste(cluster, sep=""), linea))
-			}
-		}
 		close(inputFile) 
 		
 		# Replace Gene Names?

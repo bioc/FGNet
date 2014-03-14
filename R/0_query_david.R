@@ -27,7 +27,7 @@ query_david <- function(genes, geneIdType="ENSEMBL_GENE_ID", annotations=c("GOTE
 {	
 	# Check arguments
 	if(!is.character(genes)) stop("genes should be a character vector.")
-	
+		
 	functionCall <- match.call()
 	if(!is.null(email))
 	{
@@ -48,51 +48,51 @@ query_david <- function(genes, geneIdType="ENSEMBL_GENE_ID", annotations=c("GOTE
 		
 		# Connect to DAVID		
 		tryCatch( 
-{
-	davidConnection <- DAVIDWebService$new(email=email)
-}, warning = function (w)
-{
-	errorMsgDavid(w)
-})
+						{
+							davidConnection <- DAVIDWebService$new(email=email)
+						}, warning = function (w)
+						{
+							errorMsgDavid(w)
+						})
 		
 		# Upload gene list
 		tryCatch( 
-{
-	result <- addList(davidConnection, genes, idType=geneIdType, listName=paste("List_", randomNumber, sep=""), listType="Gene")
-}, error = function(e) 
-{
-	if(grep("idType", e$message)) 
-	{
-		idsFile <- "DAVID_GeneIdTypes.txt"
-		write.table(getIdTypes(davidConnection), file=idsFile, row.names=FALSE, col.names=FALSE, quote=FALSE)
-		
-		#errorMsg <- simpleError(message=paste("Gene ID type not valid. Available IDs: ", paste(getIdTypes(davidConnection), collapse=", "), ".",sep=""), call=functionCall)
-		errorMsg <- simpleError(message=paste("Gene ID type not valid. Available ID types were saved in the file ", idsFile, sep=""), call=functionCall)
-		stop(errorMsg)
-	} else {
-		errorMsgDavid(e)
-	}
-}
+			{
+				result <- addList(davidConnection, genes, idType=geneIdType, listName=paste("List_", randomNumber, sep=""), listType="Gene")
+			}, error = function(e) 
+			{
+				if(grep("idType", e$message)) 
+				{
+					idsFile <- "DAVID_GeneIdTypes.txt"
+					write.table(getIdTypes(davidConnection), file=idsFile, row.names=FALSE, col.names=FALSE, quote=FALSE)
+					
+					#errorMsg <- simpleError(message=paste("Gene ID type not valid. Available IDs: ", paste(getIdTypes(davidConnection), collapse=", "), ".",sep=""), call=functionCall)
+					errorMsg <- simpleError(message=paste("Gene ID type not valid. Available ID types were saved in the file ", idsFile, sep=""), call=functionCall)
+					stop(errorMsg)
+				} else {
+					errorMsgDavid(e)
+				}
+			}
 		)
 		if(length(result$unmappedIds) > 0) message(paste("Unmapped IDs: ", paste(result$unmappedIds, collapse=", "), ".", sep=""))	
 		
 		# Set annotations
 		tryCatch( 
-{
-	setAnnotationCategories(davidConnection, categories=annotations)					
-}, error = function(e) 
-{
-	if(grep("categories", e$message)) 
-	{
-		annotFile <- "DAVID_AnnotationCategoryNames.txt"
-		write.table(getAllAnnotationCategoryNames(davidConnection), file=annotFile, row.names=FALSE, col.names=FALSE, quote=FALSE)
-		
-		errorMsg <- simpleError(message=paste("Some of the annotation categories are not valid. Available ones were saved in the file ", annotFile, sep=""), call=functionCall)
-		stop(errorMsg)
-	} else {
-		errorMsgDavid(e)
-	}
-}
+				{
+					setAnnotationCategories(davidConnection, categories=annotations)					
+				}, error = function(e) 
+				{
+					if(grep("categories", e$message)) 
+					{
+						annotFile <- "DAVID_AnnotationCategoryNames.txt"
+						write.table(getAllAnnotationCategoryNames(davidConnection), file=annotFile, row.names=FALSE, col.names=FALSE, quote=FALSE)
+						
+						errorMsg <- simpleError(message=paste("Some of the annotation categories are not valid. Available ones were saved in the file ", annotFile, sep=""), call=functionCall)
+						stop(errorMsg)
+					} else {
+						errorMsgDavid(e)
+					}
+				}
 		)
 		
 		# Check species
@@ -107,7 +107,7 @@ query_david <- function(genes, geneIdType="ENSEMBL_GENE_ID", annotations=c("GOTE
 		# Request & save clustering report
 		getClusterReportFile(davidConnection, type="Term", fileName=downloadFile,
 												 overlap=argsWS["overlap"], initialSeed=argsWS["initialSeed"], finalSeed=argsWS["finalSeed"], linkage=argsWS["linkage"], kappa=argsWS["kappa"])
-		
+
 	}else
 	{
 		## Query through web API
@@ -120,39 +120,39 @@ query_david <- function(genes, geneIdType="ENSEMBL_GENE_ID", annotations=c("GOTE
 		queryUrl <- paste("http://david.abcc.ncifcrf.gov/api.jsp?type=", geneIdType, "&ids=", genes, "&tool=", tool, "&annot=", annotations, sep="") # Do not change order
 		# URL has a charactor size limitation (<= 2048 characters in total), i.e., the very large gene list may not be able to completely passed by URL.
 		if(nchar(queryUrl)>2048) stop("Query url too long.")
-		
+	
 		writeChar(queryUrl, "queryUrl.txt")
 		
 		curlHandle <- getCurlHandle(cookiefile = "CurlHandleCookie.txt")
 		reply <- getURL(queryUrl, curl = curlHandle)
 		#writeChar(reply, "reply.txt")
-		
+	
 		replyRowids <- getContent(reply, attribute = 'document.apiForm.rowids.value="')
 		replyAnnot <- getContent(reply, attribute = 'document.apiForm.annot.value="')
-		
+	
 		getURL <- paste("http://david.abcc.ncifcrf.gov/term2term.jsp?rowids=", replyRowids, "&annot=", replyAnnot, sep="")
 		if(nchar(getURL) < 2048)
 		{
 			finalReply <- getURL(getURL, curl = curlHandle)
 		}else
 		{    
-			finalReply <- tryCatch({
-				postForm("http://david.abcc.ncifcrf.gov/term2term.jsp",
-								 curl = curlHandle,
-								 rowids = replyRowids,
-								 annot = replyAnnot)
+		  finalReply <- tryCatch({
+			   postForm("http://david.abcc.ncifcrf.gov/term2term.jsp",
+			                         curl = curlHandle,
+			                         rowids = replyRowids,
+			                         annot = replyAnnot)
 			}, error = function(e) {
-				FALSE
+			    FALSE
 			})
-			
-			if(finalReply != FALSE) warning("Query URL too long, default annotations might be used.")  
-			if(finalReply == FALSE) stop("Query URL too long, try with less genes or use the Web Server (provide email).")  
+	     
+	    if(finalReply != FALSE) warning("Query URL too long, default annotations might be used.")  
+		  if(finalReply == FALSE) stop("Query URL too long, try with less genes or use the Web Server (provide email).")  
 		}
-		
+	  
 		downloadFile <- NULL
 		if(finalReply != FALSE)
 		{
-			downloadFile <- getContent(finalReply, attribute = '<a href="data/download/')[1]
+		  downloadFile <- getContent(finalReply, attribute = '<a href="data/download/')[1]
 		}
 		
 		

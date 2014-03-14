@@ -4,12 +4,12 @@
 getResults_gtLinker <- function(jobID=NULL,  path=getwd(), jobName="", alreadyDownloaded=FALSE, keepTrying=FALSE, serverWeb="http://gtlinker.cnb.csic.es", serverWS="http://gtlinker.cnb.csic.es:8182")
 {
 	# Libraries
-	#	if (!library(igraph, logical.return=TRUE)) stop("Library igraph is required to plot the networks.")
+#	if (!library(igraph, logical.return=TRUE)) stop("Library igraph is required to plot the networks.")
 	
 	# Check arguments
 	if(is.numeric(jobID)) jobID <- as.character(jobID)
 	if(!is.character(jobID) && !alreadyDownloaded) stop("jobID not valid.")
-	
+		
 	if(!file.exists(path)) stop("The given path does not exist.")
 	if(!is.character(jobName)) stop("jobName should be character.")
 	if(!is.logical(alreadyDownloaded)) stop("alreadyDownloaded should be TRUE or FALSE.")
@@ -47,12 +47,13 @@ getResults_gtLinker <- function(jobID=NULL,  path=getwd(), jobName="", alreadyDo
 	if(!is.null(jobID))
 	{
 		status_envelope_body <-	 paste('<status xmlns="urn:gtLinkerWS">',
-																	 '<job_id xsi:type="xsd:string">',jobID ,'</job_id></status>', sep="") 
+																		'<job_id xsi:type="xsd:string">',jobID ,'</job_id></status>', sep="") 
 		
 		while(!jobReady)
 		{
 			reply <- SOAPQuery(status_envelope_body, serverWS)
-			
+
+			print(reply$statusResponse)
 			# Ready
 			if(reply$statusResponse == 0) 
 			{
@@ -64,7 +65,7 @@ getResults_gtLinker <- function(jobID=NULL,  path=getwd(), jobName="", alreadyDo
 			if(reply$statusResponse == -1)
 			{
 				info_envelope_body <-	 paste('<info xmlns="urn:gtLinkerWS">',
-																		 '<job_id xsi:type="xsd:string">',jobID ,'</job_id></info>', sep="")
+																			 '<job_id xsi:type="xsd:string">',jobID ,'</job_id></info>', sep="")
 				reply <- SOAPQuery(info_envelope_body, serverWS)$infoResponse
 				stop(paste("Message from server: ", reply, sep=""))
 			}
@@ -80,7 +81,7 @@ getResults_gtLinker <- function(jobID=NULL,  path=getwd(), jobName="", alreadyDo
 			}
 		}
 	}								
-	
+								
 	###############################
 	# Download results (jobID)
 	###############################
@@ -103,13 +104,13 @@ getResults_gtLinker <- function(jobID=NULL,  path=getwd(), jobName="", alreadyDo
 			globalMetagroups <- read.table( paste(folder, jobName, "global_overview.txt", sep="") ,skip=2, header=F, sep="\t", quote = "")
 			colnames(globalMetagroups) <- c("Size","Diameter","Similarity","Silhouette Width","Genes","nGenes","nref_list","pValue","Terms")
 			nMetaGroups <- dim(globalMetagroups)[1]
-			
+		
 			globalMetagroups[, "nGenes"] <- as.numeric(sapply(strsplit(as.character(globalMetagroups[, "nGenes"]), split="(", fixed=TRUE), function(x) x[1]))
 			globalMetagroups[, "nref_list"] <- sapply(strsplit(as.character(globalMetagroups[, "nref_list"]), split="(", fixed=TRUE), function(x) x[1])
-			
+		
 			# Download Metagroups
 			if(!alreadyDownloaded) for (mg in 1:nMetaGroups) download.file(quiet=TRUE, url=paste(serverWeb, "/jobs/",jobID,"/", mg-1,"_hash", sep=""), destfile=paste(folder, jobName,"metagroup_", mg,".txt", sep=""))
-			
+		
 			# Leer termSets
 			tablaGeneTermSets <- NULL
 			for(mg in rownames(globalMetagroups)) 

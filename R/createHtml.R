@@ -18,40 +18,40 @@ getMGTerms <- function(globalMetagroups, grType, org=NULL)
 		
 		# Get term description		
 		descripciones <- t(sapply(terms, function(x)
-		{ 
-			# Annotation
-			annot <- x[1]
-			# Description
-			descr <- capitalize(x[length(x)])
-			
-			# Link (Only for Kegg and Interpro)
-			link <- NA
-			# Interpro
-			# David: 			IPR000719:Protein kinase, core
-			# gtLinker: 	IPR000980:SH2 motif
-			if(substring(x[1], 1, 3) == "IPR")
-			{
-				link <- paste("http://www.ebi.ac.uk/interpro/entry/", x[1], sep="")
-				annot <- "InterPro"
-			}
-			
-			# Kegg
-			# David: 			K:xtr04330:Notch signaling pathway 
-			if(x[1] == "KEGG") link <- paste("http://www.genome.jp/kegg-bin/show_pathway?org_name=", substring(x[2], 1, 3), "&mapno=", substring(x[2], 4, nchar(x[2])), sep="") 
-			
-			# gtLinker: 	Kegg:03040:Spliceosome 
-			if(x[1] == "Kegg") link <- paste("http://www.genome.jp/kegg-bin/show_pathway?org_name=", org, "&mapno=", x[2], sep="")
-			
-			# SMART (Appears in david even if it was not explicitly requested)
-			# David:			SM00181:EGF
-			if(substring(x[1], 1, 3) == "SM0") link <- paste("http://smart.embl.de/smart/do_annotation.pl?DOMAIN=", x[1], sep="")			
-			
-			### NUEVOS
-			if(length(grep("REACT", x[1]))>0) link <- paste("http://www.reactome.org/cgi-bin/link?SOURCE=Reactome&ID=", sub("REACT_", "REACT:", x[1]), sep="")	
-			
-			
-			return (c(annot, descr, link))
-		}))
+			{ 
+					# Annotation
+					annot <- x[1]
+					# Description
+					descr <- capitalize(x[length(x)])
+									
+					# Link (Only for Kegg and Interpro)
+					link <- NA
+					# Interpro
+					# David: 			IPR000719:Protein kinase, core
+					# gtLinker: 	IPR000980:SH2 motif
+					if(substring(x[1], 1, 3) == "IPR")
+					{
+						link <- paste("http://www.ebi.ac.uk/interpro/entry/", x[1], sep="")
+						annot <- "InterPro"
+					}
+								
+					# Kegg
+					# David: 			K:xtr04330:Notch signaling pathway 
+					if(x[1] == "KEGG") link <- paste("http://www.genome.jp/kegg-bin/show_pathway?org_name=", substring(x[2], 1, 3), "&mapno=", substring(x[2], 4, nchar(x[2])), sep="") 
+					
+					# gtLinker: 	Kegg:03040:Spliceosome 
+					if(x[1] == "Kegg") link <- paste("http://www.genome.jp/kegg-bin/show_pathway?org_name=", org, "&mapno=", x[2], sep="")
+					
+					# SMART (Appears in david even if it was not explicitly requested)
+					# David:			SM00181:EGF
+					if(substring(x[1], 1, 3) == "SM0") link <- paste("http://smart.embl.de/smart/do_annotation.pl?DOMAIN=", x[1], sep="")			
+					
+					### NUEVOS
+					if(length(grep("REACT", x[1]))>0) link <- paste("http://www.reactome.org/cgi-bin/link?SOURCE=Reactome&ID=", sub("REACT_", "REACT:", x[1]), sep="")	
+					
+					
+					return (c(annot, descr, link))
+			}))
 		
 		colnames(descripciones) <- c("Annotation", "Description", "Link")
 		
@@ -69,7 +69,7 @@ getMGTerms <- function(globalMetagroups, grType, org=NULL)
 
 representativeTerm <- function(termsDescriptions)
 {
-	
+
 	# Search for a representative term (based only on key words! not function!)
 	reprTerms <- rep(NA, length(termsDescriptions))
 	for(index in 1:length(termsDescriptions))
@@ -86,7 +86,7 @@ representativeTerm <- function(termsDescriptions)
 		splittedTerms <- unlist(strsplit(splittedTerms, ")", fixed=TRUE))
 		
 		sortedFreq <- sort(table(tolower(splittedTerms)), decreasing=TRUE)
-		
+
 		commonWords <- sortedFreq[sortedFreq >= quantile(sortedFreq, 0.9)]
 		commonWords <- commonWords[grepl("[[:alnum:]]", names(commonWords))]
 		
@@ -119,22 +119,22 @@ buildTermsTable <- function(termsDescriptions)
 	termLinks <- lapply(termsDescriptions, function(mgMx) {
 		if(!is.matrix(mgMx)) mgMx <- t(as.matrix(mgMx)) # 1 row?
 		descrLinks <- apply(mgMx, 1, function(term){
-			if(is.na(term["Link"]))
-			{
-				link <- term["Description"]
-			}else
-			{
-				link <- paste("<a href='", term["Link"],"' target='_blank'>", term["Description"] ,"</a>", sep="")
-			}
-			return (link)
-		})
+																					if(is.na(term["Link"]))
+																					{
+																							link <- term["Description"]
+																					}else
+																					{
+																							link <- paste("<a href='", term["Link"],"' target='_blank'>", term["Description"] ,"</a>", sep="")
+																					}
+																					return (link)
+																	})
 		
 		descrLinks <- cbind(descrLinks, mgMx[,"Annotation"])
 		colnames(descrLinks) <- NULL
 		rownames(descrLinks) <- NULL
 		return(descrLinks)
 	})
-	
+
 	return(termLinks)
 }
 
@@ -143,30 +143,16 @@ buildTermsTable <- function(termsDescriptions)
 # Returns the link to the ontology tree for each metagroup go terms
 creteGoLinks <- function(goIds, folder)
 {
-	goTerms <- sapply(goIds, function(x) if(length(x)>0) paste("%22GO%3A", x,"%22%3A{%22fill%22%3A%22%23ccccff%22}", sep="",collapse=","))
-	if(length(goTerms)>0)
-	{
-		goLinks <- paste("http://amigo.geneontology.org/cgi-bin/amigo/visualize?mode=advanced&term_data={",goTerms ,"}&term_data_type=json&format=png", sep="")
-		names(goLinks) <- names(goIds)
-		
-		fileNames <- paste(folder, paste("GO_", gsub("s ","_",names(goIds)),".png", sep=""),sep="")
-		names(fileNames) <- names(goIds)
-		
-		for(i in 1:length(goLinks)) 
-		{
-			fileNames[i] <- tryCatch({
-					download.file(url=goLinks[i], destfile=fileNames[i], quiet=TRUE)
-					return(fileNames[i]) # se ha descargado bien: linkar
-			}, error = function(e) {
-					if (file.exists(fileNames[i])) file.remove(fileNames[i])
-				  return(goLinks[i]) # No se ha podido descargar. Link a la url
-			})
-		}
-		return(fileNames)
-	} else 
-	{
-		return("")
-	}
+  goTerms <- sapply(goIds, function(x) paste("%22GO%3A", x,"%22%3A{%22fill%22%3A%22%23ccccff%22}", sep="",collapse=","))
+	goLinks <- paste("http://amigo.geneontology.org/cgi-bin/amigo/visualize?mode=advanced&term_data={",goTerms ,"}&term_data_type=json&format=png", sep="")
+  names(goLinks) <- names(goIds)
+  
+  fileNames <- paste(folder, paste("GO_", gsub("s ","_",names(goIds)),".png", sep=""),sep="")
+  names(fileNames) <- names(goIds)
+  
+  for(i in 1:length(goLinks)) download.file(url=goLinks[i], destfile=fileNames[i], quiet=TRUE)
+  
+  return(fileNames)
 }
 
 
@@ -204,13 +190,13 @@ createHtml <- function(htmlFileName, results, tables, metagroupAttributeName, th
 	#setColors(names(tables$metagroupGenesMatrix))
 	
 	globalMetagroups <- rawMetagroups[colnames(tables$metagroupGenesMatrix),]
-	
+
 	#### Set locations
 	# Folter to save images etc: Same as downloaded results	
 	rawResults <- results$fileName # Whole path
 	tmp <- gregexpr("./.", rawResults)[[1]]
 	folder <- substring(rawResults, first=1, last=tmp[length(tmp)]+1) # Location (Folder)
-	
+
 	if(folder!="") rawResults <- substring(rawResults, first=attr(gregexpr(folder, rawResults)[[1]], "match.length")+1) # Only file name
 	
 	tmp <- gregexpr("/", htmlFileName)[[1]]
@@ -229,7 +215,7 @@ createHtml <- function(htmlFileName, results, tables, metagroupAttributeName, th
 	
 	goIds <- mgTerms$goIds
 	goLinks <- creteGoLinks(goIds,folder)																					
-	
+		
 	# Copiar CSS a la carpeta actual...
 	cssDir <- file.path(system.file('css', package='FGNet'))
 	cssFile <- paste(cssDir, "functionalNetworks.css", sep="/")
@@ -239,7 +225,7 @@ createHtml <- function(htmlFileName, results, tables, metagroupAttributeName, th
 	# Add representative term to DAVID legend
 	legendMg <- NULL
 	if(grType ==  "Cluster") legendMg <- paste(representativeTerm(mgTerms$termsDescriptions), ", ...", sep="")
-	
+
 	#####################################################################################################
 	#################################### Create Plots  ###################################################
 	
@@ -250,7 +236,7 @@ createHtml <- function(htmlFileName, results, tables, metagroupAttributeName, th
 	distancePlot <- paste(folder, "plot_Distance.png", sep="")
 	iGraphFile <- paste(folder, "iGraph.RData", sep="")
 	simplifiedTable <- paste(folder, "simplifiedTermsTable.txt", sep="")
-	
+		
 	
 	# Set node and label size
 	numNodes <- sum(dim(tables$metagroupGenesMatrix))
@@ -291,7 +277,7 @@ createHtml <- function(htmlFileName, results, tables, metagroupAttributeName, th
 	dev.off()
 	
 	save(iGraph, file=iGraphFile)
-	
+		
 	#####################################################################################################
 	#################################### Create HTML  ###################################################
 	p=openPage(htmlFileName, link.css=paste(folder, "functionalNetworks.css", sep=""))
@@ -381,14 +367,14 @@ createHtml <- function(htmlFileName, results, tables, metagroupAttributeName, th
 	if(!is.null(intersectionGraph))
 	{
 		subImages <- c(hwrite('Nodes in several metagroups: ', class='InfoLabel', br=TRUE),
-									 hwrite('(Different layouts)'),
-									 hwriteImage(networkPlot2a, class='intersectionNw', link=c(networkPlot2a), br=FALSE),
-									 hwriteImage(networkPlot2b, class='intersectionNw', link=c(networkPlot2b), br=FALSE),
-									 hwriteImage(networkPlot2c, class='intersectionNw', link=c(networkPlot2c), br=FALSE))
+								 hwrite('(Different layouts)'),
+								 hwriteImage(networkPlot2a, class='intersectionNw', link=c(networkPlot2a), br=FALSE),
+								 hwriteImage(networkPlot2b, class='intersectionNw', link=c(networkPlot2b), br=FALSE),
+								 hwriteImage(networkPlot2c, class='intersectionNw', link=c(networkPlot2c), br=FALSE))
 	}
 	imageTable <- c(hwriteImage(networkPlot, class='network', link=c(networkPlot), br=FALSE), hwrite(subImages, border=0, dim=c(length(subImages),1)))
 	hwrite(c(imageTable), p, border=0, class="ImageTable")
-	
+		
 	if(grType == "Metagroup") hwrite("Metagroups (sorted by Silhouette): ", p, br=TRUE)
 	if(grType == "Cluster") hwrite("Clusters (sorted by Score): ", p, br=TRUE)
 	# Terms table
@@ -401,14 +387,14 @@ createHtml <- function(htmlFileName, results, tables, metagroupAttributeName, th
 		if(grType == "Metagroup")
 		{
 			attrs <- c(paste("Silhouette: ", round(globalMetagroups[mg, "Silhouette Width"], 2), sep=""),
-								 paste("P-value: ", signif(globalMetagroups[mg, "pValue"],2),sep=""))		
+							 paste("P-value: ", signif(globalMetagroups[mg, "pValue"],2),sep=""))		
 		}		
 		if(grType == "Cluster")
 		{	
 			attrs <- c("", # "Silhouette  only in GtLinker
 								 paste("Score: ", signif(as.numeric(as.character(globalMetagroups[mg, "EnrichmentScore"])),2),sep=""))
 		}		
-		
+					 
 		linkGenes <- paste("Num genes: ", '<a href="#" title="', sort(gsub(",", " ", globalMetagroups[mg, "Genes"])),'" class="tooltip"><span title="Genes">', globalMetagroups[mg, "nGenes"], '</span></a>',sep="")			 
 		txtGenes <- paste(globalMetagroups[mg, "nGenes"], " genes: ", sort(gsub(",", " ", globalMetagroups[mg, "Genes"])), sep="")
 		attrsTxt <- c(attrs, txtGenes)
@@ -419,7 +405,7 @@ createHtml <- function(htmlFileName, results, tables, metagroupAttributeName, th
 		termsTable <- c(termsTable, hwrite(c(mgName, attrs), class='mgAttr', table=TRUE, border=0), 
 										hwrite(terms, table=TRUE, col.class=list("termsRow", "annotRow")))
 		txtTermsTable <- rbind(txtTermsTable, paste(c(names(termsTables)[mg], attrsTxt), collapse="\t"), rbind(mgTerms$termsDescriptions[[mg]])[, "Description", drop=FALSE])
-		#cbind(mgTerms$termsDescriptions[[mg]][,"Description"]))
+													 #cbind(mgTerms$termsDescriptions[[mg]][,"Description"]))
 	}
 	
 	#bgCols <- c(strsplit(paste(substr(colores, 1, 7)[rownames(globalMetagroups)], "#FFFFFF", collapse=" "), split=" ")[[1]],"#FFFFFF")
@@ -441,7 +427,7 @@ createHtml <- function(htmlFileName, results, tables, metagroupAttributeName, th
 			rownames(distanceMatrix) <- paste("Cl", rownames(distanceMatrix), sep="")
 		}
 		subImages <- c(hwrite('Distance matrix: ', class='InfoLabel', br=TRUE),
-									 hwrite(round(distanceMatrix,2), table=TRUE, border=0, class='matrix', br=FALSE))
+									hwrite(round(distanceMatrix,2), table=TRUE, border=0, class='matrix', br=FALSE))
 		imageTable <- c(hwriteImage(distancePlot, class='distance', link=distancePlot, br=TRUE), hwrite(subImages, border=0, dim=c(length(subImages),1)))
 		
 		hwrite(c(imageTable), p, table=TRUE, border=0, class="ImageTable")
@@ -452,3 +438,4 @@ createHtml <- function(htmlFileName, results, tables, metagroupAttributeName, th
 	
 	browseURL(htmlFileName) # Open html
 }
+

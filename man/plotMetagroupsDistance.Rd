@@ -27,3 +27,4 @@ incidMat <- toMatrix(results$geneTermSets,
  attribute=results$metagroups[,"Silhouette Width", drop=FALSE])
 plotMetagroupsDistance(incidMat$metagroupGenesMatrix)
 }
+
