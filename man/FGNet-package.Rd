@@ -17,6 +17,8 @@ License: \tab GPL (>= 2)\cr
 }
 \author{
 Author:  Sara Aibar, Celia Fontanillo and Javier De Las Rivas. Bioinformatics and Functional Genomics Group. Cancer Research Center (CiC-IBMCC, CSIC/USAL). Salamanca. Spain.
+
+If you have any issue, you can contact us at: <jrivas at usal.es> 
 }
 \seealso{
 \code{\link[FGNet:report]{report_gtLinker()}} and \code{\link[FGNet:report]{report_david()}} are wrapper functions that include all the following steps and generate an HTML report.\cr 

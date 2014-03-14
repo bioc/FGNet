@@ -129,8 +129,8 @@ report_david(genesYeast, jobName="ExampleYeast_David") #add: email="your@email.c
 library(org.Sc.sgd.db)
 geneLabels <- unlist(as.list(org.Sc.sgdGENENAME)[genesYeast])
 names(genesYeast) <- geneLabels 
-# report_david(genesYeast, geneLabels=genesYeast,  
-# annotations = c("GOTERM_BP_ALL", "GOTERM_MF_ALL", "KEGG_PATHWAY", "INTERPRO"))
+report_david(genesYeast, geneLabels=genesYeast,  
+ annotations = c("GOTERM_BP_ALL", "GOTERM_MF_ALL", "KEGG_PATHWAY", "INTERPRO"))
 
 }
 }
