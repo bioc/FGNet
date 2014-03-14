@@ -99,6 +99,7 @@ The report functions are wrappers that includes the following steps: \cr
 		\code{\link[FGNet:FGNet-package]{FGNet}}
 }
 \examples{
+\dontrun{
 ##### Runs analysis and generates HTML report:
 
 # GtLinker:
@@ -131,4 +132,5 @@ names(genesYeast) <- geneLabels
 # report_david(genesYeast, geneLabels=genesYeast,  
 # annotations = c("GOTERM_BP_ALL", "GOTERM_MF_ALL", "KEGG_PATHWAY", "INTERPRO"))
 
+}
 }

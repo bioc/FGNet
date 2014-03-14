@@ -1,10 +1,10 @@
 
 #tables <- toTables_gtLinker( results$globalMetagroups, results$geneTermSets)
-#tables <- adjMatrix(results$geneTermSets, results$globalMetagroups[,"Silhouette Width"])
+#tables <- toMatrix(results$geneTermSets, results$globalMetagroups[,"Silhouette Width"])
 
 #attribute: Sorted by metagroup/Cluster!!
 
-adjMatrix <- function(geneTermSets, attribute=NULL, threshold=0)
+toMatrix <- adjMatrix <- function(geneTermSets, attribute=NULL, threshold=0)
 {
 	# Check arguments
 	if(!is.data.frame(geneTermSets)) stop("geneTermSets should be the data.frame returned by getResults_gtLinker().")
