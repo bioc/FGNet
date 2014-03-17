@@ -141,12 +141,12 @@ buildTermsTable <- function(termsDescriptions)
 
 
 # Returns the link to the ontology tree for each metagroup go terms
-creteGoLinks <- function(goIds, folder)
+createGoLinks <- function(goIds, folder)
 {
 	goTerms <- sapply(goIds, function(x) if(length(x)>0) paste("%22GO%3A", x,"%22%3A{%22fill%22%3A%22%23ccccff%22}", sep="",collapse=","))
 	if(length(goTerms)>0)
 	{
-		goLinks <- paste("http://amigo.geneontology.org/cgi-bin/amigo/visualize?mode=advanced&term_data={",goTerms ,"}&term_data_type=json&format=png", sep="")
+		goLinks <- paste("http://amigo.geneontology.org/visualize?term_data={",goTerms ,"}&term_data_type=json&mode=amigo&format=png&inline=false", sep="")
 		names(goLinks) <- names(goIds)
 		
 		fileNames <- paste(folder, paste("GO_", gsub("s ","_",names(goIds)),".png", sep=""),sep="")
@@ -228,7 +228,7 @@ createHtml <- function(htmlFileName, results, tables, metagroupAttributeName, th
 	termsTables <- buildTermsTable(mgTerms$termsDescriptions)
 	
 	goIds <- mgTerms$goIds
-	goLinks <- creteGoLinks(goIds,folder)																					
+	goLinks <- createGoLinks(goIds,folder)																					
 	
 	# Copiar CSS a la carpeta actual...
 	cssDir <- file.path(system.file('css', package='FGNet'))
