@@ -1,3 +1,16 @@
+CHANGES IN VERSION 2.0
+------------------------
+NEW FEATURES
+    o The networks can now be plotted for terms in addition to genes.
+    o In the report, clicking on the plots allows to see the plot at full size next to the terms table (if the screen resolution allows it).
+    o ToMatrix(): Added arguments 'key' (to choose either genes or terms) and 'removeFiltered' terms. Renamed main argument (geneTermSets) to 'results'.
+    o IntersectionNetwork() shows a warning if there is no intersection. Added argument 'plotAllMg' to allow choosing wether to plot unconnected metagroups or not.
+    o FunctionalNetwork() changed the two main arguments to a single one, which is the raw output from toMatrix() (a list with names: c("metagroupsMatrix", "gtSetsMatrix", "filteredOut")). Added arguments: 'eColor' to provide the edges color, and 'weighted' to draw the edge width according to the number of shared gene-term sets.
+    o Reports: Added argument 'downloadGOtree' to allow choosing wether to download the go term trees png (slower) or just provide the link to the web tool.
+    
+BUG FIXES
+    o functionalNetwork() now correctly  writes either "cl" or "mg" in the legend
+
 CHANGES IN VERSION 1.3.1
 ------------------------
 NEW FEATURES

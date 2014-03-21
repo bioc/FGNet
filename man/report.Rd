@@ -8,21 +8,20 @@ Generate the Functional Network report for a gene list performing the functional
 Perform the functional analysis and clustering and generate an HTML report containing the functional network.
 }
 \usage{
-report_gtLinker(genes = NULL, organism = "Hs", 
- annotations = c("GO_Biological_Process", "GO_Molecular_Function", 
- "GO_Cellular_Component", "KEGG_Pathways", "InterPro_Motifs"), 
- minSupport = 4, jobID = NULL, alreadyDownloaded = FALSE, 
- path = getwd(), jobName = NULL, threshold = 0, 
- serverWeb = "http://gtlinker.cnb.csic.es", 
- serverWS = "http://gtlinker.cnb.csic.es:8182")
+report_gtLinker(genes=NULL, organism="Hs", 
+annotations=c("GO_Biological_Process","GO_Molecular_Function", 
+"GO_Cellular_Component", "KEGG_Pathways", "InterPro_Motifs"), 
+minSupport=4, jobID=NULL, alreadyDownloaded=FALSE, 
+downloadGOtree=TRUE, path=getwd(), jobName=NULL, threshold=0, 
+serverWeb="http://gtlinker.cnb.csic.es", 
+serverWS="http://gtlinker.cnb.csic.es:8182")
 
-report_david(genes = NULL, geneIdType = "ENSEMBL_GENE_ID", 
- annotations = c("GOTERM_BP_ALL", "GOTERM_MF_ALL", 
- "GOTERM_CC_ALL", "KEGG_PATHWAY", "INTERPRO"), 
- email=NULL,
- argsWS = c(overlap=4L, initialSeed=4L, finalSeed=4L, linkage=0.5, kappa=35L),
- inputFileLocation = NULL, path = getwd(), jobName = NULL, 
- threshold = 0, geneLabels=NULL)
+report_david(genes=NULL, geneIdType="ENSEMBL_GENE_ID", 
+annotations=c("GOTERM_BP_ALL", "GOTERM_MF_ALL", "GOTERM_CC_ALL",
+"KEGG_PATHWAY", "INTERPRO"), email=NULL,  
+argsWS = c(overlap=4L, initialSeed=4L, finalSeed=4L, 
+linkage=0.5, kappa=35L), inputFileLocation=NULL, path=getwd(), 
+jobName=NULL, threshold=0, geneLabels=NULL, downloadGOtree=TRUE)
 }
 
 \arguments{
@@ -44,6 +43,9 @@ report_david(genes = NULL, geneIdType = "ENSEMBL_GENE_ID",
 	\item{threshold}{
 	numeric. Threshold to filter the metagroups/clusters. Those with a value under the threshold will not be plotted.\cr
 	By default, GeneTerm Linker metagroups are filtered based on their \emph{Silhouette Width}, DAVID's clusters based on their \emph{Enrichment Score}.
+	}
+	\item{downloadGOtree}{
+	logical. if TRUE download the go term trees png. If FALSE the report will contain the link to the web tool (faster).
 	}
 
 \bold{Specific for GeneTerm Linker:}
@@ -117,7 +119,7 @@ annotations <- c("KEGG_Pathways")
   organism=organism, jobName="ExampleYeast")
 
 # or, for an already executed query:
-report_gtLinker(jobID="3907019", jobName="ExampleYeast")
+report_gtLinker(jobID="3907019", jobName="ExampleYeast", downloadGOtree=FALSE)
 
 # David:
 genesYeast <- c("YBL084C", "YDL008W", "YDR118W", "YDR301W", "YDR448W", 
@@ -130,7 +132,8 @@ library(org.Sc.sgd.db)
 geneLabels <- unlist(as.list(org.Sc.sgdGENENAME)[genesYeast])
 names(genesYeast) <- geneLabels 
 report_david(genesYeast, geneLabels=genesYeast,  
- annotations = c("GOTERM_BP_ALL", "GOTERM_MF_ALL", "KEGG_PATHWAY", "INTERPRO"))
+ annotations = c("GOTERM_BP_ALL", "GOTERM_MF_ALL", "KEGG_PATHWAY", "INTERPRO"),
+ downloadGOtree=FALSE)
 
 }
 }

@@ -32,7 +32,7 @@
 \SweaveOpts{concordance=TRUE}
 \maketitle 
 \begin{center}
-Version: 1.3
+Version: 2.0
 \end{center}
 \tableofcontents
 
@@ -74,7 +74,7 @@ Different levels of overlap between gene groups.
 \newpage
 \textbf{Functional network}
 
-The \emph{functional network} is the representation of the results from a functional enrichment analysis clustering. Each of the genes is one node, and the genes are linked to each other if they are in the same gene-term set. In the plot, the groups (metagroups or clusters) are also represented by a coloured background. The genes that are only in one group, will also be coloured. \\
+The \emph{functional network} is the representation of the results from a functional enrichment analysis clustering. Each of the genes is one node, and the genes are linked to each other if they are in the same gene-term set. In the plot, the groups (metagroups or clusters) are also represented by surrounded all the genes in them by a coloured background. \\
 
 
 The package includes a \emph{report} function which allows to automatically generate an HTML file with the functional network, the terms included in each group, the intersection network and distance matrix. The \emph{intersection network} is a simplified functional network where all the genes that belong to only one metagroup are clustered into a single node. Therefore, the resulting network contains only the nodes in several groups (\emph{intersection} between groups) linked to the metagroups they belong to. The \emph{distance matrix} represents the similarity between the groups based on the genes they share with each other (binary distance).\\
@@ -123,7 +123,7 @@ report_gtLinker(genesYeast, organism = "Sc")
 These report functions are wrappers that include all the steps to query to the functional enrichment tool (DAVID or GtLinker) and generate the functional network (see \textbf{Section Workflow}). The first step for creating the functional network is to perform the functional enrichment and clustering. This which can be done directly in R (see following sections) but also through their web sites: 
 \begin{itemize}
 	\item DAVID: \url{http://david.abcc.ncifcrf.gov} (Functional Annotation Clustering Tool)
-	\item GeneTerm Linker: \url{http://gtlinker.dacya.ucm.es}
+	\item GeneTerm Linker: \url{http://gtlinker.cnb.csic.es}
 \end{itemize}
 
 \begin{figure}[h]
@@ -243,27 +243,30 @@ Since DAVID instead of a job ID, returns the txt file with the results, it uses 
 
 The raw results can now be transformed into incidence matrices in order to create the network:
 <<eval=TRUE>>=
-incidMat <- toMatrix(results$geneTermSets)
+incidMat <- toMatrix(results)
 @
 These matrices now contain which genes are in each metagroup or cluster and in each gene-term set:
 <<eval=TRUE>>= 
-head(incidMat$metagroupGenesMatrix)
-incidMat$gtSetGenesMatrix[1:5, 14:18]
+head(incidMat$metagroupsMatrix)
+incidMat$gtSetsMatrix[1:5, 14:18]
 @
 Filtering the metagrops/clusters based on a score threshold can be done in this step. i.e. for filtering metagroups with \emph{silhouette} under 0.2:
 <<eval=TRUE>>=
-incidMatFiltered <- toMatrix(results$geneTermSets, 
-attribute=results$metagroups[,"Silhouette Width", drop=FALSE], threshold=0.2)
+incidMatFiltered <- toMatrix(results, threshold=0.2,
+attribute=results$metagroups[,"Silhouette Width", drop=FALSE])
 @
 To see which metagroups/clusters have been filtered out and now are no longer in the incidence matrices:
 <<eval=TRUE>>=
 incidMatFiltered$filteredOut
 @
 
+To build the networks based on terms, use the argument \emph{key="Terms"}. See section \emph{\ref{sec:TermsNw} Terms network} for further details.
+
 \subsection{Step 4: Build and plot the networks}
 \label{sec:Step4}
 
-Once the incidence matrices are ready, they can be transformed into the network. The function \emph{functionalNetwork()} generates the network and plots it:
+\subsubsection{Functional network}
+Once the incidence matrices are ready, they can be transformed into the network. The function \emph{functionalNetwork()} generates and plots the network:
 <<fig=TRUE, eval=TRUE>>=
 functionalNetwork(incidMat) 
 @
@@ -304,9 +307,10 @@ saveLayout <- tkplot.getcoords(1)   # tkp.id (ID of the tkplot window)
 functionalNetwork(incidMatFiltered, vLayout=saveLayout)
 @
 
-In addition to the functional network, when there are nodes in several metagroups, the \emph{intersection network} can also be plotted.
-This plot is a simplified functional network, containing only the nodes in several metagroups and the metagroups they belong to. The 'metagroup nodes' are the coloured nodes, which can be seen as a cluster of all the genes/proteins that belong only to that metagroup. 
-By default, the intersection network is plotted automatically when requesting an interactive plot, but it can also be plotted by itself:
+\subsubsection{Intersection network}
+In addition to the functional network, it is also possible to draw a the \emph{intersection network} if there are nodes in several metagroups.
+This plot is a simplified functional network, containing only the nodes in several metagroups and the metagroups they belong to. 'Metagroup nodes' are coloured, and can be seen as a cluster of all the genes/proteins that belong only to that metagroup. 
+By default, the intersection network is automatically plotted when requesting an interactive plot, but it can also be plotted by itself:
 
 <<fig=TRUE, eval=TRUE>>=
 intersectionNetwork(incidMat, 
@@ -319,10 +323,36 @@ The terms in each metagroup can be seen in the raw \emph{results} data frame or 
 getTerms(results)[1]
 @
 
+\subsubsection{Terms networks}
+\label{sec:TermsNw}
+In the same way we have built networks to explore the relationship between genes, the same approach can be used to explore the relationship between the biological terms in the enrichment analysis. i.e. to see which biological terms are usually associated, or locate which terms are in several groups. 
+To do so, all we need to do is to build the incidence matrices based on terms instead of genes using the argument \emph{key="Terms"}.
+<<eval=TRUE>>=
+results <- getResults_gtLinker(jobID=1639610, jobName="Alzheimer")
+incidMatTerms <- toMatrix(results, key="Terms")
+@
+<<eval=FALSE>>=
+functionalNetwork(incidMatTerms, plotType="dynamic", 
+ weighted=TRUE, eColor="grey")
+intersectionNetwork(incidMatTerms)
+@
+<<eval=TRUE, echo=FALSE, fig=TRUE>>=
+intersectionNetwork(incidMatTerms, plotType="static", plotTitle="Terms in several metagroups")
+@
+
+Since GeneTerm Linker filters out generic and redundant terms from the final metagroups, by default these terms are not plotted. To include them in the graph, set the argument \emph{removeFiltered=FALSE}.
+<<eval=TRUE, fig=TRUE>>=
+incidMatTerms <- toMatrix(results, key="Terms", removeFiltered=FALSE)
+intersectionNetwork(incidMatTerms, plotType="static", 
+ plotTitle="Including filtered terms")
+@
+
+For more information on the filtered terms see \cite{Fontanillo} or \url{http://gtlinker.cnb.csic.es/gtset/help}.
+
 \subsection{Example using DAVID Functional Annotation Clustering Tool}
 \label{sec:DavidExample}
 
-To generate the functional network with DAVID, the workflow is the same as with GeneTerm Linker. In this example we will use yeast genes from 2 metabolic pathways: \emph{ergosterol biosynthesis} and \emph{sphingolipid metabolism}: \\
+To generate the functional network with DAVID, the workflow is the same as with GeneTerm Linker. In this example we will use yeast genes from 2 metabolic pathways: \emph{ergosterol biosynthesis} and \emph{sphingolipid metabolism}: 
 
 <<eval=TRUE>>=
 genesMetabolism <- c("YGR175C", "YHR007C", "YMR202W", "YJL167W", 
@@ -337,7 +367,7 @@ geneLabels <- unlist(as.list(org.Sc.sgdGENENAME)[genesMetabolism])
 names(genesMetabolism) <- geneLabels 
 @
 
-\textbf{Option A)} Generating the report automatically (getting an initial overview of the networks):\\
+\textbf{A) Generating the report automatically} (getting an initial overview of the networks):\\
 
 If the analysis has already been performed at the website, it is possible to provide directly the URL or file of the analysis (see Section \ref{sec:BasicExample}):
 <<eval=FALSE>>=
@@ -356,18 +386,19 @@ report_david(genesMetabolism)
 
 DAVID usually provides many overlapping clusters. In order to simplify the results or explore the overlap between specific clusters, see the following example.\\
 
-\textbf{Option B)} Executing the steps on the workflow one by one (i.e. to personalize the network): 
+\textbf{Option B) Executing the steps on the workflow one by one} (i.e. to personalize the network): 
 
 <<eval=TRUE, echo=FALSE>>=
 txtFile <- paste(file.path(system.file('examples', package='FGNet')), "David_Metabolism.txt", sep="/")
 results <- getResults_david(txtFile, jobName="David_Metabolism", geneLabels=genesMetabolism)
-incidMat <- toMatrix(results$geneTermSets)
+incidMat <- toMatrix(results)
 functionalNetwork(incidMat) 
 @
 <<eval=FALSE>>=
 txtFile <- query_david(genesMetabolism, email="...")
-results <- getResults_david(txtFile, jobName="David_Metabolism", geneLabels=genesMetabolism)
-incidMat <- toMatrix(results$geneTermSets)
+results <- getResults_david(txtFile, jobName="David_Metabolism",
+ geneLabels=genesMetabolism)
+incidMat <- toMatrix(results)
 #functionalNetwork(incidMat) 
 @
 
@@ -384,9 +415,12 @@ getTerms(results)[5]
 @
 
 DAVID usually provides many overlapping clusters. \emph{plotMetagroupsDistance()} allows to explore the overlap between groups.
-<<eval=TRUE, fig=TRUE>>=
-distMat <- plotMetagroupsDistance(incidMat$metagroupGenesMatrix)
+<<eval=TRUE, fig=TRUE, width=9>>=
+distMat <- plotMetagroupsDistance(incidMat)
 @
+
+
+\textbf{Filtering results}
 
 When there are many overlapping clusters it is useful to filter the results or select only a few clusters to plot.
 The clusters to plot can be selected/filtered based on their Enrichment score, the number of genes they contain, or any other parameter:\\
@@ -397,7 +431,7 @@ colnames(results$clusters)
 quantile(results$clusters$EnrichmentScore, c(0.10, 0.25, 0.5, 0.75, 0.9))
 @
 <<eval=TRUE, results=hide>>=
-incidMatFiltered <- toMatrix(results$geneTermSets, 
+incidMatFiltered <- toMatrix(results, 
  attribute=results$clusters[,"EnrichmentScore", drop=FALSE], threshold=10)
 functionalNetwork(incidMatFiltered)
 @
@@ -405,7 +439,7 @@ functionalNetwork(incidMatFiltered)
 b) Inverse filtering, selection of \textbf{lowest values}. i.e. Overlap between clusters with least genes:
 <<eval=TRUE, results=hide>>=
 quantile(results$clusters$nGenes, c(0.10, 0.25, 0.5, 0.75, 0.9))
-incidMatFiltered <- toMatrix(results$geneTermSets, 
+incidMatFiltered <- toMatrix(results, 
  attribute=-(results$clusters[,"nGenes", drop=FALSE]), threshold=-15)
 functionalNetwork(incidMatFiltered)
 @
@@ -421,7 +455,7 @@ selectedClusters <- sapply(getTerms(results),
 resultsSclusters <- results
 resultsSclusters$clusters <- cbind(resultsSclusters$clusters, 
  selectedKeywords=as.numeric(selectedClusters))
-incidMatSelectedGroups <- toMatrix(resultsSclusters$geneTermSets, 
+incidMatSelectedGroups <- toMatrix(resultsSclusters, 
  attribute=resultsSclusters$clusters[,"selectedKeywords", drop=FALSE], 
  threshold=1)
 functionalNetwork(incidMatSelectedGroups)
@@ -436,12 +470,29 @@ selectedClusters[c(2,9,11)] <- TRUE
 resultsSclusters <- results
 resultsSclusters$clusters <- cbind(resultsSclusters$clusters, 
  selectedClusters=as.numeric(selectedClusters))
-incidMatSelectedGroups <- toMatrix(resultsSclusters$geneTermSets, 
+incidMatSelectedGroups <- toMatrix(resultsSclusters, 
  attribute=resultsSclusters$clusters[,"selectedClusters", drop=FALSE], 
  threshold=1)
 functionalNetwork(incidMatSelectedGroups)
 @
 
+\textbf{Terms network}
+
+Another way to explore the results from the analysis is the terms network. However, since DAVID's gene-term sets only include one term, the default functional network will have no edges. Instead, plot the network based on the clusters (stablishig a link between terms in the same cluster):
+
+<<eval=FALSE>>=
+# Continuing the previous example...
+incidMatTerms <- toMatrix(results, key="Terms")
+functionalNetwork(incidMatTerms$clustersMatrix, plotType="dynamic",
+ weighted=TRUE, eColor="grey")
+intersectionNetwork(incidMatTerms$clustersMatrix, plotType="static", 
+ plotTitle="Terms in several clusters")
+@
+<<fig=TRUE, eval=TRUE, echo=FALSE>>=
+incidMatTerms <- toMatrix(results, key="Terms")
+intersectionNetwork(incidMatTerms$clustersMatrix, plotType="static", 
+ plotTitle="Terms in several clusters")
+@
 
 \begin{thebibliography}{6} 
 

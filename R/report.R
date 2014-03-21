@@ -1,6 +1,6 @@
 # Workflow wrapper, generates a Report in HTML.
 
-report_gtLinker <- function(genes=NULL, organism="Hs", annotations=c("GO_Biological_Process","GO_Molecular_Function", "GO_Cellular_Component", "KEGG_Pathways", "InterPro_Motifs"), minSupport=4, jobID=NULL, alreadyDownloaded=FALSE, path=getwd(), jobName=NULL, threshold=0, serverWeb="http://gtlinker.cnb.csic.es", serverWS="http://gtlinker.cnb.csic.es:8182")
+report_gtLinker <- function(genes=NULL, organism="Hs", annotations=c("GO_Biological_Process","GO_Molecular_Function", "GO_Cellular_Component", "KEGG_Pathways", "InterPro_Motifs"), minSupport=4, jobID=NULL, alreadyDownloaded=FALSE, downloadGOtree=TRUE, path=getwd(), jobName=NULL, threshold=0, serverWeb="http://gtlinker.cnb.csic.es", serverWS="http://gtlinker.cnb.csic.es:8182")
 {
 	if(!is.null(jobID))
 	{
@@ -8,9 +8,9 @@ report_gtLinker <- function(genes=NULL, organism="Hs", annotations=c("GO_Biologi
 		annotations <- NULL
 		minSupport <- NULL		
 	}
-	return( fnReport(tool="gtLinker", organism=organism, genes=genes, annotations=annotations, minSupport=minSupport, jobID=jobID, alreadyDownloaded=alreadyDownloaded, path=path, jobName=jobName, threshold=threshold, serverWeb=serverWeb, serverWS=serverWS))
+	return( fnReport(tool="gtLinker", organism=organism, genes=genes, annotations=annotations, minSupport=minSupport, jobID=jobID, alreadyDownloaded=alreadyDownloaded, path=path, jobName=jobName, threshold=threshold, serverWeb=serverWeb, serverWS=serverWS, downloadGOtree=downloadGOtree))
 }
-report_david <- function(genes=NULL, geneIdType="ENSEMBL_GENE_ID", annotations=c("GOTERM_BP_ALL", "GOTERM_MF_ALL", "GOTERM_CC_ALL", "KEGG_PATHWAY", "INTERPRO"), email=NULL,  argsWS = c(overlap=4L, initialSeed=4L, finalSeed=4L, linkage=0.5, kappa=35L), inputFileLocation=NULL, path=getwd(), jobName=NULL, threshold=0, geneLabels=NULL)
+report_david <- function(genes=NULL, geneIdType="ENSEMBL_GENE_ID", annotations=c("GOTERM_BP_ALL", "GOTERM_MF_ALL", "GOTERM_CC_ALL", "KEGG_PATHWAY", "INTERPRO"), email=NULL,  argsWS = c(overlap=4L, initialSeed=4L, finalSeed=4L, linkage=0.5, kappa=35L), inputFileLocation=NULL, path=getwd(), jobName=NULL, threshold=0, geneLabels=NULL, downloadGOtree=TRUE)
 {
 	if(!is.null(inputFileLocation))
 	{
@@ -18,7 +18,7 @@ report_david <- function(genes=NULL, geneIdType="ENSEMBL_GENE_ID", annotations=c
 		annotations <- NULL
 		argsWS  <- NULL
 	}
-	return( fnReport(tool="David", genes=genes, geneIdType=geneIdType, annotations=annotations, email=email, inputFileLocation=inputFileLocation, alreadyDownloaded=FALSE, path=path, jobName=jobName, threshold=threshold, argsWS = argsWS, geneLabels=geneLabels))
+	return( fnReport(tool="David", genes=genes, geneIdType=geneIdType, annotations=annotations, email=email, inputFileLocation=inputFileLocation, alreadyDownloaded=FALSE, path=path, jobName=jobName, threshold=threshold, argsWS = argsWS, geneLabels=geneLabels, downloadGOtree=downloadGOtree))
 }
 
 ### Common arguments
@@ -41,7 +41,7 @@ report_david <- function(genes=NULL, geneIdType="ENSEMBL_GENE_ID", annotations=c
 # geneIdType
 # inputFileLocation
 
-fnReport <- function (tool, organism=NULL, geneIdType=NULL, genes=NULL, annotations=NULL, email=NULL, minSupport=3, jobID=NULL, inputFileLocation=NULL, alreadyDownloaded=FALSE, path=NULL, jobName=NULL,  threshold=0, serverWeb=NULL, serverWS=NULL, argsWS = NULL, geneLabels=geneLabels)
+fnReport <- function (tool, organism=NULL, geneIdType=NULL, genes=NULL, annotations=NULL, email=NULL, minSupport=3, jobID=NULL, inputFileLocation=NULL, alreadyDownloaded=FALSE, path=NULL, jobName=NULL,  threshold=0, serverWeb=NULL, serverWS=NULL, argsWS = NULL, geneLabels=geneLabels, downloadGOtree=TRUE)
 {
 	#####################################################################################################
 	####################################   Check arguments   ############################################
@@ -116,6 +116,7 @@ fnReport <- function (tool, organism=NULL, geneIdType=NULL, genes=NULL, annotati
 	{
 		grType <- "Metagroup"
 		metagroupAttributeName <- "Silhouette Width"
+		removeFiltered <- TRUE
 		
 		if(alreadyDownloaded && (is.null(jobID) && is.null(jobName))) stop("If the analysis is already downloaded, please provide the jobID or jobName (folder).") #Enough??
 		
@@ -138,6 +139,7 @@ fnReport <- function (tool, organism=NULL, geneIdType=NULL, genes=NULL, annotati
 	{
 		metagroupAttributeName <- "EnrichmentScore"
 		serverWeb <- "http://david.abcc.ncifcrf.gov/summary.jsp"
+		removeFiltered <- FALSE
 		
 		if(is.null(inputFileLocation))
 		{
@@ -181,15 +183,16 @@ fnReport <- function (tool, organism=NULL, geneIdType=NULL, genes=NULL, annotati
 	
 	# Common to both tools
 	attribute <- results[[1]][,metagroupAttributeName, drop=FALSE]   # $metagroups or $cluster (first in list)
-	tables <- toMatrix(results$geneTermSets, attribute = attribute, threshold=threshold)
+	tablesGenes <- toMatrix(results, attribute = attribute, threshold=threshold)
+	tablesTerms <- toMatrix(results, attribute = attribute, threshold=threshold, key="Terms", removeFiltered=removeFiltered)
 	
 	#####################################################################################################
 	####################################   Generate  HTML    ############################################
 	
 	htmlFileName <- paste(path, "/", jobName, ".html", sep="")
 	
-	createHtml(htmlFileName=htmlFileName, results=results, tables=tables, metagroupAttributeName=metagroupAttributeName, threshold=threshold,
-						 organism=organism, annotations=annotations, genes=genes, serverWeb=serverWeb, jobID=jobID)
+	createHtml(htmlFileName=htmlFileName, results=results, tablesGenes=tablesGenes, tablesTerms=tablesTerms, metagroupAttributeName=metagroupAttributeName, threshold=threshold,
+						 organism=organism, annotations=annotations, genes=genes, serverWeb=serverWeb, jobID=jobID, downloadGOtree=downloadGOtree)
 	
 	#return (jobID)
 }

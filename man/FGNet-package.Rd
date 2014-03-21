@@ -27,7 +27,8 @@ The workflow to generate the functional networks include the following steps:\cr
  1. - Query/Analize (optional): Performs the analysis through GeneTerm Linker [1] or DAVID [2].  \code{\link[FGNet:query_gtLinker]{query_gtLinker()}} returns the analysis jobID and \code{\link[FGNet:query_david]{query_david()}} the url of the .txt file with the results.\cr
  2. - Get results: Retrieves the analysis results (metagroups/clusters and gene-term sets) from the server and formats them. This can be done through \code{\link[FGNet:getResults_gtLinker]{getResults_gtLinker()}} and \code{\link[FGNet:getResults_david]{getResults_david()}}\cr 
  3. - Transform into incidence matrices: \code{\link[FGNet:toMatrix]{toMatrix()}} transforms the metagroups and gene-term sets (gtset) into genes-metagroups and genes-gtsets matrices.\cr
- 4. - Plot the functional gene network: Network representing the common functions of the genes. \cr
+ The incidence matrices can also be term-based in order to build the network of associated terms.
+ 4. - Plot the functional gene network: Network representing the common functions of the genes (or terms). \cr
  The main function is \code{\link[FGNet:functionalNetwork]{functionalNetwork()}}), but \code{\link[FGNet:intersectionNetwork]{intersectionNetwork()}} \cr 
  and \code{\link[FGNet:plotMetagroupsDistance]{plotMetagroupsDistance()}} are also available.\cr    
 }

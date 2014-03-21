@@ -1,8 +1,11 @@
 
 # Distances: Binary
 # Clustering: Single
-plotMetagroupsDistance <- function(metagroupGenesMatrix)
+plotMetagroupsDistance <- function(incidenceMatices)
 {	
+	if("metagroupsMatrix" %in% names(incidenceMatices)) metagroupGenesMatrix <- incidenceMatices$metagroupsMatrix
+	if("clustersMatrix" %in% names(incidenceMatices)) metagroupGenesMatrix <- incidenceMatices$clustersMatrix
+
 	mxDistancias <- NULL
 	if(dim(metagroupGenesMatrix)[2]>2)	
 	{

@@ -7,11 +7,11 @@ Plots distances between metagroups.
 Plots the distances between metagroups taking into account the number of common genes.
 }
 \usage{
-plotMetagroupsDistance(metagroupGenesMatrix)
+plotMetagroupsDistance(incidenceMatices)
 }
 \arguments{
-  \item{metagroupGenesMatrix}{
-  \emph{$metagroupGenesMatrix} returned by  \code{\link[FGNet:toMatrix]{toMatrix()}}.
+  \item{incidenceMatices}{
+  Object returned by  \code{\link[FGNet:toMatrix]{toMatrix()}}.
 }
 }
 \value{
@@ -23,7 +23,7 @@ plotMetagroupsDistance(metagroupGenesMatrix)
 }
 \examples{
 results <- getResults_gtLinker(jobID=1963186, jobName="gtLinker_ej")
-incidMat <- toMatrix(results$geneTermSets,
+incidMat <- toMatrix(results,
  attribute=results$metagroups[,"Silhouette Width", drop=FALSE])
-plotMetagroupsDistance(incidMat$metagroupGenesMatrix)
+plotMetagroupsDistance(incidMat)
 }

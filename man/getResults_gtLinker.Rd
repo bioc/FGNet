@@ -81,4 +81,8 @@ List:\cr
 \examples{
 jobID <- 3907019
 results <- getResults_gtLinker(jobID)
+
+# To continue the workflow... (see help for further details)
+incidMat <- toMatrix(results)
+functionalNetwork(incidMat)
 }

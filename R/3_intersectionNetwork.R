@@ -1,18 +1,16 @@
 
-intersectionNetwork <- function(metagroupGenesMatrix, plotType="dynamic", vLayout="kk", returnGraph=FALSE, vSize=12, vLabelCex=2/3, legendMg=NULL, grPrefix="", plotTitle="Nodes in several metagroups", keepColors=TRUE)
+intersectionNetwork <- function(metagroupsMatrix, plotType="dynamic", vLayout="kk", returnGraph=FALSE, vSize=12, vLabelCex=2/3, legendMg=NULL, grPrefix="", plotTitle="Nodes in several metagroups", keepColors=TRUE, plotAllMg=FALSE)
 {
-	# Libraries
-	# if (!library(igraph, logical.return=TRUE)) stop("Library igraph is required to plot the networks.")
-	
 	#################################### Check arguments ################################################
 	filteredOut <- NULL
-	if(is.list(metagroupGenesMatrix) && (all(names(metagroupGenesMatrix %in% c("metagroupGenesMatrix", "gtSetGenesMatrix", "filteredOut")))))
+	if(is.list(metagroupsMatrix) && (any(names(metagroupsMatrix) %in% c("metagroupsMatrix", "clustersMatrix"))))
 	{
-		gtSetGenesMatrix <- metagroupGenesMatrix$gtSetGenesMatrix
-		filteredOut <- metagroupGenesMatrix$filteredOut
-		metagroupGenesMatrix <- metagroupGenesMatrix$metagroupGenesMatrix
+		if("filteredOut" %in% names(metagroupsMatrix)) filteredOut <- metagroupsMatrix$filteredOut
+		
+		if("metagroupsMatrix" %in% names(metagroupsMatrix)) metagroupsMatrix <- metagroupsMatrix$metagroupsMatrix
+		if("clustersMatrix" %in% names(metagroupsMatrix)) metagroupsMatrix <- metagroupsMatrix$clustersMatrix		
 	}
-	if(!is.matrix(metagroupGenesMatrix))  stop("metagroupGenesMatrix should be the result returned by toMatrix().")
+	if(!is.matrix(metagroupsMatrix))  stop("metagroupsMatrix should be the result returned by toMatrix().")
 	
 	if(!is.character(plotType))  stop('plotType should be either "static", "dynamic" or "none".') 
 	plotType <- tolower(plotType)
@@ -36,41 +34,51 @@ intersectionNetwork <- function(metagroupGenesMatrix, plotType="dynamic", vLayou
 	if(!is.null(legendMg))
 	{
 		if(!is.character(legendMg)) stop("legendMg should be the metagroups legend (i.e. main function).")
-		if(dim(metagroupGenesMatrix)[2] != length(legendMg)) stop("The number of metagroups in the matrix and the legend do not match.")
+		if(dim(metagroupsMatrix)[2] != length(legendMg)) stop("The number of metagroups in the matrix and the legend do not match.")
 	}
 	
 	# Initialize
-	nMetagroups <- dim(metagroupGenesMatrix)[2]
+	nMetagroups <- dim(metagroupsMatrix)[2]	
+	
 	######## Set colors
 	if(keepColors==TRUE)
 	{
-		colores <- setColors(as.character(sort(as.numeric(c(colnames(metagroupGenesMatrix), filteredOut)))))[colnames(metagroupGenesMatrix)]
+		colores <- setColors(as.character(sort(as.numeric(c(colnames(metagroupsMatrix), filteredOut)))))[colnames(metagroupsMatrix)]
 	}else
 	{
-		colores <- setColors(colnames(metagroupGenesMatrix))
+		colores <- setColors(colnames(metagroupsMatrix))
 	}
-	colnames(metagroupGenesMatrix) <- paste(grPrefix, colnames(metagroupGenesMatrix), sep=" ")
+	
+	# Substitute terms for they description (for the graph)
+	if(grepl(":", rownames(metagroupsMatrix)[1]))
+	{
+		clMgMxNames <- clDescriptions(rownames(metagroupsMatrix))
+		rownames(metagroupsMatrix) <- paste(clMgMxNames[,"Description"], " (", clMgMxNames[,"Annotation"], ")", sep="")
+	}
 	
 	#####################################################################################################
 	#################################### Create Matrices  ###############################################	
-	genesInManyMg <- which(apply(metagroupGenesMatrix, 1, sum)>1)
+	genesInManyMg <- which(apply(metagroupsMatrix, 1, sum)>1)
 	
+	if(!plotAllMg) metagroupsMatrix <- metagroupsMatrix[names(genesInManyMg),apply(metagroupsMatrix[names(genesInManyMg),], 2, sum)>0]
+
 	mgJoinedGraph <- NULL
 	if((length(genesInManyMg)>1) && any(plotType %in% c("static", "dynamic")))
 	{
-		mgJoined <- metagroupGenesMatrix[genesInManyMg,]
+		mgJoined <- metagroupsMatrix[names(genesInManyMg),]
 		
 		# Replace 1 by mg number (for vertex color)
 		for(col in 1:ncol(mgJoined))
 		{
 			thisCol <- which(mgJoined[,col]==1)
-			mgJoined[thisCol,col] <- col
+			mgJoined[thisCol,col] <- colnames(mgJoined)[col]
 		}	
 		
 		if(!is.null(legendMg))
 		{
 			colnames(mgJoined) <- paste(colnames(mgJoined), legendMg, sep="\n")
 		}
+		if(grPrefix!="") colnames(mgJoined) <- paste(grPrefix, colnames(mgJoined), sep=" ")
 		
 		# Create adjacency matrix (add nodes and mg to both, columns and rows)
 		mgXmg <- matrix(data=0, ncol=dim(mgJoined)[2], nrow=dim(mgJoined)[2])
@@ -83,8 +91,8 @@ intersectionNetwork <- function(metagroupGenesMatrix, plotType="dynamic", vLayou
 		mgJoined <- cbind(genXgen, mgJoined)
 		
 		# Vertex colors (genes: white, mg:their color)
-		vCols2 <- c(rep("white", length(genesInManyMg)), colores)
-		
+		vCols2 <- c(rep("white", length(genesInManyMg)), colores[colnames(metagroupsMatrix)])
+	
 		# Create graph
 		mgJoinedGraph <- graph.adjacency(mgJoined, weighted=TRUE,   mode="undirected", diag=FALSE) 
 		
@@ -115,16 +123,18 @@ intersectionNetwork <- function(metagroupGenesMatrix, plotType="dynamic", vLayou
 			
 			if(plotType =="dynamic")	
 			{
-				tkplot(mgJoinedGraph, layout=vertexLayout, vertex.color=vCols2, edge.color=colores[E(mgJoinedGraph)$weight], edge.width=2, vertex.size=vSize, vertex.label.cex=vLabelCex)
+				tkplot(mgJoinedGraph, layout=vertexLayout, vertex.color=vCols2, edge.color=colores[as.character(E(mgJoinedGraph)$weight)], edge.width=2, vertex.size=vSize, vertex.label.cex=vLabelCex)
 			}else
 			{
 				if(plotType!= "none")
 				{
-					plot(mgJoinedGraph, layout=vertexLayout, vertex.color=vCols2, edge.color=colores[E(mgJoinedGraph)$weight], edge.width=2, vertex.size=vSize, vertex.label.cex=vLabelCex)
+					plot(mgJoinedGraph, layout=vertexLayout, vertex.color=vCols2, edge.color=colores[as.character(E(mgJoinedGraph)$weight)], edge.width=2, vertex.size=vSize, vertex.label.cex=vLabelCex)
 					title(main=plotTitle, sub=paste("Layout: ", layoutName, sep=""))
 				}
 			}
 		}
+	}else{
+		if(length(genesInManyMg)<=1) warning("There is nothing to plot. There is no intersection between metagroups/clusters.")
 	}
 	
 	if(returnGraph) return(mgJoinedGraph)

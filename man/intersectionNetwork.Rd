@@ -7,14 +7,14 @@ Metagroup/Cluster intersection network.
 Plots a simplified version of the functional network, only with the genes in more than one metagroup/cluster.
 }
 \usage{
-intersectionNetwork(metagroupGenesMatrix, plotType = "dynamic", 
+intersectionNetwork(metagroupsMatrix, plotType = "dynamic", 
 vLayout = "kk", returnGraph = FALSE, vSize = 12, vLabelCex = 2/3, 
 legendMg=NULL, grPrefix="", plotTitle = "Nodes in several metagroups",
-keepColors=TRUE)
+keepColors=TRUE, plotAllMg=FALSE)
 }
 \arguments{
-  \item{metagroupGenesMatrix}{
-matrix or list. \emph{$metagroupGenesMatrix} returned by \code{\link[FGNet:toMatrix]{toMatrix}}. If raw output (list) from \code{\link[FGNet:toMatrix]{toMatrix}}, it will be automatically splitted into $metagroupGenesMatrix and $gtSetGenesMatrix.
+  \item{metagroupsMatrix}{
+list or matrix. raw output (list) from \code{\link[FGNet:toMatrix]{toMatrix}}, or 'metagroupsMatrix' or 'clustersMatrix'.
 }
   \item{plotType}{
 character "static", "dynamic" or "none". "static" will generate a standard plot. "dynamic" will produce an interactive tkplot (metagroups background cannot be drawn). "none" will not plot the network.
@@ -43,6 +43,9 @@ character. Title to show on the plot.
   \item{keepColors}{
 logical. If TRUE, it will keep the same colors for all the plots, independently of the filtered groups. Only available if metagroupGenesMatrix is the raw result from \code{\link[FGNet:toMatrix]{toMatrix}}.
 }
+  \item{plotAllMg}{
+logical. If TRUE, metagroup/cluster nodes will be plotted even if they are not connected to any more nodes.
+}
 }
 \value{
  Plots the network.
@@ -56,10 +59,19 @@ logical. If TRUE, it will keep the same colors for all the plots, independently 
 \examples{
 jobID <- 3907019
 results <- getResults_gtLinker(jobID, jobName="gtLinkerExample")
-incidMat <- toMatrix(results$geneTermSets, 
+incidMat <- toMatrix(results, 
  attribute=results$metagroups[,"Silhouette Width", drop=FALSE], threshold=0)
 
 intersectionNetwork(incidMat)
 intNw <- intersectionNetwork(incidMat, 
  vLayout="sugiyama", plotType="static", returnGraph=TRUE) 
+ 
+ 
+# Term-based network
+incidMatTerms <- toMatrix(results, key="Terms")
+intersectionNetwork(incidMatTerms)
+
+# Including generic terms filterd by GtLinker from final metagroups:
+incidMatTerms2 <- toMatrix(results, key="Terms", removeFiltered=FALSE)
+intersectionNetwork(incidMatTerms2)
 }

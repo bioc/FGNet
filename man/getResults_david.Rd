@@ -81,5 +81,9 @@ library(org.Sc.sgd.db)
 geneLabels <- unlist(as.list(org.Sc.sgdGENENAME)[genesYeast])
 names(genesYeast) <- geneLabels 
 results <- getResults_david(txtFile, geneLabels=genesYeast)
+
+# To continue the workflow... (see help for further details)
+incidMat <- toMatrix(results)
+functionalNetwork(incidMat)
 }
 

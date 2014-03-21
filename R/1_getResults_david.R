@@ -71,6 +71,7 @@ getResults_david <- function(inputFileLocation, path=getwd(), jobName="", geneLa
 			}
 		}
 		close(inputFile) 
+		colnames(tablaGeneTermSets)[which(colnames(tablaGeneTermSets)=="Term")] <- "Terms"
 		
 		# Replace Gene Names?
 		if(!is.null(geneLabels))
@@ -96,14 +97,14 @@ getResults_david <- function(inputFileLocation, path=getwd(), jobName="", geneLa
 		
 		for(cluster in names(clusterScore))
 		{
-			tmpTable <- as.matrix(tablaGeneTermSets[which(tablaGeneTermSets[,"Cluster"] == cluster),c("Cluster", "Term", "Category", colGenes)])
+			tmpTable <- as.matrix(tablaGeneTermSets[which(tablaGeneTermSets[,"Cluster"] == cluster),c("Cluster", "Terms", "Category", colGenes)])
 			# Kegg
 			keggs <- which(tmpTable[,"Category"] == "KEGG_PATHWAY")
-			tmpTable[keggs, "Term"] <- paste("KEGG:", tmpTable[keggs, "Term"], sep="")				# Used in createHtml
+			tmpTable[keggs, "Terms"] <- paste("KEGG:", tmpTable[keggs, "Terms"], sep="")				# Used in createHtml
 			
 			# Reactome
 			reactomes <- grep("REACTOME_PATHWAY", tmpTable[,"Category"]) 
-			tmpTable[reactomes, "Term"] <- sub("REACT_", "REACT:", tmpTable[reactomes, "Term"])
+			tmpTable[reactomes, "Terms"] <- sub("REACT_", "REACT:", tmpTable[reactomes, "Terms"])
 			# Not Kegg or GO or...
 			gos <- grep("GOTERM", tmpTable[,"Category"])
 			iprs <- grep("INTERPRO", tmpTable[,"Category"])		
@@ -111,14 +112,14 @@ getResults_david <- function(inputFileLocation, path=getwd(), jobName="", geneLa
 			otherAnnot <- which(!(1:dim(tmpTable)[1] %in% c(keggs, gos, iprs, reactomes)))
 			if (length(otherAnnot) > 0)
 			{
-				#tmpTable[otherAnnot, "Term"] <- gsub(":", ". ", tmpTable[otherAnnot, "Term"]) -> Pasar el codigo al final con parentesis
-				tmpTable[otherAnnot, "Term"] <- sapply(strsplit(tmpTable[otherAnnot, "Term"], split=":"), function(x) paste(x[-1], " (ID ", x[1], ")", sep=""))
-				tmpTable[otherAnnot, "Term"] <- paste(tmpTable[otherAnnot, "Category"], tmpTable[otherAnnot, "Term"], sep=":")	
+				#tmpTable[otherAnnot, "Terms"] <- gsub(":", ". ", tmpTable[otherAnnot, "Terms"]) -> Pasar el codigo al final con parentesis
+				tmpTable[otherAnnot, "Terms"] <- sapply(strsplit(tmpTable[otherAnnot, "Terms"], split=":"), function(x) paste(x[-1], " (ID ", x[1], ")", sep=""))
+				tmpTable[otherAnnot, "Terms"] <- paste(tmpTable[otherAnnot, "Category"], tmpTable[otherAnnot, "Terms"], sep=":")	
 			}
-			tmpTable[, "Term"] <- gsub(";", ". ", tmpTable[, "Term"])
+			tmpTable[, "Terms"] <- gsub(";", ". ", tmpTable[, "Terms"])
 			
 			# Genes & terms
-			tmpTerms <- paste(sub("~", ":", tmpTable[,"Term"]), collapse=";")
+			tmpTerms <- paste(sub("~", ":", tmpTable[,"Terms"]), collapse=";")
 			tmpGenes <- list()
 			for(i in 1:length(colGenes))
 			{

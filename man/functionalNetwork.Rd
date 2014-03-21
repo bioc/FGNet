@@ -8,21 +8,15 @@ Plots the gene network. Edges join nodes with  common gene-term sets. Background
 }
 \usage{
 
-functionalNetwork(metagroupGenesMatrix, gtSetGenesMatrix=NULL, 
-plotType="static", returnGraph=FALSE,
+functionalNetwork(incidMatrices, plotType="static", returnGraph=FALSE,
 plotTitle="Functional Network", vSize=12, vLabelCex=3/4, 
-vLayout=NULL, bgTransparency=0.4, legendMg=NULL, keepColors=TRUE)
+vLayout=NULL, bgTransparency=0.4, legendMg=NULL, keepColors=TRUE,
+eColor="#323232", weighted=FALSE)
 }
-
-
-
 
 \arguments{
- \item{metagroupGenesMatrix}{
-matrix or list. \emph{$metagroupGenesMatrix} (matrix) returned by \code{\link[FGNet:toMatrix]{toMatrix}}. If raw output (list) from \code{\link[FGNet:toMatrix]{toMatrix}}, it will be automatically splitted into $metagroupGenesMatrix and $gtSetGenesMatrix.
-}
-  \item{gtSetGenesMatrix}{
-matrix. \emph{$gtSetGenesMatrix} returned by \code{\link[FGNet:toMatrix]{toMatrix}}.
+ \item{incidMatrices}{
+list or matrix. Raw output (list) from \code{\link[FGNet:toMatrix]{toMatrix}}.  List with slots:  "gtSetsMatrix", "filteredOut" and either "metagroupsMatrix" or "clustersMatrix". If only a matrix is provided, it will be asumed to be the metagroups matrix, and all nodes will be connected to every other node in the metagroup.
 }
   \item{plotType}{
 character "static", "dynamic" or "none". "static" will generate a standard plot. "dynamic" will produce an interactive tkplot. In the interactive plot metagroups background cannot be drawn, instead the intersection network will also be shown. "none" will not plot the network.
@@ -51,6 +45,12 @@ character. Label to show next to the metagroup/cluster id in the legend. If FALS
   \item{keepColors}{
 logical. If TRUE, it will keep the same colors for all the plots, independently of the filtered groups. Only available if metagroupGenesMatrix is the raw result from \code{\link[FGNet:toMatrix]{toMatrix}}.
 }
+  \item{eColor}{
+character. Color for the edges.
+}
+  \item{weighted}{
+logical. If TRUE, edges width will be based on the number of shared gene-term sets.
+}
 }
 
 \value{
@@ -68,8 +68,8 @@ logical. If TRUE, it will keep the same colors for all the plots, independently 
 \examples{
 jobID <- 3907019
 results <- getResults_gtLinker(jobID, jobName="gtLinkerExample")
-incidMat <- toMatrix(results$geneTermSets, 
-										attribute=results$metagroups[,"Silhouette Width", drop=FALSE], threshold=0)
+incidMat <- toMatrix(results, threshold=0,
+		attribute=results$metagroups[,"Silhouette Width", drop=FALSE])
 
 functionalNetwork(incidMat) 
 functionalNetwork(incidMat, plotType="dynamic") 
@@ -85,5 +85,30 @@ fNw <- functionalNetwork(incidMat, plotType="none", returnGraph=TRUE)
 class(fNw)
 betweenness(fNw)
 igraph.to.graphNEL(fNw)
+
+
+# Term-based network
+incidMatTerms <- toMatrix(results, key="Terms")
+functionalNetwork(incidMatTerms, plotType="dynamic", weighted=TRUE, eColor="grey")
+
+# Including generic terms filterd by GtLinker from final metagroups:
+incidMatTerms2 <- toMatrix(results, key="Terms", removeFiltered=FALSE)
+functionalNetwork(incidMatTerms2, weighted=TRUE)
+
+### DAVID:
+genesMetabolism <- c("YGR175C", "YHR007C", "YMR202W", "YJL167W", 
+ "YNL280C", "YGR060W", "YGL001C", "YLR100W", "YLR056W", "YGL012W",
+ "YMR015C", "YML008C", "YHR072W", "YHR190W", "YKL004W", "YBR036C",
+ "YDR294C", "YDR072C", "YKL008C", "YHL003C", "YMR296C", "YDR062W",
+ "YJL134W", "YOR171C", "YLR260W", "YMR298W", "YMR272C", "YPL057C",
+ "YDR297W", "YBR265W", "YPL087W", "YBR183W", "YKR053C")
+txtFile <- query_david(genesMetabolism)
+results <- getResults_david(txtFile)
+														
+# Term-based network
+incidMatTerms <- toMatrix(results, key="Terms")
+functionalNetwork(incidMatTerms$clustersMatrix, plotType="dynamic")
+									
+
 
 }

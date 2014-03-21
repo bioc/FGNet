@@ -13,55 +13,14 @@ getMGTerms <- function(globalMetagroups, grType, org=NULL)
 	goIds <- list()
 	for(mgName in names(mgTerms))
 	{
-		mg <- mgTerms[[mgName]]
-		terms <- sapply(mg, function(x) strsplit(x, split=":"))
+		descripciones <- clDescriptions(mgTerms[[mgName]], org)
 		
-		# Get term description		
-		descripciones <- t(sapply(terms, function(x)
-		{ 
-			# Annotation
-			annot <- x[1]
-			# Description
-			descr <- capitalize(x[length(x)])
-			
-			# Link (Only for Kegg and Interpro)
-			link <- NA
-			# Interpro
-			# David: 			IPR000719:Protein kinase, core
-			# gtLinker: 	IPR000980:SH2 motif
-			if(substring(x[1], 1, 3) == "IPR")
-			{
-				link <- paste("http://www.ebi.ac.uk/interpro/entry/", x[1], sep="")
-				annot <- "InterPro"
-			}
-			
-			# Kegg
-			# David: 			K:xtr04330:Notch signaling pathway 
-			if(x[1] == "KEGG") link <- paste("http://www.genome.jp/kegg-bin/show_pathway?org_name=", substring(x[2], 1, 3), "&mapno=", substring(x[2], 4, nchar(x[2])), sep="") 
-			
-			# gtLinker: 	Kegg:03040:Spliceosome 
-			if(x[1] == "Kegg") link <- paste("http://www.genome.jp/kegg-bin/show_pathway?org_name=", org, "&mapno=", x[2], sep="")
-			
-			# SMART (Appears in david even if it was not explicitly requested)
-			# David:			SM00181:EGF
-			if(substring(x[1], 1, 3) == "SM0") link <- paste("http://smart.embl.de/smart/do_annotation.pl?DOMAIN=", x[1], sep="")			
-			
-			### NUEVOS
-			if(length(grep("REACT", x[1]))>0) link <- paste("http://www.reactome.org/cgi-bin/link?SOURCE=Reactome&ID=", sub("REACT_", "REACT:", x[1]), sep="")	
-			
-			
-			return (c(annot, descr, link))
-		}))
-		
-		colnames(descripciones) <- c("Annotation", "Description", "Link")
-		
-		descripciones <- descripciones[order(descripciones[,"Description"]),]
+		descripciones <- descripciones[order(descripciones[,"Description"]),, drop=FALSE]
 		termsDescriptions[[mgName]] <- descripciones
 		
 		# GO
-		goIds[[mgName]] <- unlist(sapply(terms, function(x) if(x[1] =="GO") return(x[2])))		
+		goIds[[mgName]] <- unlist(apply(descripciones,1, function(x) if(x["Annotation"] =="GO") return(x["goID"])))	# GO ID is saved in fourth slot 
 	}
-	
 	return(list(termsDescriptions=termsDescriptions, goIds=goIds))
 }
 
@@ -141,7 +100,7 @@ buildTermsTable <- function(termsDescriptions)
 
 
 # Returns the link to the ontology tree for each metagroup go terms
-createGoLinks <- function(goIds, folder)
+goTreeLinks <- function(goIds, folder, downloadGOtree)
 {
 	goTerms <- sapply(goIds, function(x) if(length(x)>0) paste("%22GO%3A", x,"%22%3A{%22fill%22%3A%22%23ccccff%22}", sep="",collapse=","))
 	if(length(goTerms)>0)
@@ -152,15 +111,20 @@ createGoLinks <- function(goIds, folder)
 		fileNames <- paste(folder, paste("GO_", gsub("s ","_",names(goIds)),".png", sep=""),sep="")
 		names(fileNames) <- names(goIds)
 		
-		for(i in 1:length(goLinks)) 
+		if(downloadGOtree)
 		{
-			fileNames[i] <- tryCatch({
-					download.file(url=goLinks[i], destfile=fileNames[i], quiet=TRUE)
-					return(fileNames[i]) # se ha descargado bien: linkar
-			}, error = function(e) {
-					if (file.exists(fileNames[i])) file.remove(fileNames[i])
-				  return(goLinks[i]) # No se ha podido descargar. Link a la url
-			})
+			for(i in 1:length(goLinks)) 
+			{
+				fileNames[i] <- tryCatch({
+						download.file(url=goLinks[i], destfile=fileNames[i], quiet=TRUE)
+						fileNames[i] # se ha descargado bien: linkar
+				}, error = function(e) {
+						if (file.exists(fileNames[i])) file.remove(fileNames[i])
+					  return(goLinks[i]) # No se ha podido descargar. Link a la URL
+				})
+			}
+		}else{
+			fileNames <- goLinks
 		}
 		return(fileNames)
 	} else 
@@ -171,25 +135,30 @@ createGoLinks <- function(goIds, folder)
 
 
 # Main function
-createHtml <- function(htmlFileName, results, tables, metagroupAttributeName, threshold, jobID=NULL, organism=NULL, annotations=NULL, genes=NULL, serverWeb)
+createHtml <- function(htmlFileName, results, tablesGenes, tablesTerms, metagroupAttributeName, threshold, jobID=NULL, organism=NULL, annotations=NULL, genes=NULL, serverWeb, downloadGOtree=TRUE)
 {
-	# Libraries
-	#if (!library(hwriter, logical.return=TRUE)) stop("Libary hwriter is required to generate the HTML report.")
-	#if (!library(R.utils, logical.return=TRUE)) stop("Libary R.utils is required to generate the HTML report.") # Capitalize
-	
 	#####################################################################################################
 	####################################   Initializations   ############################################
 	
+	tables <- tablesGenes
 	grType <- names(results)[1] # $metagroups or $clusters
+	
+	# David or gtLinker?
 	if(grType == "metagroups") 
 	{
 		grType <- "Metagroup"
 		grPrefix <- "mg"
+		
+		mgIncMatrix <- tables$metagroupsMatrix
+		termsNumMg <- apply(tablesTerms$metagroupsMatrix,1,sum)
 	}
 	if(grType == "clusters") 	
 	{
 		grType <- "Cluster"
 		grPrefix <- "cl"
+		
+		mgIncMatrix <- tables$clustersMatrix
+		termsNumMg <- apply(tablesTerms$clustersMatrix,1,sum)
 	}
 	
 	rawMetagroups <- results[[1]]
@@ -200,10 +169,9 @@ createHtml <- function(htmlFileName, results, tables, metagroupAttributeName, th
 	nRawMg <- dim(rawMetagroups)[1]
 	
 	# Get metagroup colors
-	colores <- setColors(as.character(sort(as.numeric(c(colnames(tables$metagroupGenesMatrix), filteredOut)))))[colnames(tables$metagroupGenesMatrix)]
-	#setColors(names(tables$metagroupGenesMatrix))
+	colores <- setColors(as.character(sort(as.numeric(c(colnames(mgIncMatrix), filteredOut)))))[colnames(mgIncMatrix)]
 	
-	globalMetagroups <- rawMetagroups[colnames(tables$metagroupGenesMatrix),]
+	globalMetagroups <- rawMetagroups[colnames(mgIncMatrix),]
 	
 	#### Set locations
 	# Folter to save images etc: Same as downloaded results	
@@ -225,10 +193,24 @@ createHtml <- function(htmlFileName, results, tables, metagroupAttributeName, th
 	
 	# Get metagroup terms
 	mgTerms <- getMGTerms(globalMetagroups, grType, organism)
+	
+	# Add asterisc to terms in several metagroups:
+	termsMultipleMg <- termsNumMg[which(termsNumMg>1)]
+	if(length(termsMultipleMg)>0)
+	{
+		mgTerms$termsDescriptions <- sapply(mgTerms$termsDescriptions, function(x) 
+		{
+			tmp <- rownames(x) %in% names(termsMultipleMg)
+			if(any(tmp))  x[tmp,"Description"] <- paste(x[tmp,"Description"], " *", sep="")
+			x
+		})
+	}
+		
+	# Terms table to write in html: 
 	termsTables <- buildTermsTable(mgTerms$termsDescriptions)
 	
 	goIds <- mgTerms$goIds
-	goLinks <- createGoLinks(goIds,folder)																					
+	goLinks <- goTreeLinks(goIds,folder, downloadGOtree)																					
 	
 	# Copiar CSS a la carpeta actual...
 	cssDir <- file.path(system.file('css', package='FGNet'))
@@ -246,14 +228,14 @@ createHtml <- function(htmlFileName, results, tables, metagroupAttributeName, th
 	networkPlot <- paste(folder, "nwFunctionalNetwork.png", sep="")
 	networkPlot2a <- paste(folder, "nwIntersection_kk.png", sep="")
 	networkPlot2b <- paste(folder, "nwIntersection_circle.png", sep="")
-	networkPlot2c <- paste(folder, "nwIntersection_sugiyama.png", sep="")	
+	#networkPlot2c <- paste(folder, "nwIntersection_sugiyama.png", sep="")	
+	networkTerms <- paste(folder, "nwTerms.png", sep="")
 	distancePlot <- paste(folder, "plot_Distance.png", sep="")
 	iGraphFile <- paste(folder, "iGraph.RData", sep="")
 	simplifiedTable <- paste(folder, "simplifiedTermsTable.txt", sep="")
 	
-	
 	# Set node and label size
-	numNodes <- sum(dim(tables$metagroupGenesMatrix))
+	numNodes <- sum(dim(mgIncMatrix))
 	if(numNodes < 150)
 	{
 		vSize <- 12
@@ -281,13 +263,20 @@ createHtml <- function(htmlFileName, results, tables, metagroupAttributeName, th
 		png(networkPlot2b, width = 800, height = 800)
 		intersectionNetwork(tables, vLayout=c("circle"), plotType="static",  vSize=vSize, vLabelCex=vLabelCex, grPrefix=grPrefix)
 		dev.off()
-		png(networkPlot2c, width = 800, height = 800)
-		intersectionNetwork(tables, vLayout=c("sugiyama"), plotType="static",  vSize=vSize, vLabelCex=vLabelCex, grPrefix=grPrefix)
+# 		png(networkPlot2c, width = 800, height = 800)
+# 		intersectionNetwork(tables, vLayout=c("sugiyama"), plotType="static",  vSize=vSize, vLabelCex=vLabelCex, grPrefix=grPrefix)
+# 		dev.off()
+	}
+	
+	if(length(termsMultipleMg)>0)
+	{
+		png(networkTerms, width = 800, height = 800)
+		intersectionNetwork(tablesTerms, plotType="static", plotTitle=paste("Terms in several ", tolower(grType), "s", sep=""),  plotAllMg=FALSE, vSize=vSize, vLabelCex=vLabelCex, grPrefix=grPrefix) 
 		dev.off()
 	}
 	
-	png(distancePlot)
-	distanceMatrix <- plotMetagroupsDistance(tables$metagroupGenesMatrix)
+	png(distancePlot, width = 600, height = 600)
+	distanceMatrix <- plotMetagroupsDistance(tables)
 	dev.off()
 	
 	save(iGraph, file=iGraphFile)
@@ -318,7 +307,7 @@ createHtml <- function(htmlFileName, results, tables, metagroupAttributeName, th
 	{
 		hwrite("Genes: ", p, class='InfoLabel', br=FALSE)
 		hwrite(paste("(", length(genes), ") ", sep=""), p, br=FALSE)
-		hwrite(paste(genes, sep="", collapse=", "), p, br=TRUE)
+		hwrite(paste(sort(genes), sep="", collapse=", "), p, br=TRUE)
 	}
 	hwrite("Server/Tool: ", p, class='InfoLabel', br=FALSE)
 	hwrite(serverWeb, link=paste(serverWeb, '" target="_blank', sep=""),p, br=TRUE)
@@ -380,13 +369,30 @@ createHtml <- function(htmlFileName, results, tables, metagroupAttributeName, th
 	subImages <- ""
 	if(!is.null(intersectionGraph))
 	{
-		subImages <- c(hwrite('Nodes in several metagroups: ', class='InfoLabel', br=TRUE),
+		closeButton <- '<a href="#close" title="Close" class="close">X</a>'
+		subImages <- c(hwrite(paste('Genes in several ', tolower(grType),'s: ', sep=""), class='InfoLabel', br=TRUE),
 									 hwrite('(Different layouts)'),
-									 hwriteImage(networkPlot2a, class='intersectionNw', link=c(networkPlot2a), br=FALSE),
-									 hwriteImage(networkPlot2b, class='intersectionNw', link=c(networkPlot2b), br=FALSE),
-									 hwriteImage(networkPlot2c, class='intersectionNw', link=c(networkPlot2c), br=FALSE))
+									 
+									 hwriteImage(networkPlot2a, class='intersectionNw', link='#nwIntersection_kk', br=FALSE),
+									 hwrite(paste('<div id="nwIntersection_kk" class="modalDialog"><div>',closeButton, '<img border="0" src="',networkPlot2a,'" width="100%"></div></div>', sep="")),
+									 									 
+									 hwriteImage(networkPlot2b, class='intersectionNw', link='#nwIntersection_circle', br=FALSE),
+									 hwrite(paste('<div id="nwIntersection_circle" class="modalDialog"><div>',closeButton, '<img border="0" src="',networkPlot2b,'" width="100%"></div></div>', sep="")))
+
+		
+		if(length(termsMultipleMg)>0) 
+		{
+			subImages <- c(subImages,
+										 hwrite(paste('Terms in several ', tolower(grType),'s: ', sep=""), class='InfoLabel', br=TRUE),
+										 hwrite('(Marked with * in the table)'),
+										 hwriteImage(networkTerms, class='intersectionNw', link='#nwTerms', br=FALSE),
+										 hwrite(paste('<div id="nwTerms" class="modalDialog"><div>',closeButton, '<img border="0" src="',networkTerms,'" width="100%"></div></div>', sep="")))
+		}
+	
 	}
-	imageTable <- c(hwriteImage(networkPlot, class='network', link=c(networkPlot), br=FALSE), hwrite(subImages, border=0, dim=c(length(subImages),1)))
+	imageTable <- c(hwriteImage(networkPlot, class='network', link='#functionalNetwork', br=FALSE),
+									hwrite(paste('<div id="functionalNetwork" class="modalDialog"><div>',closeButton, '<img border="0" src="',networkPlot,'" width="100%"></div></div>', sep="")),
+									hwrite(subImages, border=0, dim=c(length(subImages),1), class="ImageTable"))
 	hwrite(c(imageTable), p, border=0, class="ImageTable")
 	
 	if(grType == "Metagroup") hwrite("Metagroups (sorted by Silhouette): ", p, br=TRUE)
@@ -408,13 +414,13 @@ createHtml <- function(htmlFileName, results, tables, metagroupAttributeName, th
 			attrs <- c("", # "Silhouette  only in GtLinker
 								 paste("Score: ", signif(as.numeric(as.character(globalMetagroups[mg, "EnrichmentScore"])),2),sep=""))
 		}		
-		
-		linkGenes <- paste("Num genes: ", '<a href="#" title="', sort(gsub(",", " ", globalMetagroups[mg, "Genes"])),'" class="tooltip"><span title="Genes">', globalMetagroups[mg, "nGenes"], '</span></a>',sep="")			 
-		txtGenes <- paste(globalMetagroups[mg, "nGenes"], " genes: ", sort(gsub(",", " ", globalMetagroups[mg, "Genes"])), sep="")
+		tmpGenes <- paste(sort(unlist(strsplit(as.character(globalMetagroups[mg, "Genes"]), ","))), collapse=", ")
+		linkGenes <- paste("Genes: ", '<a href="#close" title="', tmpGenes,'" class="tooltip"><span title="Genes">', globalMetagroups[mg, "nGenes"], '</span></a>',sep="")			 
+		txtGenes <- paste(globalMetagroups[mg, "nGenes"], " genes: ", tmpGenes, sep="")
 		attrsTxt <- c(attrs, txtGenes)
 		attrs <- c(attrs, linkGenes)					 
 		
-		terms <- rbind(termsTables[[mg]], if(!is.na(goLinks[names(termsTables)[mg]])) cbind("", paste("<a href='",goLinks[names(termsTables)[mg]],"'' target='_blank' class='goLink'>[GO terms tree]</a>", sep="")))
+		terms <- rbind(termsTables[[mg]], if(!is.na(goLinks[names(termsTables)[mg]])) cbind("", paste("<a href='",goLinks[names(termsTables)[mg]],"'' target='_blank' class='goLink'>[GO tree]</a>", sep="")))
 		
 		termsTable <- c(termsTable, hwrite(c(mgName, attrs), class='mgAttr', table=TRUE, border=0), 
 										hwrite(terms, table=TRUE, col.class=list("termsRow", "annotRow")))
@@ -425,6 +431,15 @@ createHtml <- function(htmlFileName, results, tables, metagroupAttributeName, th
 	#bgCols <- c(strsplit(paste(substr(colores, 1, 7)[rownames(globalMetagroups)], "#FFFFFF", collapse=" "), split=" ")[[1]],"#FFFFFF")
 	borderCols <- paste('border-color:', strsplit(paste(substr(colores, 1, 7), substr(colores, 1, 7), collapse=" "), split=" ")[[1]], sep="")
 	hwrite(termsTable, p, border=1, class=rep(c('mgHeader', 'Terms'), length(termsTable)/2), row.style=borderCols, dim=c(length(termsTable),1))
+	
+	# Explanation of asterisc (there are terms in several metagroups):
+	if(length(termsMultipleMg)>0) 
+	{
+		hwrite(paste("<i>* Terms marked with an asterisc are in several ", tolower(grType),"s.</i>", sep=""), p, br=TRUE)
+		#hwriteImage(networkTerms, p, link=c(networkTerms), br=TRUE,border=0)	
+	} else {
+		hwrite(paste("<i>(There are no terms in more than one ", tolower(grType),")</i>", sep=""), p, br=TRUE)
+	}
 	
 	# Distances Plot	
 	if(!is.null(distanceMatrix))
@@ -444,7 +459,7 @@ createHtml <- function(htmlFileName, results, tables, metagroupAttributeName, th
 									 hwrite(round(distanceMatrix,2), table=TRUE, border=0, class='matrix', br=FALSE))
 		imageTable <- c(hwriteImage(distancePlot, class='distance', link=distancePlot, br=TRUE), hwrite(subImages, border=0, dim=c(length(subImages),1)))
 		
-		hwrite(c(imageTable), p, table=TRUE, border=0, class="ImageTable")
+		hwrite(c(imageTable), p, table=TRUE, border=0) #, class="ImageTable"
 	}
 	closePage(p)
 	

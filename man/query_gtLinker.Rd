@@ -62,5 +62,12 @@ genesYeast <- c("ADA2", "APC1", "APC11", "APC2", "APC4", "APC5", "APC9",
 
 jobID <- query_gtLinker(genesYeast, organism = "Sc",
  annotations = c("KEGG_Pathways"), minSupport = 3)
+ 
+ 
+# To continue the workflow... (see help for further details)
+jobID <- 3907019
+results <- getResults_gtLinker(jobID)
+incidMat <- toMatrix(results)
+functionalNetwork(incidMat)
 }
 }

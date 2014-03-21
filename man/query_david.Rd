@@ -81,5 +81,11 @@ txtFile_ws <- query_david(genesYeast, email="example@email.com")
 # To obtain exactly the same results using the web service, use:
 API_defaults <- c(overlap=3L, initialSeed=3L, finalSeed=3L, linkage=0.5, kappa=50L) 
 query_david(genesYeast, email="...", argsWS=API_defaults)
+
+
+# To continue the workflow... (see help for further details)
+results <- getResults_david(txtFile)
+incidMat <- toMatrix(results)
+functionalNetwork(incidMat)
 }
 }
