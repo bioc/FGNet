@@ -60,11 +60,11 @@ intersectionNetwork <- function(metagroupsMatrix, plotType="dynamic", vLayout="k
 	#################################### Create Matrices  ###############################################	
 	genesInManyMg <- which(apply(metagroupsMatrix, 1, sum)>1)
 	
-	if(!plotAllMg) metagroupsMatrix <- metagroupsMatrix[names(genesInManyMg),apply(metagroupsMatrix[names(genesInManyMg),], 2, sum)>0]
-
 	mgJoinedGraph <- NULL
 	if((length(genesInManyMg)>1) && any(plotType %in% c("static", "dynamic")))
 	{
+		if(!plotAllMg) metagroupsMatrix <- metagroupsMatrix[names(genesInManyMg),apply(metagroupsMatrix[names(genesInManyMg),], 2, sum)>0]
+		
 		mgJoined <- metagroupsMatrix[names(genesInManyMg),]
 		
 		# Replace 1 by mg number (for vertex color)

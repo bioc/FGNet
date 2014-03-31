@@ -367,9 +367,9 @@ createHtml <- function(htmlFileName, results, tablesGenes, tablesTerms, metagrou
 	# Functional Network plot
 	#hwrite("Functional Network: ", p, heading=3)
 	subImages <- ""
+	closeButton <- '<a href="#close" title="Close" class="close">X</a>'
 	if(!is.null(intersectionGraph))
-	{
-		closeButton <- '<a href="#close" title="Close" class="close">X</a>'
+	{		
 		subImages <- c(hwrite(paste('Genes in several ', tolower(grType),'s: ', sep=""), class='InfoLabel', br=TRUE),
 									 hwrite('(Different layouts)'),
 									 
