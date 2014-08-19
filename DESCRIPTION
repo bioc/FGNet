@@ -14,4 +14,4 @@ License: GPL (>= 2)
 URL: http://gtlinker.cnb.csic.es
 LazyLoad: yes
 biocViews: Annotation, GO, Pathways, GeneSetEnrichment, Network, Visualization,
-FunctionalGenomics, NetworkEnrichment, Clustering
+  FunctionalGenomics, NetworkEnrichment, Clustering
