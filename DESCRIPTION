@@ -7,11 +7,10 @@ Date: 2014-03-21
 Author: Sara Aibar, Celia Fontanillo, Conrad Droste and Javier De Las Rivas. Bioinformatics and Functional Genomics Group. Cancer Research Center (CiC-IBMCC, CSIC/USAL). Salamanca. Spain.
 Maintainer: Sara Aibar <saibar@usal.es>
 Depends: R (>= 2.15)
-Imports: igraph (>= 0.6), RCurl, hwriter, R.utils, XML
-Enhances: RColorBrewer, png, RDAVIDWebService
-Suggests: RUnit, BiocGenerics, org.Sc.sgd.db
+Imports: igraph (>= 0.6), RCurl, hwriter, R.utils, XML,  plotrix, reshape2, RColorBrewer, png, RGtk2, gage, topGO, KEGGprofile, BiocInstaller
+Suggests: GO.db, KEGG.db, reactome.db, RDAVIDWebService, RUnit, BiocGenerics, org.Sc.sgd.db
 License: GPL (>= 2)
-URL: http://gtlinker.cnb.csic.es
+URL: http://www.cicancer.org
 LazyLoad: yes
 biocViews: Annotation, GO, Pathways, GeneSetEnrichment, Network, Visualization,
   FunctionalGenomics, NetworkEnrichment, Clustering

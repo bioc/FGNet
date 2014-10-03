@@ -1,3 +1,37 @@
+CHANGES IN VERSION 3.0
+------------------------
+NEW FEATURES
+    o Graphical User Interface (GUI)
+    o New FEA tools: topGO and gage (GSA)
+    o Plot gene expression (up/down) in the functional networks (Available since devel. version 2.1)
+    o plotGoAncestors, plotKegg
+	
+INTERFACE CHANGES 
+Functions renamed or replaced:
+    o toMatrix/adjMatrix: fea2incidMat
+    o plotMetagroupsDistance: clusterDistance
+    o query_gtLinker & getResults_gtLinker: fea_gtLinker & fea_gtLinker_getResults
+    o query_david & getResults_david: fea_david & format_david
+    o report_gtLinker & report_david: FGNet_report
+    o intersectionNetwork: is now included in functionalNetwork
+
+CHANGES IN VERSION 2.1
+------------------------
+NEW FEATURES
+    o Expression in functionalNetwork: It is now possible to plot gene expression (up/down) in the network.
+    o plotGoAncestors: New function.
+    o report: Added option to show only the most specific GO terms (tree leaves: terms at the bottom of the ontology). Kegg pathway plot can now be plotted and saved locally.
+    o Added p-value stats to clusters matrix.
+    o Side colors added to metagroups heatmap.
+    o toMatrix: added argument sepChar, legendPrefix and filterOperator. Attribute and threshold renamed to filterAttribute and filterThreshold.
+    o functionalNetwork: added arguments plotIntersectionNetwork,plotTitleSub.
+    o getResults_gtLinker: added argument organism (adds the prefix to kegg id).
+    o getResults_david: inputFileLocation renamed to fileName
+    
+BUG FIXES
+    o GO ontology plot: now done locally through plotGoAncestors.
+    o toMatrix: Accepts characters in cluster column (provides more flexibility with non-clustered/modular FEA and support to build term-term and term-genes networks). Arguments: legendMg renamed to legendText.   
+	    
 CHANGES IN VERSION 2.0
 ------------------------
 NEW FEATURES
@@ -9,7 +43,7 @@ NEW FEATURES
     o Reports: Added argument 'downloadGOtree' to allow choosing wether to download the go term trees png (slower) or just provide the link to the web tool.
     
 BUG FIXES
-    o functionalNetwork() now correctly  writes either "cl" or "mg" in the legend
+    o functionalNetwork() now correctly  writes either "cl" or "mg" in the legend.
 
 CHANGES IN VERSION 1.3.1
 ------------------------

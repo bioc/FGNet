@@ -1,21 +1,69 @@
-export(query_gtLinker)
-export(getResults_gtLinker)
-export(query_david)
-export(getResults_david)
-export(adjMatrix)
-export(toMatrix)
+export(FGNet_GUI)
+export(FGNet_report)
+
+export(fea_gtLinker)
+export(fea_gtLinker_getResults)
+export(fea_david)
+export(fea_gage)
+export(fea_topGO)
+
+export(format_david)
+export(format_results)
+export(readGeneTermSets)
+
+export(fea2incidMat)
 export(functionalNetwork)
-export(intersectionNetwork)
-export(plotMetagroupsDistance)
-export(report_gtLinker)
-export(report_david)
+export(clustersDistance)
+export(analyzeNetwork)
+
 export(getTerms)
-
-
+export(plotGoAncestors)
+export(keywordsTerm)
+export(plotKegg)
+ 
 import(igraph)
-import(RCurl)
-import(hwriter)
+import(png)
+
+import(RGtk2)
+
 importFrom(R.utils, capitalize)
 importFrom(R.utils, decapitalize)
 importFrom(XML, xmlToDataFrame)
+importFrom(plotrix, color.scale)
+importFrom(reshape2, melt)
+importFrom(RColorBrewer, brewer.pal)
+
+importFrom(topGO, annFUN.db)
+importFrom(topGO, annFUN.gene2GO)
+importFrom(topGO, getSigGroups)
+importFrom(topGO, GenTable)
+importFrom(topGO, genesInTerm)
+importFrom(topGO, sigGenes)
+importFrom(topGO, GOFisherTest)
+
+
+
+
+importFrom(gage,gage)
+importFrom(gage,esset.grp)
+importFrom(gage,readList)
+
+importFrom(KEGGprofile, parse_XMLfile)
+importFrom(KEGGprofile, plot_profile)
+
+importFrom(hwriter,hwrite)
+importFrom(hwriter,hwriteImage)
+importFrom(hwriter,openPage)
+importFrom(hwriter,closePage)
+
+importFrom(RCurl, parseHTTPHeader)
+importFrom(RCurl, basicTextGatherer)
+importFrom(RCurl, getCurlHandle)
+importFrom(RCurl, getURL)
+importFrom(RCurl, postForm)
+importFrom(RCurl, url.exists)
+importFrom(RCurl, curlPerform)
+
+importFrom(BiocInstaller, biocLite)
+
 

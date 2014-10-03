@@ -6,12 +6,13 @@
 Functional gene networks derived from biological enrichment analyses
 }
 \description{
-Build and visualize functional gene/protein networks from clustering of enrichment analyses in multiple annotation spaces. The package includes an interface to perform the enrichment through David and GeneTerm Linker.
+Build and visualize functional gene and term networks from clustering of enrichment analyses in multiple annotation spaces. The package includes a graphical user interface (GUI) and functions to perform the functional enrichment analysis through DAVID, GeneTerm Linker, gage (GSA) and topGO.
 }
 \details{
 \tabular{ll}{
 Package: \tab FGNet\cr
 Type: \tab Package\cr
+Version: \tab 3.0\cr
 License: \tab GPL (>= 2)\cr
 }
 }
@@ -21,42 +22,77 @@ Author:  Sara Aibar, Celia Fontanillo and Javier De Las Rivas. Bioinformatics an
 If you have any issue, you can contact us at: <jrivas at usal.es> 
 }
 \seealso{
-\code{\link[FGNet:report]{report_gtLinker()}} and \code{\link[FGNet:report]{report_david()}} are wrapper functions that include all the following steps and generate an HTML report.\cr 
+\code{\link[FGNet:FGNet_GUI]{FGNet_GUI()}} provides a Graphical User Interface (GUI) to most of the functionalities of the package: Performing a Functional Enrichment Analysis (FEA) of a list of genes, and analyzing it through the functional networks. 
 
-The workflow to generate the functional networks include the following steps:\cr
- 1. - Query/Analize (optional): Performs the analysis through GeneTerm Linker [1] or DAVID [2].  \code{\link[FGNet:query_gtLinker]{query_gtLinker()}} returns the analysis jobID and \code{\link[FGNet:query_david]{query_david()}} the url of the .txt file with the results.\cr
- 2. - Get results: Retrieves the analysis results (metagroups/clusters and gene-term sets) from the server and formats them. This can be done through \code{\link[FGNet:getResults_gtLinker]{getResults_gtLinker()}} and \code{\link[FGNet:getResults_david]{getResults_david()}}\cr 
- 3. - Transform into incidence matrices: \code{\link[FGNet:toMatrix]{toMatrix()}} transforms the metagroups and gene-term sets (gtset) into genes-metagroups and genes-gtsets matrices.\cr
- The incidence matrices can also be term-based in order to build the network of associated terms.
- 4. - Plot the functional gene network: Network representing the common functions of the genes (or terms). \cr
- The main function is \code{\link[FGNet:functionalNetwork]{functionalNetwork()}}), but \code{\link[FGNet:intersectionNetwork]{intersectionNetwork()}} \cr 
- and \code{\link[FGNet:plotMetagroupsDistance]{plotMetagroupsDistance()}} are also available.\cr    
+1. The Functional Enrichment Analysis an be performed through several tools:
+
+\itemize{
+\item{DAVID [1]: \code{\link[FGNet:fea_david]{fea_david()}} (Requires internet connection)}
+\item{GeneTerm Linker [2]: \code{\link[FGNet:fea_gtLinker]{fea_gtLinker()}} & \code{fea_gtLinker_getResults()}
+ (Requires internet connection)}
+\item{\link[gage:gage]{gage} [3]: \code{\link[FGNet:fea_gage]{fea_gage()}} (GSA analysis. For offline use requires gene sets or installed database packages)}
+\item{\link[topGO:getSigGroups]{topGO} [4]: \code{\link[FGNet:fea_topGO]{fea_topGO()}} (Only supports GO. For offline use requires having installed the required database packages)}
+    
+There are also a few functions to import the results from a previous FEA analysis: \code{\link[FGNet:format_david]{format_david()}}, \code{format_results()} and \code{\link[FGNet:readGeneTermSets]{readGeneTermSets()}}.    
+
+}
+
+2. \code{\link[FGNet:FGNet_report]{FGNet_report()}}: automatically generates a report with the default network options. It includes the following steps, wich can be executed individually to personalize or explore the networks:
+\enumerate{
+\item{\code{\link[FGNet:fea2incidMat]{fea2incidMat()}}: Transforms the FEA output into incidence matrices. These function determines wether the network will be gene- or term-based.}
+ 
+\item{\code{\link[FGNet:functionalNetwork]{functionalNetwork()}}: Generates and plots the functional networks. 
+These networks can be further explored by \code{\link[FGNet:analyzeNetwork]{analyzeNetwork()}} and \code{\link[FGNet:clustersDistance]{clustersDistance()}}. 
+
+Other auxiliary functions:
+\code{\link[FGNet:getTerms]{getTerms()}}, 
+\code{\link[FGNet:keywordsTerm]{keywordsTerm()}}, 
+\code{\link[FGNet:plotGoAncestors]{plotGoAncestors()}}, 
+\code{\link[FGNet:plotKegg]{plotKegg()}}.}
+}
+
+For more info see the package tutorial: \code{vignette("FGNet-vignette")}
 }
 \references{
-	[1] Fontanillo C, Nogales-Cadenas R, Pascual-Montano A, De Las Rivas J (2011) Functional Analysis beyond Enrichment: Non-Redundant Reciprocal Linkage of Genes and Biological Terms. PLoS ONE 6(9): e24289. URL: \url{http://gtlinker.cnb.csic.es}\cr
+	[1] Fontanillo C, Nogales-Cadenas R, Pascual-Montano A, De Las Rivas J (2011) Functional Analysis beyond Enrichment: Non-Redundant Reciprocal Linkage of Genes and Biological Terms. PLoS ONE 6(9): e24289. URL: \url{http://gtlinker.cnb.csic.es}
 	
 	[2] Huang DW, Sherman BT, Lempicki RA (2009) Bioinformatics enrichment tools: paths toward the comprehensive functional analysis of large gene lists. Nucleic Acids Res. 37(1):1-13. URL: \url{http://david.abcc.ncifcrf.gov/}
+    
+    [3] Luo W, Friedman MS, Shedden K, Hankenson KD, Woolf PJ (2009) GAGE: generally applicable gene set enrichment for pathway analysis. BMC Bioinformatics. 10:161. URL: \url{http://www.bioconductor.org/packages/release/bioc/html/gage.html}
+    
+    [4] Adrian Alexa and Jorg Rahnenfuhrer (2010) topGO: Enrichment analysis for Gene Ontology. R package version 2.16.0. URL: \url{http://www.bioconductor.org/packages/release/bioc/html/topGO.html}
 }
 \examples{
-genesYeast <- c("ADA2", "APC1", "APC11", "APC2", "APC4", "APC5", "APC9", 
-"CDC16", "CDC23", "CDC26", "CDC27", "CFT1", "CFT2", "DCP1", "DOC1", "FIP1", 
-"GCN5", "GLC7", "HFI1", "KEM1", "LSM1", "LSM2", "LSM3", "LSM4", "LSM5", 
-"LSM6", "LSM7", "LSM8", "MPE1", "NGG1", "PAP1", "PAT1", "PFS2", "PTA1", 
-"PTI1", "REF2", "RNA14", "RPN1", "RPN10", "RPN11", "RPN13", "RPN2", "RPN3", 
-"RPN5", "RPN6", "RPN8", "RPT1", "RPT3", "RPT6", "SGF11", "SGF29", "SGF73", 
-"SPT20", "SPT3", "SPT7", "SPT8", "TRA1", "YSH1", "YTH1")
+\dontrun{
 
-# Run analysis and generate HTML report:
-# GtLinker:
-org <- "Sc"
-annots <- c("KEGG_Pathways")
-# report_gtLinker(genesYeast, annotations=annots, organism=org, jobName="ExampleYeast")
+# GUI:
+FGNet_GUI()
 
-# More examples in:
-if (interactive())
-    vignette("FGNet-vignette")
+# 1. FEA:
+genesYeast <- c("YBL084C", "YDL008W", "YDR118W", "YDR301W", "YDR448W", "YFR036W", "YGL240W", "YHR166C", "YKL022C", "YLR102C", "YLR115W", "YLR127C", "YNL172W", "YOL149W", "YOR249C")
+# Optional: Gene expression
+genesYeast <- setNames(c(rep(1,10),rep(-1,5)), genesYeast)
+
+results <- fea_david(names(genesYeast), email="your@email.com")
+
+# 2 A) Report:
+FGNet_report(results, geneExpr=genesYeast)
+
+# 2 B) Step by step:
+# 2.1. Create incidence matrices:
+incidMat <- fea2incidMat(results)
+incidMat_terms <- fea2incidMat(results, key="Terms")
+
+# 2.2. Explore networks:
+functionalNetwork(incidMat)
+functionalNetwork(incidMat_terms, plotType="bipartite", plotOutput="dynamic")
+getTerms(results)
+
+analyzeNetwork(incidMat)
+clustersDistance(incidMat)
+
 }
-
+}
 \keyword{ package }
 \keyword{ interface }
 \keyword{ graphs }

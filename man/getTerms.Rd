@@ -7,11 +7,14 @@ Get terms in the metagroups/clusters.
 Gets the terms in each metagroup/cluster (simplifyes the raw output from GeneTermLinker or DAVID).
 }
 \usage{
-getTerms(results)
+getTerms(feaResults, returnValue = "description")
 }
 \arguments{
-  \item{results}{
-Output returned by \code{\link[FGNet:getResults_gtLinker]{getResults_gtLinker()}} or \code{\link[FGNet:getResults_david]{getResults_david()}}.
+  \item{feaResults}{
+Output returned by any of the \link[FGNet:fea_david]{fea functions}.
+}
+  \item{returnValue}{
+"description" Returns term description, "GO" or "KEGG" returns GO or KEGG term IDs.
 }
 }
 \value{
@@ -22,10 +25,8 @@ Full description of the package:
 \code{\link[FGNet:FGNet-package]{FGNet}}
 }
 \examples{
-\dontrun{
-# GeneTermLinker
-jobID <- 9396814
-results <- getResults_gtLinker(jobID)
+
+results <- fea_gtLinker_getResults(jobID=1963186)
 getTerms(results)
-}
+
 }

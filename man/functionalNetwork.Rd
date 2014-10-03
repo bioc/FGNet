@@ -1,31 +1,56 @@
 \name{functionalNetwork}
 \alias{functionalNetwork}
+\alias{intersectionNetwork}
 \title{
-Create and plot the functional gene network.
+Creates and plots the functional gene network.
 }
 \description{
-Plots the gene network. Edges join nodes with  common gene-term sets. Background and node color represent metagroup/clusters. White nodes are in several metagroups/clusters.
+Plots the functional networks. 
+
+The default network links genes to genes, or terms to terms. The bipartite network links genes or terms to their clusters. 
 }
 \usage{
-
-functionalNetwork(incidMatrices, plotType="static", returnGraph=FALSE,
-plotTitle="Functional Network", vSize=12, vLabelCex=3/4, 
-vLayout=NULL, bgTransparency=0.4, legendMg=NULL, keepColors=TRUE,
-eColor="#323232", weighted=FALSE)
+functionalNetwork(incidMatrices, plotType = c("default", "bipartite")[1], plotOutput = "static", 
+plotTitle = "Functional Network", plotTitleSub = NULL, legendPrefix = NULL, legendText = NULL, 
+geneExpr = NULL, plotExpression = c("border", "fill"), 
+vSize = 12, vLabelCex = 3/4, vLayout = NULL, keepColors = TRUE, 
+bgTransparency = 0.4, eColor = "#323232", eWidth=NULL, weighted = FALSE, 
+keepAllNodes = FALSE, plotAllMg = FALSE)
 }
 
 \arguments{
- \item{incidMatrices}{
-list or matrix. Raw output (list) from \code{\link[FGNet:toMatrix]{toMatrix}}.  List with slots:  "gtSetsMatrix", "filteredOut" and either "metagroupsMatrix" or "clustersMatrix". If only a matrix is provided, it will be asumed to be the metagroups matrix, and all nodes will be connected to every other node in the metagroup.
+  \item{incidMatrices}{
+list or matrix. Raw output (list) from \code{\link[FGNet:fea2incidMat]{fea2incidMat}}: a list with slots:  "gtSetsMatrix", "filteredOut" and either "metagroupsMatrix" or "clustersMatrix". If only a matrix is provided, it will be asumed to be the clusters matrix, and all nodes will be connected to every other node in the metagroup.
 }
   \item{plotType}{
-character "static", "dynamic" or "none". "static" will generate a standard plot. "dynamic" will produce an interactive tkplot. In the interactive plot metagroups background cannot be drawn, instead the intersection network will also be shown. "none" will not plot the network.
+"default" or "bipartite". 
+
+Default network: Nodes are either genes or terms. Edges join nodes in common gene-term sets. Background and node color represent cluster/metagroup. White nodes are in several  clusters/metagroups.
+
+Bipartite network: Nodes are genes or terms and their clusters. 
+By default it keeps only the genes or terms in more than one cluster or metagroup, which represents a simplified version of the functional network.
+
 }
-  \item{returnGraph}{
-logical. If TRUE, the igraph object containing the network is returned.
+  \item{plotOutput}{
+"static", "dynamic" or "none". "static" will generate a standard R plot. "dynamic" will produce an interactive tkplot (metagroups background cannot be drawn). "none" will not plot the network.
 }
   \item{plotTitle}{
 character. Title to show on the plot.
+}
+  \item{plotTitleSub}{
+character. Text to show at the bottom of the plot (sub-title).
+}
+  \item{legendPrefix}{
+character. Label to show next to the cluster/metagroup id in the legend. If FALSE, legend is not shown. In the bipartite network the legens replaces the cluster node label.
+}
+  \item{legendText}{
+character. Description of each cluster (shown as the legend).
+}
+  \item{geneExpr}{
+numeric. Named vector with the relative expression value of the gene (node). 0 is taken as reference, positive values will be plotted red, negative values green.
+}
+  \item{plotExpression}{
+character. Determines the way to plot the expression: "border" adds a red or green border to the node, "fill" colors the whole with the expression color instead of the metagroup color.
 }
   \item{vSize}{
 numeric. Vertex size.
@@ -34,81 +59,94 @@ numeric. Vertex size.
 numeric. A numerical value giving the amount by which plotting text and symbols should be magnified relative to the default label size. 
 }
   \item{vLayout}{
-2 x n matrix. Where n is the number of nodes in the graph, each column gives the (x, y)-coordinates for the corresponding node.
-}
-  \item{bgTransparency}{
-numeric. Value between 0 and 1 for the transparency of the metagroups background.
-}
-  \item{legendMg}{
-character. Label to show next to the metagroup/cluster id in the legend. If FALSE, legend is not shown.
+2 x n matrix or character. Where n is the number of nodes in the graph, each column gives the (x, y)-coordinates for the corresponding node. The bipartite network accepts "kk" (Kamada Kawai), "circle", or "sugiyama" (hierarquical).
 }
   \item{keepColors}{
-logical. If TRUE, it will keep the same colors for all the plots, independently of the filtered groups. Only available if metagroupGenesMatrix is the raw result from \code{\link[FGNet:toMatrix]{toMatrix}}.
+logical. If TRUE, it will keep the same colors for all the plots, independently of the filtered groups. Only available if incidMatrices is the raw result from \code{\link[FGNet:fea2incidMat]{fea2incidMat()}}.
+}
+  \item{bgTransparency}{
+numeric. Value between 0 and 1 for the transparency of the metagroups background (only default network).
 }
   \item{eColor}{
 character. Color for the edges.
 }
+  \item{eWidth}{
+numeric. Edge width. Set to 0 not to plot edges.
+}
   \item{weighted}{
 logical. If TRUE, edges width will be based on the number of shared gene-term sets.
 }
+  \item{keepAllNodes}{
+logical. Only used in bipartite network. If FALSE, nodes in only one cluster are not plotted. If TRUE, all nodes in the clusters are shown.
+}
+  \item{plotAllMg}{
+logical. Only used in bipartite network. If FALSE, non-connected clusters are not plotted. If TRUE, all non-filtered clusters are shown.
+}
+}
+\value{
+Plots the functional networks.
+ 
+An \link[base:invisible]{invisible} list with the igraph networks and incidence matrices, to collect it assign it to a variable.
 }
 
-\value{
- Plots the functional network.\cr
- If plotType="dynamic" it also plots the \link[FGNet:intersectionNetwork]{intersectionNetwork}.\cr
- If returnGraph=TRUE: Returns the igraph object with the network.\cr
-}
 
 \seealso{
-  To see the terms included in each metagroup or cluster: 
-    \code{\link[FGNet:getTerms]{getTerms()}}
-	Full description of the package:
-		\code{\link[FGNet:FGNet-package]{FGNet}}
+Previous step in the workflow: \code{\link[FGNet:fea2incidMat]{fea2incidMat()}}
+    
+To see the terms included in each cluster or metagroup: \code{\link[FGNet:getTerms]{getTerms()}}
+
+Overview of the package: \code{\link[FGNet:FGNet-package]{FGNet}}
+
+Package tutorial: \code{vignette("FGNet-vignette")}
 }
 \examples{
-jobID <- 3907019
-results <- getResults_gtLinker(jobID, jobName="gtLinkerExample")
-incidMat <- toMatrix(results, threshold=0,
-		attribute=results$metagroups[,"Silhouette Width", drop=FALSE])
+###################################################
+# Previous steps
+# Set gene list:
+genesYeast <- c("ADA2", "APC1", "APC11", "APC2", "APC4", "APC5", "APC9", 
+                "CDC16", "CDC23", "CDC26", "CDC27", "CFT1", "CFT2", "DCP1", "DOC1", "FIP1", 
+                "GCN5", "GLC7", "HFI1", "KEM1", "LSM1", "LSM2", "LSM3", "LSM4", "LSM5", 
+                "LSM6", "LSM7", "LSM8", "MPE1", "NGG1", "PAP1", "PAT1", "PFS2", "PTA1", 
+                "PTI1", "REF2", "RNA14", "RPN1", "RPN10", "RPN11", "RPN13", "RPN2", "RPN3", 
+                "RPN5", "RPN6", "RPN8", "RPT1", "RPT3", "RPT6", "SGF11", "SGF29", "SGF73", 
+                "SPT20", "SPT3", "SPT7", "SPT8", "TRA1", "YSH1", "YTH1")
+# Optional gene expression
+genesYeast <- setNames(c(rep(1,29), rep(-1,30)), genesYeast) # 1=UP, -1=DW
 
-functionalNetwork(incidMat) 
-functionalNetwork(incidMat, plotType="dynamic") 
+# FEA:
+# jobID <- query_gtLinker(names(genesYeast), organism = "Sc")
+jobID <- 3907019
+results <- fea_gtLinker_getResults(jobID)
+
+###################################################
+# Gene-based networks:
+incidMat <- fea2incidMat(results, filterAttribute="Silhouette Width")
+
+functionalNetwork(incidMat, geneExpr=genesYeast)
+functionalNetwork(incidMat, plotType="bipartite", plotOutput="dynamic")
+
 getTerms(results)
 
 # To modify the layout and plot as static network (with metagroup background)...
 library(igraph)
 saveLayout <- tkplot.getcoords(1)   # tkp.id (ID of the tkplot window)
-functionalNetwork(incidMat, vLayout=saveLayout)
+functionalNetwork(incidMat, vLayout=saveLayout, plotType="bipartite")
 
 # Only return the network, without plotting
-fNw <- functionalNetwork(incidMat, plotType="none", returnGraph=TRUE) 
+fNw <- functionalNetwork(incidMat, plotOutput="none") 
 class(fNw)
-betweenness(fNw)
-igraph.to.graphNEL(fNw)
+names(fNw)
+betweenness(fNw$iGraph$commonClusters)
+igraph.to.graphNEL(fNw$iGraph$commonClusters)
 
-
+###################################################
 # Term-based network
-incidMatTerms <- toMatrix(results, key="Terms")
-functionalNetwork(incidMatTerms, plotType="dynamic", weighted=TRUE, eColor="grey")
+incidMat_terms <- fea2incidMat(results, key="Terms")
+functionalNetwork(incidMat_terms, weighted=TRUE, plotOutput="dynamic")
+functionalNetwork(incidMat_terms, plotType="bipartite", plotOutput="dynamic", plotAllMg=TRUE)
+functionalNetwork(incidMat_terms, plotType="bipartite", plotOutput="dynamic", keepAllNodes=TRUE)
 
 # Including generic terms filterd by GtLinker from final metagroups:
-incidMatTerms2 <- toMatrix(results, key="Terms", removeFiltered=FALSE)
-functionalNetwork(incidMatTerms2, weighted=TRUE)
-
-### DAVID:
-genesMetabolism <- c("YGR175C", "YHR007C", "YMR202W", "YJL167W", 
- "YNL280C", "YGR060W", "YGL001C", "YLR100W", "YLR056W", "YGL012W",
- "YMR015C", "YML008C", "YHR072W", "YHR190W", "YKL004W", "YBR036C",
- "YDR294C", "YDR072C", "YKL008C", "YHL003C", "YMR296C", "YDR062W",
- "YJL134W", "YOR171C", "YLR260W", "YMR298W", "YMR272C", "YPL057C",
- "YDR297W", "YBR265W", "YPL087W", "YBR183W", "YKR053C")
-txtFile <- query_david(genesMetabolism)
-results <- getResults_david(txtFile)
-														
-# Term-based network
-incidMatTerms <- toMatrix(results, key="Terms")
-functionalNetwork(incidMatTerms$clustersMatrix, plotType="dynamic")
-									
-
-
+incidMat_terms2 <- fea2incidMat(results, key="Terms", removeFiltered=FALSE)
+functionalNetwork(incidMat_terms2, weighted=TRUE)
 }
