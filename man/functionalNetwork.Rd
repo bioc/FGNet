@@ -10,12 +10,13 @@ Plots the functional networks.
 The default network links genes to genes, or terms to terms. The bipartite network links genes or terms to their clusters. 
 }
 \usage{
-functionalNetwork(incidMatrices, plotType = c("default", "bipartite")[1], plotOutput = "static", 
-plotTitle = "Functional Network", plotTitleSub = NULL, legendPrefix = NULL, legendText = NULL, 
-geneExpr = NULL, plotExpression = c("border", "fill"), 
-vSize = 12, vLabelCex = 3/4, vLayout = NULL, keepColors = TRUE, 
-bgTransparency = 0.4, eColor = "#323232", eWidth=NULL, weighted = FALSE, 
-keepAllNodes = FALSE, plotAllMg = FALSE)
+functionalNetwork(incidMatrices, plotType = c("default", "bipartite")[1], 
+    plotOutput = "static", plotTitle = "Functional Network", 
+    plotTitleSub = NULL, legendPrefix = NULL, legendText = NULL, 
+    geneExpr = NULL, plotExpression = c("border", "fill"), 
+    vSize = 12, vLabelCex = 3/4, vLayout = NULL, keepColors = TRUE, 
+    bgTransparency = 0.4, eColor = "#323232", eWidth=NULL, weighted = FALSE, 
+    keepAllNodes = FALSE, plotAllMg = FALSE)
 }
 
 \arguments{
@@ -104,12 +105,12 @@ Package tutorial: \code{vignette("FGNet-vignette")}
 # Previous steps
 # Set gene list:
 genesYeast <- c("ADA2", "APC1", "APC11", "APC2", "APC4", "APC5", "APC9", 
-                "CDC16", "CDC23", "CDC26", "CDC27", "CFT1", "CFT2", "DCP1", "DOC1", "FIP1", 
-                "GCN5", "GLC7", "HFI1", "KEM1", "LSM1", "LSM2", "LSM3", "LSM4", "LSM5", 
-                "LSM6", "LSM7", "LSM8", "MPE1", "NGG1", "PAP1", "PAT1", "PFS2", "PTA1", 
-                "PTI1", "REF2", "RNA14", "RPN1", "RPN10", "RPN11", "RPN13", "RPN2", "RPN3", 
-                "RPN5", "RPN6", "RPN8", "RPT1", "RPT3", "RPT6", "SGF11", "SGF29", "SGF73", 
-                "SPT20", "SPT3", "SPT7", "SPT8", "TRA1", "YSH1", "YTH1")
+    "CDC16", "CDC23", "CDC26", "CDC27", "CFT1", "CFT2", "DCP1", "DOC1", "FIP1", 
+    "GCN5", "GLC7", "HFI1", "KEM1", "LSM1", "LSM2", "LSM3", "LSM4", "LSM5", 
+    "LSM6", "LSM7", "LSM8", "MPE1", "NGG1", "PAP1", "PAT1", "PFS2", "PTA1", 
+    "PTI1", "REF2", "RNA14", "RPN1", "RPN10", "RPN11", "RPN13", "RPN2", "RPN3", 
+    "RPN5", "RPN6", "RPN8", "RPT1", "RPT3", "RPT6", "SGF11", "SGF29", "SGF73", 
+    "SPT20", "SPT3", "SPT7", "SPT8", "TRA1", "YSH1", "YTH1")
 # Optional gene expression
 genesYeast <- setNames(c(rep(1,29), rep(-1,30)), genesYeast) # 1=UP, -1=DW
 
@@ -143,8 +144,10 @@ igraph.to.graphNEL(fNw$iGraph$commonClusters)
 # Term-based network
 incidMat_terms <- fea2incidMat(results, key="Terms")
 functionalNetwork(incidMat_terms, weighted=TRUE, plotOutput="dynamic")
-functionalNetwork(incidMat_terms, plotType="bipartite", plotOutput="dynamic", plotAllMg=TRUE)
-functionalNetwork(incidMat_terms, plotType="bipartite", plotOutput="dynamic", keepAllNodes=TRUE)
+functionalNetwork(incidMat_terms, plotType="bipartite", plotOutput="dynamic", 
+    plotAllMg=TRUE)
+functionalNetwork(incidMat_terms, plotType="bipartite", plotOutput="dynamic",
+    keepAllNodes=TRUE)
 
 # Including generic terms filterd by GtLinker from final metagroups:
 incidMat_terms2 <- fea2incidMat(results, key="Terms", removeFiltered=FALSE)

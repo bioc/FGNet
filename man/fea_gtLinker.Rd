@@ -17,22 +17,26 @@ Since Gene-Term Linker takes a while to analyze the gene list, the process has b
 }
 \usage{
 fea_gtLinker(geneList, organism = "Hs", 
-  annotations = c("GO_Biological_Process", "GO_Molecular_Function", "GO_Cellular_Component", "KEGG_Pathways", "InterPro_Motifs"),
-  minSupport = 4, serverWS = "http://gtlinker.cnb.csic.es:8182")
+    annotations = c("GO_Biological_Process", "GO_Molecular_Function", 
+    "GO_Cellular_Component", "KEGG_Pathways", "InterPro_Motifs"),
+    minSupport = 4, serverWS = "http://gtlinker.cnb.csic.es:8182")
 
-fea_gtLinker_getResults(jobID = NULL, organism = NULL, jobName = NULL, alreadyDownloaded = FALSE, 
-  keepTrying = FALSE, serverWeb = "http://gtlinker.cnb.csic.es", serverWS = "http://gtlinker.cnb.csic.es:8182")
+fea_gtLinker_getResults(jobID = NULL, organism = NULL, jobName = NULL, 
+    alreadyDownloaded = FALSE, keepTrying = FALSE, 
+    serverWeb = "http://gtlinker.cnb.csic.es", 
+    serverWS = "http://gtlinker.cnb.csic.es:8182")
 }
 \arguments{
 
-\bold{fea_gtLinker()}:
+\bold{fea_gtLinker():}
 
   \item{geneList}{
 character vector. List of genes to analyze.
 }
   \item{annotations}{
 character vector. Annotation spaces for the functional analysis. \cr
-Available values: "GO_Biological_Process", "GO_Molecular_Function", "GO_Cellular_Component", "KEGG_Pathways", "InterPro_Motifs".
+Available values: "GO_Biological_Process", "GO_Molecular_Function", \cr
+"GO_Cellular_Component", "KEGG_Pathways", "InterPro_Motifs".
 }
   \item{minSupport}{
 numeric. Minimum number of genes per group.
@@ -71,7 +75,7 @@ Available mirrors: "http://gtlinker.cnb.csic.es" % and "http://cicblade.dep.usal
 
 \bold{fea_gtLinker()} returns the jobID of the analysis
 
-\bold{fea_gtLinker_getResults()} returns an \link[base:invisible]{invisible} list with the folowing fields:\cr:
+\bold{fea_gtLinker_getResults()} returns an \link[base:invisible]{invisible} list with the folowing fields:\cr
 
 \code{queryArgs } list with the arguments for the query.
 
@@ -125,12 +129,12 @@ Package tutorial: \code{vignette("FGNet-vignette")}
     
 ### Execute new query:
 geneList <- c("ADA2", "APC1", "APC11", "APC2", "APC4", "APC5", "APC9", 
-              "CDC16", "CDC23", "CDC26", "CDC27", "CFT1", "CFT2", "DCP1", "DOC1", "FIP1", 
-              "GCN5", "GLC7", "HFI1", "KEM1", "LSM1", "LSM2", "LSM3", "LSM4", "LSM5", 
-              "LSM6", "LSM7", "LSM8", "MPE1", "NGG1", "PAP1", "PAT1", "PFS2", "PTA1", 
-              "PTI1", "REF2", "RNA14", "RPN1", "RPN10", "RPN11", "RPN13", "RPN2", "RPN3", 
-              "RPN5", "RPN6", "RPN8", "RPT1", "RPT3", "RPT6", "SGF11", "SGF29", "SGF73", 
-              "SPT20", "SPT3", "SPT7", "SPT8", "TRA1", "YSH1", "YTH1")
+    "CDC16", "CDC23", "CDC26", "CDC27", "CFT1", "CFT2", "DCP1", "DOC1", "FIP1", 
+    "GCN5", "GLC7", "HFI1", "KEM1", "LSM1", "LSM2", "LSM3", "LSM4", "LSM5", 
+    "LSM6", "LSM7", "LSM8", "MPE1", "NGG1", "PAP1", "PAT1", "PFS2", "PTA1", 
+    "PTI1", "REF2", "RNA14", "RPN1", "RPN10", "RPN11", "RPN13", "RPN2", "RPN3", 
+    "RPN5", "RPN6", "RPN8", "RPT1", "RPT3", "RPT6", "SGF11", "SGF29", "SGF73", 
+    "SPT20", "SPT3", "SPT7", "SPT8", "TRA1", "YSH1", "YTH1")
 jobID <- fea_gtLinker(geneList=geneList,organism="Sc")
 
 # Load existing query:

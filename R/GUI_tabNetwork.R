@@ -76,7 +76,7 @@ tabNetwork_fill <- function(mainWindow, statusbar, geneList)
     # ####### FGNet tab end
     gtkNotebookInsertPage(tabsNw, tabReport$tabReport, tab.label = gtkLabelNew("HTML report"))
     gtkNotebookInsertPage(tabsNw, tabPlotNetwork$tabPlotNetwork, tab.label = gtkLabelNew("Plot network"))
-    gtkNotebookInsertPage(tabsNw, tabSubNetwork$tabSubNetwork, tab.label = gtkLabelNew("Subnetwork [in construction]"))
+    # gtkNotebookInsertPage(tabsNw, tabSubNetwork$tabSubNetwork, tab.label = gtkLabelNew("Subnetwork [in construction]"))
     tabNetwork$fields$commonBox$add(tabsNw)
     
     # SignalConnects

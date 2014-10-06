@@ -60,7 +60,7 @@ For more info see the package tutorial: \code{vignette("FGNet-vignette")}
     
     [3] Luo W, Friedman MS, Shedden K, Hankenson KD, Woolf PJ (2009) GAGE: generally applicable gene set enrichment for pathway analysis. BMC Bioinformatics. 10:161. URL: \url{http://www.bioconductor.org/packages/release/bioc/html/gage.html}
     
-    [4] Adrian Alexa and Jorg Rahnenfuhrer (2010) topGO: Enrichment analysis for Gene Ontology. R package version 2.16.0. URL: \url{http://www.bioconductor.org/packages/release/bioc/html/topGO.html}
+    [4] Alexa A, and Rahnenfuhrer J (2010) topGO: Enrichment analysis for Gene Ontology. R package version 2.16.0. URL: \url{http://www.bioconductor.org/packages/release/bioc/html/topGO.html}
 }
 \examples{
 \dontrun{
@@ -69,9 +69,11 @@ For more info see the package tutorial: \code{vignette("FGNet-vignette")}
 FGNet_GUI()
 
 # 1. FEA:
-genesYeast <- c("YBL084C", "YDL008W", "YDR118W", "YDR301W", "YDR448W", "YFR036W", "YGL240W", "YHR166C", "YKL022C", "YLR102C", "YLR115W", "YLR127C", "YNL172W", "YOL149W", "YOR249C")
+genesYeast <- c("YBL084C", "YDL008W", "YDR118W", "YDR301W", "YDR448W", "YFR036W", 
+    "YGL240W", "YHR166C", "YKL022C", "YLR102C", "YLR115W", "YLR127C", "YNL172W", 
+    "YOL149W", "YOR249C")
 # Optional: Gene expression
-genesYeast <- setNames(c(rep(1,10),rep(-1,5)), genesYeast)
+geneExpr <- setNames(c(rep(1,10),rep(-1,5)), genesYeast)
 
 results <- fea_david(names(genesYeast), email="your@email.com")
 
@@ -84,7 +86,7 @@ incidMat <- fea2incidMat(results)
 incidMat_terms <- fea2incidMat(results, key="Terms")
 
 # 2.2. Explore networks:
-functionalNetwork(incidMat)
+functionalNetwork(incidMat, geneExpr=genesYeast)
 functionalNetwork(incidMat_terms, plotType="bipartite", plotOutput="dynamic")
 getTerms(results)
 

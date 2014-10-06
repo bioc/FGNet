@@ -243,8 +243,16 @@ createHtml <- function(htmlFileName, feaResults, jobName, tablesGenes, tablesTer
         keggIDs <- getTerms(feaResults, returnValue="KEGG")
         names(keggIDs) <- NULL
         keggIDs <- unlist(keggIDs)
-        keggPlots <- plotKegg(keggIDs, keggExpression, geneIDtype=geneIDtype)
-        if(!is.null(keggPlots)) keggPlots <- setNames(paste(folder, keggPlots, sep=""), names(keggPlots))
+        keggPlots <- tryCatch( 
+                    {
+                        keggPlots <- plotKegg(keggIDs, keggExpression, geneIDtype=geneIDtype)
+                        keggPlots
+                    }, error = function(e) 
+                    {
+                        plotKeggPw <<- FALSE
+                    })
+        if(all(keggPlots==FALSE)) keggPlots <- NULL
+        if(!is.null(keggPlots))   keggPlots <- setNames(paste(folder, keggPlots, sep=""), names(keggPlots))
     }
     mgTerms <- getMGTerms(globalMetagroups, grType, keggPlots=keggPlots)
     

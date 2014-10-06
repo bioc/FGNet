@@ -7,7 +7,9 @@ Plot GO term ancestors
 Plots the ancestors in the tree ontology for the given GO terms.
 }
 \usage{
-plotGoAncestors(goIds, tColor = NULL, ontology = NULL, returnLeaves = FALSE, returnGraph = FALSE, plotOutput = "static", nSize = NULL, labelCex = NULL, asp = NULL, fileName = NULL, height = 1000)
+plotGoAncestors(goIds, tColor = NULL, ontology = NULL,
+    returnLeaves = FALSE, returnGraph = FALSE, plotOutput = "static", 
+    nSize = NULL, labelCex = NULL, asp = NULL, fileName = NULL, height = 1000)
 }
 \arguments{
   \item{goIds}{
@@ -58,11 +60,13 @@ Package tutorial: \code{vignette("FGNet-vignette")}
 
 plotGoAncestors(c("GO:0000152","GO:0043234", "GO:0044446", "GO:0043227"))
 
-plotGoAncestors(c("GO:0051603", "GO:0019941", "GO:0051128","GO:0044265"), plotOutput="dynamic")
+plotGoAncestors(c("GO:0051603", "GO:0019941", "GO:0051128","GO:0044265"), 
+    plotOutput="dynamic")
 
 
 # From analysis:
-txtFile <- paste(file.path(system.file('examples', package='FGNet')), "David_Metabolism.txt", sep="/")
+txtFile <- paste(file.path(system.file('examples', package='FGNet')),
+    "David_Metabolism.txt", sep="/")
 results <- format_david(txtFile, jobName="DavidAnalysis")
 
 plotGoAncestors(getTerms(results, returnValue="GO")$"Cluster 1")

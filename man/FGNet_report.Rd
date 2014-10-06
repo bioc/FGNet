@@ -76,7 +76,9 @@ Package tutorial: \code{vignette("FGNet-vignette")}
 
 ##########################
 # DAVID & TopGO
-genesYeast <- c("YBL084C", "YDL008W", "YDR118W", "YDR301W", "YDR448W", "YFR036W", "YGL240W", "YHR166C", "YKL022C", "YLR102C", "YLR115W", "YLR127C", "YNL172W", "YOL149W", "YOR249C")
+genesYeast <- c("YBL084C", "YDL008W", "YDR118W", "YDR301W", "YDR448W", "YFR036W", 
+    "YGL240W", "YHR166C", "YKL022C", "YLR102C", "YLR115W", "YLR127C", "YNL172W", 
+    "YOL149W", "YOR249C")
 geneExpr <- setNames(c(rep(1,10),rep(-1,5)), genesYeast) 
 
 library(org.Sc.sgd.db)
@@ -88,13 +90,17 @@ results_David <- fea_david(genesYeast, geneLabels=geneLabels, email="example@ema
 FGNet_report(results_David, geneExpr=geneExpr) 
 
 # TopGO
-results_topGO <- fea_topGO(genesYeast, geneIdType="ENSEMBL", geneLabels=geneLabels, organism="Sc") 
+results_topGO <- fea_topGO(genesYeast, geneIdType="ENSEMBL", 
+    geneLabels=geneLabels, organism="Sc") 
 FGNet_report(results_topGO, geneExpr=geneExpr)   
 
 ##########################
 # Gage
 library(gage); data(gse16873)
-results_gage <- fea_gage(eset=gse16873, refSamples=grep('HN',colnames(gse16873), ignore.case =T), compSamples=grep('DCIS',colnames(gse16873), ignore.case=T), geneIdType="ENTREZID", organism="Hs", annotations="REACTOME")
+results_gage <- fea_gage(eset=gse16873, 
+    refSamples=grep('HN',colnames(gse16873), ignore.case =T), 
+    compSamples=grep('DCIS',colnames(gse16873), ignore.case=T), 
+    geneIdType="ENTREZID", organism="Hs", annotations="REACTOME")
 FGNet_report(results_gage)
 
 ##########################
@@ -102,13 +108,13 @@ FGNet_report(results_gage)
 
 # Execute new query:
 geneList <- setNames(c(rep(1,29), rep(-1,30)), # 1=UP, -1=DW
-                       c("ADA2", "APC1", "APC11", "APC2", "APC4", "APC5", "APC9", 
-                         "CDC16", "CDC23", "CDC26", "CDC27", "CFT1", "CFT2", "DCP1", "DOC1", "FIP1", 
-                         "GCN5", "GLC7", "HFI1", "KEM1", "LSM1", "LSM2", "LSM3", "LSM4", "LSM5", 
-                         "LSM6", "LSM7", "LSM8", "MPE1", "NGG1", "PAP1", "PAT1", "PFS2", "PTA1", 
-                         "PTI1", "REF2", "RNA14", "RPN1", "RPN10", "RPN11", "RPN13", "RPN2", "RPN3", 
-                         "RPN5", "RPN6", "RPN8", "RPT1", "RPT3", "RPT6", "SGF11", "SGF29", "SGF73", 
-                         "SPT20", "SPT3", "SPT7", "SPT8", "TRA1", "YSH1", "YTH1"))
+   c("ADA2", "APC1", "APC11", "APC2", "APC4", "APC5", "APC9", 
+     "CDC16", "CDC23", "CDC26", "CDC27", "CFT1", "CFT2", "DCP1", "DOC1", "FIP1", 
+     "GCN5", "GLC7", "HFI1", "KEM1", "LSM1", "LSM2", "LSM3", "LSM4", "LSM5", 
+     "LSM6", "LSM7", "LSM8", "MPE1", "NGG1", "PAP1", "PAT1", "PFS2", "PTA1", 
+     "PTI1", "REF2", "RNA14", "RPN1", "RPN10", "RPN11", "RPN13", "RPN2", "RPN3", 
+     "RPN5", "RPN6", "RPN8", "RPT1", "RPT3", "RPT6", "SGF11", "SGF29", "SGF73", 
+     "SPT20", "SPT3", "SPT7", "SPT8", "TRA1", "YSH1", "YTH1"))
                          
 jobID <- fea_gtLinker(geneList=names(geneList),organism="Sc")
 

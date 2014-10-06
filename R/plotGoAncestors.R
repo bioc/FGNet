@@ -42,8 +42,9 @@ plotGoAncestors <- function(goIds, tColor=NULL, ontology=NULL, returnLeaves=FALS
     while(any(goChilds != "all"))
     {
         goChilds <- goChilds[which(goChilds!="all")]
-        tmp <- ontology[goChilds]
-        adjList <- rbind(adjList, as.matrix(melt(lapply(tmp, function(x) data.frame(parent=x, rel=names(x))), id.vars=c("parent","rel"), level="child")))
+        
+        goFamilyList <- lapply(ontology[goChilds], function(x) data.frame(parent=x, rel=names(x)))
+        adjList <- rbind(adjList, as.matrix(cbind(do.call(rbind, goFamilyList), child=rep(names(goFamilyList),sapply(goFamilyList, nrow)))))
         
         # Next children
         goChilds <- unique(as.character(adjList[which(!adjList[,"parent"] %in% adjList[,"child"]),"parent"]))    

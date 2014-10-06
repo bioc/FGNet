@@ -7,7 +7,11 @@ FEA - topGO
 Performs the functional enrichment analysis through topGO [1].
 }
 \usage{
-fea_topGO(geneList, geneIdType = "ENSEMBL", geneLabels=NULL, organism = "Hs", annotations = c("GO_BP", "GO_MF", "GO_CC"), genesUniverse = NULL, refPackage = NULL, geneID2GO = NULL, nodeSize = 5, pValThr = 0.01, testStat = NULL, jobName = NULL)
+fea_topGO(geneList, geneIdType = "ENSEMBL", geneLabels=NULL, organism = "Hs", 
+    annotations = c("GO_BP", "GO_MF", "GO_CC"), 
+    genesUniverse = NULL, refPackage = NULL, 
+    geneID2GO = NULL, nodeSize = 5, pValThr = 0.01, testStat = NULL, 
+    jobName = NULL)
 }
 \arguments{
   \item{geneList}{
@@ -90,7 +94,9 @@ Package tutorial: \code{vignette("FGNet-vignette")}
     
 
 # Load/format gene list:
-genesYeast <- c("YBL084C", "YDL008W", "YDR118W", "YDR301W", "YDR448W", "YFR036W", "YGL240W", "YHR166C", "YKL022C", "YLR102C", "YLR115W", "YLR127C", "YNL172W", "YOL149W", "YOR249C")
+genesYeast <- c("YBL084C", "YDL008W", "YDR118W", "YDR301W", "YDR448W", "YFR036W",
+    "YGL240W", "YHR166C", "YKL022C", "YLR102C", "YLR115W", "YLR127C", "YNL172W",
+    "YOL149W", "YOR249C")
 geneExpr <- setNames(c(rep(1,10),rep(-1,5)), genesYeast) 
 
 library(org.Sc.sgd.db)
@@ -98,7 +104,8 @@ geneLabels <- unlist(as.list(org.Sc.sgdGENENAME)[genesYeast])
 names(geneExpr) <- geneLabels[names(geneExpr)] 
 
 # FEA:
-results <- fea_topGO(genesYeast, geneIdType="ENSEMBL", geneLabels=geneLabels, organism="Sc") 
+results <- fea_topGO(genesYeast, geneIdType="ENSEMBL", 
+    geneLabels=geneLabels, organism="Sc") 
 
 # To continue the workflow... (see help for further details)
 FGNet_report(results, geneExpr=geneExpr)

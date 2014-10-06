@@ -7,7 +7,10 @@ Format FEA results from external tools.
 Format the functional analysis results from external tools to use with FGNet. 
 }
 \usage{
-format_results(fileName, newFileName = NULL, clusterCol = NULL, geneCol = NULL, geneSep = NULL, termDescCol = NULL, termIDCol = NULL, termCatCol = NULL, termCat = NULL, termSep = NULL, tool = "Imported text file", simplifyGage = TRUE, ...)
+format_results(fileName, newFileName = NULL, clusterCol = NULL, 
+    geneCol = NULL, geneSep = NULL, termDescCol = NULL, termIDCol = NULL,
+    termCatCol = NULL, termCat = NULL, termSep = NULL, 
+    tool = "Imported text file", simplifyGage = TRUE, ...)
 }
 \arguments{
   \item{fileName}{
@@ -62,7 +65,8 @@ Package tutorial: \code{vignette("FGNet-vignette")}
 
 \dontrun{
 
-results <- format_results("/home/user/feaResults.txt", clusterCol="Cluster", geneCol="Genes", termDescCol="Terms", sep="\t")
+results <- format_results("/home/user/feaResults.txt", clusterCol="Cluster", 
+    geneCol="Genes", termDescCol="Terms", sep="\t")
 
 }
 }

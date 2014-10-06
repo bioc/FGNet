@@ -40,6 +40,8 @@ importFrom(topGO, GenTable)
 importFrom(topGO, genesInTerm)
 importFrom(topGO, sigGenes)
 importFrom(topGO, GOFisherTest)
+importFrom(topGO, groupGOTerms)
+
 
 
 

@@ -5,8 +5,9 @@
 \alias{FEA_tools}
 \title{FGNet data}
 \description{
-FGNet package includes the following data files:
-
+FGNet package includes the following data files: organisms, groupTypes and FEA_tools
+}
+\value{
 \itemize{
 \item{organisms: Matrix with the supported organisms' name, package and KEGG prefix.}
 

@@ -9,8 +9,11 @@ Performs the functional enrichment analysis and clustering through DAVID [1] (re
 }
 \usage{
 fea_david(geneList, geneIdType = "ENSEMBL_GENE_ID", geneLabels=NULL, 
-  annotations = c("GOTERM_BP_ALL", "GOTERM_MF_ALL", "GOTERM_CC_ALL", "KEGG_PATHWAY", "INTERPRO"), 
-  email = NULL, argsWS = c(overlap = 4L, initialSeed = 4L, finalSeed = 4L, linkage = 0.5, kappa = 35L), jobName = NULL)
+  annotations = c("GOTERM_BP_ALL", "GOTERM_MF_ALL", "GOTERM_CC_ALL", 
+  "KEGG_PATHWAY", "INTERPRO"), 
+  email = NULL, 
+  argsWS = c(overlap = 4L, initialSeed = 4L, finalSeed = 4L, linkage = 0.5, 
+  kappa = 35L), jobName = NULL)
 }
 \arguments{
   \item{geneList}{
@@ -27,7 +30,8 @@ Web Service: run \code{getIdTypes(DAVIDWebService$new(email=...))}
   \item{annotations}{
 character vector. Annotation spaces for the functional analysis. \cr
 Web API: check DAVID's API documentation.\cr
-Web Service: run \code{getAllAnnotationCategoryNames(DAVIDWebService$new(email=...))}.
+Web Service: run \cr
+\code{getAllAnnotationCategoryNames(DAVIDWebService$new(email=...))}.
 }
   \item{email}{
 character. If provided, the query will be performed though DAVID's Web Service (recommended). Requires registration (see details).
@@ -47,7 +51,7 @@ If an email is provided, the query will be performed through the web service, if
 
 \bold{API:} Allows to perform a small query without registering. \cr
 Maximum number of genes: 400. It can be less depending on the ID types and the length of the resulting URL.\cr
-The default arguments for the clustering performed through the API are:
+The default arguments for the clustering performed through the API are:\cr
 \code{web_API_defaults <- c(overlap=3L, initialSeed=3L, finalSeed=3L, linkage=0.5, kappa=50L)}\cr
 More details and full list of gene ID types and annotations are available at: 
 \url{http://david.abcc.ncifcrf.gov/content.jsp?file=DAVID_API.html}.\cr
@@ -59,8 +63,10 @@ If the functional annotation and clustering has been performed directly at DAVID
 
 \section{Warning}{
 The web service and the API have different default arguments. To obtain the same results with both methods use:
-\code{API_defaults <- c(overlap=3L, initialSeed=3L, finalSeed=3L, linkage=0.5, kappa=50L) 
-fea_david(genesYeast, email="example@email.com", argsWS=API_defaults)}
+
+\code{API_defaults <- c(overlap=3L, initialSeed=3L, finalSeed=3L, linkage=0.5, kappa=50L)}
+
+\code{fea_david(genesYeast, email="example@email.com", argsWS=API_defaults)}
 }
 
 \value{
@@ -114,7 +120,9 @@ Package tutorial: \code{vignette("FGNet-vignette")}
 
 
 # Load/format gene list:
-genesYeast <- c("YBL084C", "YDL008W", "YDR118W", "YDR301W", "YDR448W", "YFR036W", "YGL240W", "YHR166C", "YKL022C", "YLR102C", "YLR115W", "YLR127C", "YNL172W", "YOL149W", "YOR249C")
+genesYeast <- c("YBL084C", "YDL008W", "YDR118W", "YDR301W", "YDR448W", "YFR036W",
+    "YGL240W", "YHR166C", "YKL022C", "YLR102C", "YLR115W", "YLR127C", "YNL172W", 
+    "YOL149W", "YOR249C")
 geneExpr <- setNames(c(rep(1,10),rep(-1,5)), genesYeast) 
 
 library(org.Sc.sgd.db)

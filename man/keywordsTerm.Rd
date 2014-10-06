@@ -31,8 +31,9 @@ Package tutorial: \code{vignette("FGNet-vignette")}
 \examples{
 
 # Previous Steps
-genesYeast <- c("YBL084C", "YDL008W", "YDR118W", "YDR301W", "YDR448W", "YFR036W", "YGL240W", 
-    "YHR166C", "YKL022C", "YLR102C", "YLR115W", "YLR127C", "YNL172W", "YOL149W", "YOR249C")
+genesYeast <- c("YBL084C", "YDL008W", "YDR118W", "YDR301W", "YDR448W", "YFR036W", 
+    "YGL240W", "YHR166C", "YKL022C", "YLR102C", "YLR115W", "YLR127C", "YNL172W", 
+    "YOL149W", "YOR249C")
 results <- fea_david(genesYeast)
 
 # Select keywords

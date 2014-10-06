@@ -5,7 +5,7 @@
 %\VignettePackage{FGNet}
 \documentclass[a4paper,12pt]{article}
 
-\usepackage{Sweave} %modify for your R home directory
+ %modify for your R home directory
 \usepackage{amsmath}
 \usepackage{hyperref}
 \usepackage{authblk}
@@ -13,6 +13,7 @@
 \usepackage{float}
 \usepackage[font=small, labelfont=bf, labelsep=period]{caption}
 \usepackage{subfigure} %or subcaption
+\usepackage{enumitem}
 \setlength{\captionmargin}{30pt}
 
 \marginsize{1in}{1in}{0.5in}{0.5in}
@@ -29,72 +30,296 @@
 \affil{Bioinformatics and Functional Genomics Group\\ Centro de Investigacion del Cancer (CiC-IBMCC, CSIC/USAL)\\ Salamanca - Spain}
 
 \begin{document}
-\SweaveOpts{concordance=TRUE}
+
+<<include=FALSE, echo=FALSE>>=
+library(knitr)
+opts_chunk$set(concordance=TRUE)
+@
+
 \maketitle 
 \begin{center}
-Version: 2.0
+Version: 3.0
 \end{center}
 \tableofcontents
 
 \newpage
-\section{Introduction to \textit{Functional Gene Networks}}
+\section{Introduction to \textit{FGNet}}
 \label{sec:intro}
 
-Functional Gene Networks (FGNet) allows to analize the results from a clustered functional enrichment analysis and transform them into a gene network. In this way, FGNet provides a functional gene network, which is analyzed and presented as a graphical object allowing an overview of the links and overlapping betwen genes and biological functions. The package also includes an interface to perform the enrichment and clustering through \emph{DAVID} and \emph{GeneTerm Linker} tools.\\
+FGNet allows perform a Functional Enrichment Analysis (FEA) on a list of genes or expression set, and transform the results into networks. The resulting functional networks provide an overview of the biological functions of the genes/terms, and allows to easily see links between genes, overlap between clusters, finding key genes... etc. \\
+%The package allows to perform the functional enrichment analysis (FEA) and clustering through several tools: \emph{DAVID}, \emph{GeneTerm Linker}, topGO and gage (GSA), and provides functions to easily import FEA results from other tools.\\
 
 \textbf{Biological functional analysis}
 
-After obtaining a list of genes or proteins from an experiment or omic studies (i.e. microarrays, RNAseq, mass spectrometry, etc), next step is usually to perform a functional analysis of the genes to search for the biological functions or processes in which they are involved. In order to facilitate the analysis of large lists of genes, multiple functional enrichment tools have been developed. These tools search for the genes in biological databases (i.e. GO, Kegg, Interpro), and test whether any biological annotations are over-represented in the query gene list compared to what would be expected in the whole population. However, the raw output from a functional enrichment analysis often provides hundreds of terms, and it still requires a lot of time and attention to go through the whole list of genes and annotations. A way to simplify this task is grouping genes and terms which often appear together and create associated networks. \emph{Functional Gene Networks} algorithm has been designed with this purpose. To do so, it uses the output of a previous functional enrichment analysis. The package has been implemented to support two specific tools:
+After obtaining a list of genes or proteins from an experiment or omic studies (microarrays, RNAseq, mass spectrometry, etc), next step is usually to perform a functional analysis of the genes to search for the biological functions or processes in which they are involved. In order to facilitate the analysis of large lists of genes, multiple functional enrichment tools have been developed. These tools search for the genes in biological databases (i.e. GO, Kegg, Interpro), and test whether any biological annotations are over-represented in the query gene list compared to what would be expected in the whole population. However, the raw output from a functional enrichment analysis often provides dozens or hundreds of terms, and it still requires a lot of time and attention to go through the whole list of genes and annotations. A way to simplify this task is grouping genes and terms which often appear together and create associated networks: Functional Networks. \\
+
+FGNet builds the functional networks, based on a previous functional analysis. The package provides the functions to perform the FEA through these specific tools:
 
 \begin{enumerate}
-\item Functional Annotation Clustering from DAVID, which measures relationships among annotation terms based on their co-association with genes within the query gene list \cite{Huang1, Huang2}. This type of clustering mostly results in groups of highly related terms, such as synonymous annotations from different annotation spaces (i.e. Glycolysis in KEGG and GO-BP), which also share most of their genes. 	
-\item	GeneTerm Linker, a post-enrichment tool, which focuses on clearing and sorting the results from a previous enrichment analysis. This is achieved by filtering little informative terms (i.e. \emph{cellular process}) and redundant annotations (i.e. \emph{metabolic process} and \emph{primary metabolic process}). The remaining gene-term sets are grouped into \emph{metagroups} based on their shared genes and terms (\emph{reciprocal linkage}) \cite{Fontanillo}.
+\item Functional Annotation Clustering from \textbf{DAVID}, which measures relationships among annotation terms based on their co-association with genes within the query gene list \cite{Huang1, Huang2}. This type of clustering mostly results in groups of highly related terms, such as synonymous annotations from different annotation spaces (i.e. Glycolysis in KEGG and GO-BP), which also share most of their genes.     
+\item \textbf{GeneTerm Linker}, a post-enrichment tool, which focuses on clearing and sorting the results from a previous enrichment analysis. This is achieved by filtering little informative terms (i.e. \emph{cellular process}) and redundant annotations (i.e. \emph{metabolic process} and \emph{primary metabolic process}). The remaining gene-term sets are grouped into \emph{metagroups} based on their shared genes and terms (\emph{reciprocal linkage}) \cite{Fontanillo}.
+\item \textbf{Gage} \cite{gage}, a Gene Set Analysis (GSA) tool, that can cluster the resulting enriched gene-term sets.
+\item \textbf{TopGO} \cite{topGO}, a modular enrichment analysis method for the Gene Ontology (GO) that can be applied offline.
 \end{enumerate}
+
+To build the network based on other \textbf{other tools}, the raw output should be saved into a text file which contains the enriched terms and their genes. (For more details see function \emph{format\_results()}).
+
+\newpage
+\textbf{Functional network}
+
+The \textbf{functional network} is the representation of the results from a functional enrichment analysis.\\ %The functional network can be gene-based or term-based, which determines whether the nodes of the network are nodes or terms.
+
+In the \textbf{default} network, all the nodes of the network are of the same type, i.e. genes OR terms, which are linked to each other if they are in the same gene-term set. In the plot, the genes/terms in the same  groups (metagroups or clusters) are surrounded by a common background color. \\
+
+In the \textbf{bipartite} network, the nodes are of two types, allowing to link the genes or terms, with the clusters they belong to. This network, can be built as an \emph{intersection network}, a simplified functional network where all the genes/terms that belong to only one metagroup are clustered into a single node. This simplified network contains only the nodes in several groups. \\% (intersection between groups) linked to the metagroups they belong to. 
+
+In addition to the networks, FGNet also provides a few functions for further analysis. These functions allow to get a \textbf{distance matrix}, which represents the similarity between the groups based on the genes they share with each other (binary distance), and the distribution of \textbf{degree and betweenness} within the network and subnetworks, in order to find the most important genes (hubs).\\
+
+All these functionalities can be accessed directly through the appopiate functions or the graphical user interface (GUI). In addition, FGNet also allows to generate an  \textbf{HTML report} with an overview of these plots and analyses for a specific gene list.\\
+
 
 \begin{figure}[h]
 \centering
 \subfigure{
-	\includegraphics[width=.3\textwidth]{nwExample1}
-	 \label{fig:subfig1a}
+    \includegraphics[width=.3\textwidth]{nwExample1}
+    \label{fig:subfig1a}
 }
 \centering
 \subfigure{
-	\includegraphics[width=.3\textwidth]{nwExample2}
-	 \label{fig:subfig1b}
-	 }
+    \includegraphics[width=.3\textwidth]{nwExample2}
+    \label{fig:subfig1b}
+}
 \centering
 \subfigure{
-	\includegraphics[width=.3\textwidth]{nwExample3}
-	 \label{fig:subfig1c}
+    \includegraphics[width=.3\textwidth]{nwExample3}
+    \label{fig:subfig1c}
 }
 
-Different levels of overlap between gene groups.
+Examples of funtional network for different analyses.
 \end{figure} 
- 
+
+\section{Installation}
+\label{sec:installation}
+To install \textit{FGNet} from \textit{Bioconductor}, type in your R console:
+<<eval=FALSE>>=
+source("http://bioconductor.org/biocLite.R")
+biocLite("FGNet")
+@ 
+
+%Note on libraries and dependencies: FGNet requires libraries \emph{igraph} (version 0.6 or older), \emph{hwriter}, \emph{RCurl}, \emph{XML} and \emph{R.utils}.
+
+%In addition, it may also use \emph{RColorBrewer} and \emph{png}. These libraries are not required for creating the Functional Networks, but they will enhance the network plots.
+
 \newpage
-\textbf{Functional network}
+\section{Creating a network from a list of genes/proteins}
+\label{sec:BasicExample}
+To generate a functional network with FGNet:
+\begin{enumerate}
+\item Perform a Functional Enrichment Analisis (FEA) on a list of genes or expression set.
+\begin{table}[h]
+\centering
+\begin{tabular}{|l|l|l|l|} 
+\hline
+\textit{FEA tool} & \textit{Online? *} & \textit{Input} & \textit{Annotations} \\ \hline
+\textbf{DAVID} & Yes & Gene list & Many \\ \hline
+\textbf{Gene-Term Linker} & Yes & Gene list & GO, KEGG, Interpro \\ \hline
+\textbf{TopGO} & No & Gene list & GO \\ \hline
+\textbf{Gage (GSA)} & No & Expression set &  \begin{tabular}[c]{@{}l@{}}Gene sets\\ (Generated by FGNet:\\ GO, Kegg, Reactome)\end{tabular} \\ \hline
+\end{tabular}
+\caption{Summary of the available FEA tools}
+\label{ToolsTable}
+\emph{* Online tools require internet connection}
+\end{table}
+\item Create an HTML report with multiple views of the networks and analyses (sec. \ref{sec:report})
+\item Personalize or analyze a specific network (sec.\ref{sec:fea2incidMat})
+\end{enumerate}
 
-The \emph{functional network} is the representation of the results from a functional enrichment analysis clustering. Each of the genes is one node, and the genes are linked to each other if they are in the same gene-term set. In the plot, the groups (metagroups or clusters) are also represented by surrounded all the genes in them by a coloured background. \\
+These steps are integrated into the Graphical User Interface (GUI), which provides access to the main functionalities of FGNet.
+
+\subsection{Graphical User Interface (GUI)}
+\label{sec:GUI}
+The most intuitive way to generate a network with FGNet is using its Graphical User Interface (GUI). 
+
+<<eval=TRUE>>=
+library(FGNet)
+FGNet_GUI()
+@
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=.7\textwidth]{FGNet_GUI}
+\label{fig:GUI}
+\end{figure} 
+
+In case you already have a gene list or gene expression from a previous analysis, it is possible to load it directly into the GUI genes field by passing it as argument:
+<<eval=TRUE>>=
+geneList1 <- c("YBL084C", "YDL008W", "YDR118W", "YDR301W", "YDR448W", 
+    "YFR036W", "YGL240W", "YHR166C", "YKL022C", "YLR102C", "YLR115W", 
+    "YLR127C", "YNL172W", "YOL149W", "YOR249C")
+geneList1 <- setNames(c(rep(1,10),rep(-1,5)), geneList1)
+
+FGNet_GUI(geneList1)
+@
+
+\subsection{In R code...}
+\subsubsection{Functional Enrichment Analysis (FEA)}
+\label{sec:fea}
+
+The first step in the workflow is always is to perform a Functional Enrichment Analisis (FEA) on a list of genes or expression set. 
+
+Here we will show a simple example with each of the tools:
+
+\begin{table}[h]
+\centering
+\begin{tabular}{|l|l|l|}
+\hline
+\textit{FEA tool} & \textit{Function} & \textit{\begin{tabular}[c]{@{}l@{}}Output\\ group type\end{tabular}} \\ \hline
+\textbf{DAVID} & fea\_david() & Clusters \\ \hline
+\textbf{TopGO} & fea\_topGO() & Gene-term sets \\ \hline
+\textbf{Gene-Term Linker} & \begin{tabular}[c]{@{}l@{}}fea\_gtLinker() \& \\ fea\_gtLinker\_getResults()\end{tabular} & Metagroups \\ \hline
+\textbf{Gage} & fea\_gage() & Clusters \\ \hline
+Other & format\_feaResults() &  \\ \hline
+\end{tabular}
+\caption{FEA functions}
+\label{FEAfunctions}
+\end{table}
+
+DAVID and topGO work in a very symilar way: Just provide a gene list and set the arguments:
+<<eval=TRUE>>=
+library(FGNet)
+geneList1 <- c("YBL084C", "YDL008W", "YDR118W", "YDR301W", "YDR448W", 
+    "YFR036W", "YGL240W", "YHR166C", "YKL022C", "YLR102C", "YLR115W", 
+    "YLR127C", "YNL172W", "YOL149W", "YOR249C")
+# Optional: Gene expression
+geneExpr1 <- setNames(c(rep(1,10),rep(-1,5)), geneList1)
+@
+<<eval=TRUE>>=
+library(org.Sc.sgd.db)
+geneLabels <- unlist(as.list(org.Sc.sgdGENENAME)[geneList1])
+names(geneExpr1) <- geneLabels[names(geneExpr1)] 
+@ 
+\textbf{DAVID}:\\
+Requires internet connection (and registration at at \url{http://david.abcc.ncifcrf.gov/webservice/register.htm}).
+<<eval=FALSE>>=
+results_David <- fea_david(geneList1, geneLabels=geneLabels, 
+    email="example@email.com")
+@ 
+\textbf{TopGO}:\\
+TopGO relies on local databases. Therefore, it does not require internet connection. Note that the the results from topGO are provided as individual gene-term sets, not grouped into clusters:
+<<eval=FALSE>>=
+results_topGO <- fea_topGO(geneList1, geneIdType="ENSEMBL", 
+    geneLabels=geneLabels, organism="Sc") 
+@
 
 
-The package includes a \emph{report} function which allows to automatically generate an HTML file with the functional network, the terms included in each group, the intersection network and distance matrix. The \emph{intersection network} is a simplified functional network where all the genes that belong to only one metagroup are clustered into a single node. Therefore, the resulting network contains only the nodes in several groups (\emph{intersection} between groups) linked to the metagroups they belong to. The \emph{distance matrix} represents the similarity between the groups based on the genes they share with each other (binary distance).\\
+\textbf{Gene-Term Linker}:\\
+Gene-Term Linker is also run over a gene list. Since the analysis usually takes several minutes to be ready, the workflow is divided in two steps: sending the analysis request, and retrieving the results:
+<<eval=TRUE>>=
+genesYeast <- c("ADA2", "APC1", "APC11", "APC2", "APC4", "APC5", "APC9", "CDC16", 
+    "CDC23", "CDC26", "CDC27", "CFT1", "CFT2", "DCP1", "DOC1", "FIP1", 
+    "GCN5", "GLC7", "HFI1", "KEM1", "LSM1", "LSM2", "LSM3", "LSM4", 
+    "LSM5", "LSM6", "LSM7", "LSM8", "MPE1", "NGG1", "PAP1", "PAT1", 
+    "PFS2", "PTA1", "PTI1", "REF2", "RNA14", "RPN1", "RPN10", "RPN11", 
+    "RPN13", "RPN2", "RPN3", "RPN5", "RPN6", "RPN8", "RPT1", "RPT3", 
+    "RPT6", "SGF11", "SGF29", "SGF73", "SPT20", "SPT3", "SPT7", "SPT8", 
+    "TRA1", "YSH1", "YTH1")
+# Optional: Gene expression (1=UP, -1=DW)
+genesYeastExpr <- setNames(c(rep(1,29), rep(-1,30)),genesYeast) 
+@
+<<eval=FALSE>>=
+jobID <- fea_gtLinker(geneList=genesYeast,organism="Sc")
+@
+\emph{once the analysis is ready...}
+<<eval=TRUE>>=
+jobID <- 3907019
+results_gtLinker <- fea_gtLinker_getResults(jobID=jobID)
+@
+
+\textbf{Gage}:\\
+As a GSA approach, instead of performing the functional enrichment over a gene list, gage requires a raw expression set and the samples to compare:
+<<eval=FALSE>>=
+library(gage); data(gse16873)
+results_gage <- fea_gage(eset=gse16873, 
+    refSamples=grep('HN',colnames(gse16873), ignore.case =T), 
+    compSamples=grep('DCIS',colnames(gse16873), ignore.case=T), 
+    geneIdType="ENTREZID", organism="Hs", annotations="REACTOME")
+FGNet_report(results_gage)
+@
+
+For \textbf{other tools} see:
+<<eval=FALSE>>=
+?format_results()
+@
 
 
+Once the FEA is ready, you can proceed to generate the HTML report or the individual network/analyses:
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=.7\textwidth]{FGNet_workflow}
+\label{fig:workflow}
+\end{figure} 
+
+\subsubsection{HTML report}
+\label{sec:report}
+The HTML report function allows to create a comprehensive report including diferent views of the Functional Network, the cluster/metagroup legend, and some further statistics directly directly from a gene list. 
+
+Here is the usage of \emph{FGNet\_report()} for each of the previous examples:
+<<eval=FALSE>>=
+FGNet_report(results_topGO, geneExpr=geneExpr1)  
+FGNet_report(results_David, geneExpr=geneExpr1) 
+FGNet_report(results_gtLinker, geneExpr=genesYeastExpr)
+FGNet_report(results_gage)
+@
+
+<<eval=FALSE>>=
+?FGNet_report
+@
+
+\subsubsection{Personalizing networks}
+\label{sec:fea2incidMat}
+To geneate specific networks rather than the full report, after the FEA is ready, use \emph{fea2incidMat()} to generate the incidence matrices that represent the networks:
+<<eval=TRUE>>=
+results <- results_gtLinker
+incidMat <- fea2incidMat(results)
+incidMat_terms <- fea2incidMat(results, key="Terms")
+@
+
+These incidence matrices can be plotted and anlyzed in diferent ways:
+<<fig=TRUE, eval=TRUE>>=
+functionalNetwork(incidMat, geneExpr=genesYeastExpr)
+@
+<<eval=TRUE>>=
+getTerms(results)[4]
+@
+
+<<eval=FALSE>>=
+functionalNetwork(incidMat_terms, plotType="bipartite", plotOutput="dynamic")
+@
+<<fig=TRUE,eval=TRUE, echo=FALSE>>=
+functionalNetwork(incidMat_terms, plotType="bipartite")
+@
+\newpage
+<<fig=TRUE,eval=TRUE, heigth=5>>=
+analyzeNetwork(incidMat)
+@
+\newpage
+<<fig=TRUE,eval=TRUE, heigth=5>>=
+distMat <- clustersDistance(incidMat)
+@
+
+\newpage
 \begin{thebibliography}{6} 
-
 \bibitem{Huang1} Huang DW, Sherman BT, Lempicki RA. \emph{Systematic and integrative analysis of large gene lists using DAVID Bioinformatics Resources.} Nature Protoc. 2009;4(1):44-57.
 
 \bibitem{Huang2} Huang DW, Sherman BT, Lempicki RA. \emph{Bioinformatics enrichment tools: paths toward the comprehensive functional analysis of large gene lists.} Nucleic Acids Res. 2009;37(1):1-13.
 
 \bibitem{Fontanillo} Fontanillo C, Nogales-Cadenas R, Pascual-Montano A, De Las Rivas J (2011) \emph{Functional Analysis beyond Enrichment: Non-Redundant Reciprocal Linkage of Genes and Biological Terms.} PLoS ONE 6(9): e24289. doi:10.1371/journal.pone.0024289 
 
-%\bibitem{Tabas} Tabas-Madrid D, Nogales-Cadenas R, Pascual-Montano A. \emph{GeneCodis3: a non-redundant and modular enrichment analysis tool for functional genomics.} Nucleic Acids Research 2012; doi: 10.1093/nar/gks402
+\bibitem{topGO} Alexa A, and Rahnenfuhrer J (2010) topGO: Enrichment analysis for Gene Ontology. R package version 2.16.0. URL: \url{http://www.bioconductor.org/packages/release/bioc/html/topGO.html}
 
-%\bibitem{Nogales} Nogales-Cadenas R, Carmona-Saez P, Vazquez M, Vicente C, Yang X, Tirado F, Carazo JM, Pascual-Montano A. \emph{GeneCodis: interpreting gene lists through enrichment analysis and integration of diverse biological information.} Nucleic Acids Research 2009; doi: 10.1093/nar/gkp416
-
-%\bibitem{Carmona} Carmona-Saez P, Chagoyen M, Tirado F, Carazo JM, Pascual-Montano A. \emph{GENECODIS: A web-based tool for finding significant concurrent annotations in gene lists.} Genome Biology 2007 8(1):R3
+\bibitem{gage} Luo W, Friedman MS, Shedden K, Hankenson KD, Woolf PJ (2009) GAGE: generally applicable gene set enrichment for pathway analysis. BMC Bioinformatics. 10:161. URL: \url{http://www.bioconductor.org/packages/release/bioc/html/gage.html}
 
 \end{thebibliography}
-
 
 \end{document}

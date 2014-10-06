@@ -9,7 +9,9 @@ Transforms FEA output into incidence matrices.
 Transforms the Funtional Enrichment Analysis (FEA) results into cluster-gene incidence matrices. 
 }
 \usage{
-fea2incidMat(feaResults, key = "Genes", sepChar = NULL, clusterColumn = NULL, filterAttribute = NULL, filterOperator = "<", filterThreshold = 0, removeFilteredGtl = NULL)
+fea2incidMat(feaResults, key = "Genes", sepChar = NULL, clusterColumn = NULL, 
+    filterAttribute = NULL, filterOperator = "<", filterThreshold = 0, 
+    removeFilteredGtl = NULL)
 }
 \arguments{
   \item{feaResults}{
@@ -62,7 +64,8 @@ results <- fea_gtLinker_getResults(jobID)
 incidMat <- fea2incidMat(results)
 
 # Filtering (threshold)
-incidMat <- fea2incidMat(results, filterAttribute="Silhouette Width", filterThreshold=0.2)
+incidMat <- fea2incidMat(results, 
+    filterAttribute="Silhouette Width", filterThreshold=0.2)
 
 incidMat$filteredOut
 head(incidMat$metagroupsMatrix)
@@ -81,7 +84,8 @@ functionalNetwork(incidMatTerms, plotOutput="dynamic", plotType="bipartite")
 # Filtering by keyword
 keywords <- c("rna")
 selectedGroups <- sapply(getTerms(results),
-    function(x) any(grep(paste("(", paste(keywords, collapse="|") ,")",sep=""), tolower(x))))
+    function(x) 
+    any(grep(paste("(", paste(keywords, collapse="|") ,")",sep=""), tolower(x))))
 
 resultsCbind <- results
 resultsCbind$metagroups <- cbind(results$metagroups,

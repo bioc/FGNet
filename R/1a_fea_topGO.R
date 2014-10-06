@@ -35,8 +35,9 @@
 fea_topGO <- function(geneList, geneIdType="ENSEMBL", geneLabels=NULL, organism="Hs", annotations=c("GO_BP","GO_MF","GO_CC"), genesUniverse=NULL, refPackage=NULL, geneID2GO=NULL, nodeSize=5, pValThr=0.01, testStat=NULL, jobName=NULL)
 {
     # require(topGO)
-    library("GO.db")
-    
+    library("GO.db")    
+    groupGOTerms(where=.GlobalEnv)
+
     ###############################
     # Check arguments 
     if(!is.null(nodeSize) && !is.numeric(nodeSize)) stop("nodeSize should be numeric.")
@@ -107,16 +108,12 @@ fea_topGO <- function(geneList, geneIdType="ENSEMBL", geneLabels=NULL, organism=
         goResTable[[ont]] <- GenTable(GOdata[[ont]], classic=resultFisher, ranksOf="classic", topNodes=sum(resultFisher@score<pValThr), numChar=100)
         
         # Check size?
-        
-        
-        print(genesInTerm)
         # Get genes in each term:
         goResTable[[ont]] <- cbind(Ont=ont, goResTable[[ont]], Genes=sapply(goResTable[[ont]]$GO.ID,function(go) 
         {
             gTerm <- genesInTerm(GOdata[[ont]], go)[[1]]
             paste(gTerm[gTerm %in%  sigGenes(GOdata[[ont]])], collapse=",")
         }))    
-        print(goResTable$Genes)
     }
     geneTermSets <- do.call(rbind,goResTable)
     

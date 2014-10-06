@@ -7,7 +7,14 @@ FEA - gage
 Performs the functional enrichment analysis and clustering through gage [1] (GSA).
 }
 \usage{
-fea_gage(eset, refSamples, compSamples, geneIdType, geneLabels=NULL, organism = "Hs", annotations = c("GO_BP", "GO_MF", "GO_CC", "KEGG", "REACTOME"), geneSets = NULL, sameDirection = FALSE, onlyEssentialTerms = TRUE, compareType = "as.group", jobName = NULL, ...)
+fea_gage(eset, refSamples, compSamples, geneIdType, geneLabels=NULL, 
+    organism = "Hs", 
+    annotations = c("GO_BP", "GO_MF", "GO_CC", "KEGG", "REACTOME"), 
+    geneSets = NULL, 
+    sameDirection = FALSE, 
+    onlyEssentialTerms = TRUE, 
+    compareType = "as.group", 
+    jobName = NULL, ...)
 }
 \arguments{
   \item{eset}{
@@ -104,7 +111,8 @@ data(gse16873)
 
 # Load gene labels?
 library(org.Hs.eg.db)
-geneSymbols <- select(org.Hs.eg.db,columns="SYMBOL",keytype="ENTREZID", keys=rownames(gse16873))
+geneSymbols <- select(org.Hs.eg.db,columns="SYMBOL",keytype="ENTREZID", 
+    keys=rownames(gse16873))
 head(geneSymbols)
 table(table(geneSymbols$ENTREZID)) # All need to be unique identifiers
 
@@ -116,7 +124,8 @@ head(geneLabels)
 results <- fea_gage(eset=gse16873, 
                     refSamples=grep('HN',colnames(gse16873), ignore.case =T), 
                     compSamples=grep('DCIS',colnames(gse16873), ignore.case=T), 
-                    geneIdType="ENTREZID", geneLabels=geneLabels, organism="Hs", annotations="REACTOME")
+                    geneIdType="ENTREZID", geneLabels=geneLabels, organism="Hs",
+                    annotations="REACTOME")
 
 
 # To continue the workflow... (see help for further details)
