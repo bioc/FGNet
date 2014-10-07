@@ -1,6 +1,6 @@
 
 #ADD? jobName=NULL,  geneLabels=NULL,
-FGNet_report <- function (feaResults, geneExpr=NULL, plotExpression="border", onlyGoLeaves=TRUE, plotGoTree=TRUE, plotKeggPw=TRUE, filterAttribute=NULL, filterOperator="<", filterThreshold=0)
+FGNet_report <- function (feaResults, geneExpr=NULL, plotExpression="border", onlyGoLeaves=TRUE, plotGoTree=TRUE, plotKeggPw=TRUE, filterAttribute=NULL, filterOperator=NULL, filterThreshold=NULL)
 {
     #####################################################################################################
     ####################################   Check arguments   ############################################
@@ -32,8 +32,8 @@ FGNet_report <- function (feaResults, geneExpr=NULL, plotExpression="border", on
     if(is.null(filterAttribute)) 
     {
         filterAttribute <- FEA_tools[tool,"DefaultFilter"]
-        filterOperator <- FEA_tools[tool,"DefaultFiltOperator"]
-        filterThreshold <- FEA_tools[tool,"DefaultFiltThreshold"]
+        if(is.null(filterOperator))   filterOperator <- FEA_tools[tool,"DefaultFiltOperator"]
+        if(is.null(filterThreshold))  filterThreshold <- FEA_tools[tool,"DefaultFiltThreshold"]
     }
     
     if(is.null(geneExpr) && ("genesFC" %in% names(feaResults))) geneExpr <- feaResults$genesFC

@@ -31,6 +31,7 @@ fea2incidMat <- function(feaResults, key="Genes", sepChar=NULL, clusterColumn=NU
         filterOperator <- NULL 
         filterThreshold <- 0        
     }
+    if(is.null(filterThreshold)) filterThreshold <- 0 
     if(!is.null(filterAttribute) && !is.data.frame(filterAttribute)) 
     {
         if(class(feaResults)=="list")

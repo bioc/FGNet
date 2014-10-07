@@ -19,7 +19,7 @@ createHTML_FEA_header<- function(p, tool, queryArgs, feaResults, folder)
     {      
         hwrite("Server: ", p, class='InfoLabel', br=FALSE)
         if("serverWeb" %in% names(queryArgs)) serverWeb <- queryArgs$serverWeb
-        hwrite(serverWeb, link=paste(serverWeb, '" target="_blank', sep=""),p, br=FALSE)
+        hwrite(serverWeb, link=paste(serverWeb, '" target="_blank', sep=""),p, br=TRUE)
     }
        
     ############################################
@@ -29,10 +29,10 @@ createHTML_FEA_header<- function(p, tool, queryArgs, feaResults, folder)
         if(!is.null(queryArgs$jobID))
         {
             hwrite("Job ID: ", p, class='InfoLabel', br=FALSE)
-            hwrite(queryArgs$jobID, p, br=FALSE)
+            hwrite(queryArgs$jobID, p, br=TRUE)
         }
         
-        hwrite("<br/>Raw gene-term sets text files: ", p,  br=FALSE)
+        hwrite("Raw gene-term sets text files: ", p,  br=FALSE)
         jobName <- gsub(.Platform$file.sep, "", folder)
         nRawMg <- nrow(feaResults$metagroups)
         hwrite(paste('[Mg', 1:nRawMg,']', sep=""), p, link=paste(folder,jobName,"_metagroup_", 1:nRawMg, ".txt", sep=""), table=FALSE, br=FALSE)

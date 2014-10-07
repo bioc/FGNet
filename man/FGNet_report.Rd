@@ -11,7 +11,7 @@ Generates an HTML report with several views of the Functional Network and comple
 \usage{
 FGNet_report(feaResults, geneExpr = NULL, plotExpression = "border", 
 onlyGoLeaves = TRUE, plotGoTree = TRUE, plotKeggPw = TRUE, 
-filterAttribute = NULL, filterOperator = "<", filterThreshold = 0)
+filterAttribute = NULL, filterOperator = NULL, filterThreshold = NULL)
 }
 \arguments{
   \item{feaResults}{

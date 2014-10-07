@@ -5,7 +5,7 @@
 %\VignettePackage{FGNet}
 \documentclass[a4paper,12pt]{article}
 
- %modify for your R home directory
+%modify for your R home directory
 \usepackage{amsmath}
 \usepackage{hyperref}
 \usepackage{authblk}
@@ -30,6 +30,7 @@
 \affil{Bioinformatics and Functional Genomics Group\\ Centro de Investigacion del Cancer (CiC-IBMCC, CSIC/USAL)\\ Salamanca - Spain}
 
 \begin{document}
+
 
 <<include=FALSE, echo=FALSE>>=
 library(knitr)
@@ -131,7 +132,7 @@ To generate a functional network with FGNet:
 \emph{* Online tools require internet connection}
 \end{table}
 \item Create an HTML report with multiple views of the networks and analyses (sec. \ref{sec:report})
-\item Personalize or analyze a specific network (sec.\ref{sec:fea2incidMat})
+\item Personalize or analyze a specific network (sec.\ref{sec:onlyNetwork})
 \end{enumerate}
 
 These steps are integrated into the Graphical User Interface (GUI), which provides access to the main functionalities of FGNet.
@@ -153,21 +154,31 @@ FGNet_GUI()
 
 In case you already have a gene list or gene expression from a previous analysis, it is possible to load it directly into the GUI genes field by passing it as argument:
 <<eval=TRUE>>=
-geneList1 <- c("YBL084C", "YDL008W", "YDR118W", "YDR301W", "YDR448W", 
+geneExpr <- c("YBL084C", "YDL008W", "YDR118W", "YDR301W", "YDR448W", 
     "YFR036W", "YGL240W", "YHR166C", "YKL022C", "YLR102C", "YLR115W", 
     "YLR127C", "YNL172W", "YOL149W", "YOR249C")
-geneList1 <- setNames(c(rep(1,10),rep(-1,5)), geneList1)
+geneExpr <- setNames(c(rep(1,10),rep(-1,5)), geneExpr)
 
-FGNet_GUI(geneList1)
+FGNet_GUI(geneExpr)
 @
 
 \subsection{In R code...}
-\subsubsection{Functional Enrichment Analysis (FEA)}
-\label{sec:fea}
-
 The first step in the workflow is always is to perform a Functional Enrichment Analisis (FEA) on a list of genes or expression set. 
 
-Here we will show a simple example with each of the tools:
+Once the FEA is ready, you can proceed to generate the HTML report or the individual network/analyses:
+\begin{figure}[h]
+\centering
+\includegraphics[width=.7\textwidth]{FGNet_workflow}
+\label{fig:workflow}
+\end{figure} 
+
+For help or more details on any functions or their arguments, just set a ? before its name. i.e. :
+<<eval=FALSE>>=
+?FGNet_report
+@
+
+\subsubsection{Functional Enrichment Analysis (FEA)}
+\label{sec:fea}
 
 \begin{table}[h]
 \centering
@@ -184,7 +195,12 @@ Other & format\_feaResults() &  \\ \hline
 \label{FEAfunctions}
 \end{table}
 
-DAVID and topGO work in a very symilar way: Just provide a gene list and set the arguments:
+A simple example to do the FEA with each of the tools:
+
+\textbf{DAVID}
+
+Using DAVID requires internet connection. In addition, we recommend to register at \url{http://david.abcc.ncifcrf.gov/webservice/register.htm} to perform the queries through its Web Service.
+
 <<eval=TRUE>>=
 library(FGNet)
 geneList1 <- c("YBL084C", "YDL008W", "YDR118W", "YDR301W", "YDR448W", 
@@ -198,22 +214,26 @@ library(org.Sc.sgd.db)
 geneLabels <- unlist(as.list(org.Sc.sgdGENENAME)[geneList1])
 names(geneExpr1) <- geneLabels[names(geneExpr1)] 
 @ 
-\textbf{DAVID}:\\
-Requires internet connection (and registration at at \url{http://david.abcc.ncifcrf.gov/webservice/register.htm}).
+
 <<eval=FALSE>>=
 results_David <- fea_david(geneList1, geneLabels=geneLabels, 
     email="example@email.com")
 @ 
-\textbf{TopGO}:\\
-TopGO relies on local databases. Therefore, it does not require internet connection. Note that the the results from topGO are provided as individual gene-term sets, not grouped into clusters:
+
+\textbf{TopGO}
+
+TopGO does not require internet connection since it relies on local databases. However, the results from topGO are provided as individual gene-term sets, not grouped into clusters.
+
+An example with the previous gene list:
 <<eval=FALSE>>=
 results_topGO <- fea_topGO(geneList1, geneIdType="ENSEMBL", 
     geneLabels=geneLabels, organism="Sc") 
 @
 
 
-\textbf{Gene-Term Linker}:\\
-Gene-Term Linker is also run over a gene list. Since the analysis usually takes several minutes to be ready, the workflow is divided in two steps: sending the analysis request, and retrieving the results:
+\textbf{Gene-Term Linker}
+
+Since the analysis with Gene-Term Linker usually takes several minutes to be ready, the workflow is divided in two steps: (1) sending the analysis request, and (2) retrieving the results:
 <<eval=TRUE>>=
 genesYeast <- c("ADA2", "APC1", "APC11", "APC2", "APC4", "APC5", "APC9", "CDC16", 
     "CDC23", "CDC26", "CDC27", "CFT1", "CFT2", "DCP1", "DOC1", "FIP1", 
@@ -232,10 +252,11 @@ jobID <- fea_gtLinker(geneList=genesYeast,organism="Sc")
 \emph{once the analysis is ready...}
 <<eval=TRUE>>=
 jobID <- 3907019
-results_gtLinker <- fea_gtLinker_getResults(jobID=jobID)
+results_gtLinker <- fea_gtLinker_getResults(jobID=jobID, organism="Sc")
 @
 
-\textbf{Gage}:\\
+\textbf{Gage}
+
 As a GSA approach, instead of performing the functional enrichment over a gene list, gage requires a raw expression set and the samples to compare:
 <<eval=FALSE>>=
 library(gage); data(gse16873)
@@ -246,19 +267,40 @@ results_gage <- fea_gage(eset=gse16873,
 FGNet_report(results_gage)
 @
 
-For \textbf{other tools} see:
+\textbf{Other tools} 
+
+To import the results from a functional enrichment analysis performed with other tools, see:
 <<eval=FALSE>>=
 ?format_results()
 @
 
+\textbf{Web analysis} 
 
-Once the FEA is ready, you can proceed to generate the HTML report or the individual network/analyses:
+FGNet can also be applied to an analysis performed at DAVID and GeneTerm Linker web site:
+\begin{itemize}
+    \item DAVID: \url{http://david.abcc.ncifcrf.gov} (Functional Annotation Clustering Tool)
+    \item GeneTerm Linker: \url{http://gtlinker.cnb.csic.es}
+\end{itemize}
 
+To import these results into FGNet, use DAVID's \emph{download file} or GeneTerm linker's \emph{job ID}, and the functions \emph{format\_david()} or \emph{fea\_gtLinker\_getResults()}:
 \begin{figure}[h]
 \centering
-\includegraphics[width=.7\textwidth]{FGNet_workflow}
-\label{fig:workflow}
-\end{figure} 
+\subfigure{
+    \includegraphics[width=.31\textwidth]{ssDavid}
+	 \label{fig:subfig2b}
+	 \centering
+}
+\centering
+\subfigure{
+    \includegraphics[width=.31\textwidth]{ssGtlinker}
+	 \label{fig:subfig2a}
+}
+\end{figure}
+
+<<eval=FALSE>>=
+results <- format_david("http://david.abcc.ncifcrf.gov/data/download/90128.txt")
+results <- fea_gtLinker_getResults(jobID=3907019)
+@
 
 \subsubsection{HTML report}
 \label{sec:report}
@@ -272,12 +314,20 @@ FGNet_report(results_gtLinker, geneExpr=genesYeastExpr)
 FGNet_report(results_gage)
 @
 
+By default, the clusters included in these reports are filtered out to get cleaner results. The default values depend on the tool, and can be modified through FGNet\_report arguments:
+<<eval=FALSE>>=
+data(FEA_tools)
+FEA_tools
+@
+<<eval=FALSE>>=
+FGNet_report(results_gtLinker, filterThreshold=0.3)
+@
 <<eval=FALSE>>=
 ?FGNet_report
 @
 
-\subsubsection{Personalizing networks}
-\label{sec:fea2incidMat}
+\subsubsection{Individual networks}
+\label{sec:onlyNetwork}
 To geneate specific networks rather than the full report, after the FEA is ready, use \emph{fea2incidMat()} to generate the incidence matrices that represent the networks:
 <<eval=TRUE>>=
 results <- results_gtLinker
@@ -299,14 +349,54 @@ functionalNetwork(incidMat_terms, plotType="bipartite", plotOutput="dynamic")
 <<fig=TRUE,eval=TRUE, echo=FALSE>>=
 functionalNetwork(incidMat_terms, plotType="bipartite")
 @
-\newpage
+
 <<fig=TRUE,eval=TRUE, heigth=5>>=
 analyzeNetwork(incidMat)
 @
-\newpage
+
 <<fig=TRUE,eval=TRUE, heigth=5>>=
 distMat <- clustersDistance(incidMat)
 @
+
+<<fig=TRUE,eval=TRUE, heigth=5>>=
+goIds <- getTerms(results, returnValue="GO")[[4]]
+plotGoAncestors(goIds, ontology="BP")
+@
+
+<<eval=FALSE>>=
+keggIds <- getTerms(results, returnValue="KEGG")[[4]]
+plotKegg(keggIds, geneExpr=genesYeastExpr, geneIDtype="GENENAME")
+@
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 \newpage
 \begin{thebibliography}{6} 
@@ -321,5 +411,4 @@ distMat <- clustersDistance(incidMat)
 \bibitem{gage} Luo W, Friedman MS, Shedden K, Hankenson KD, Woolf PJ (2009) GAGE: generally applicable gene set enrichment for pathway analysis. BMC Bioinformatics. 10:161. URL: \url{http://www.bioconductor.org/packages/release/bioc/html/gage.html}
 
 \end{thebibliography}
-
 \end{document}

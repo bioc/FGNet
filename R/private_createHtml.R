@@ -438,7 +438,7 @@ createHtml <- function(htmlFileName, feaResults, jobName, tablesGenes, tablesTer
             subImages <- c(subImages,
                          hwrite(paste('Terms in several ', tolower(grType),'s: ', sep=""), class='InfoLabel', br=TRUE),
                          hwrite('(Marked with * in the table)'),
-                         hwriteImage(paste(networkTerms,sep=""), class='intersectionNw', link='#nwTerms', br=FALSE),
+                         hwriteImage(paste(folder,networkTerms,sep=""), class='intersectionNw', link='#nwTerms', br=FALSE),
                          hwrite(paste('<div id="nwTerms" class="modalDialog"><div>',closeButton, '<img border="0" src="',folder,networkTerms,'" width="100%"></div></div>', sep="")))
         }
     
