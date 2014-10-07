@@ -103,8 +103,11 @@ loadFileDialog <- function(button, argsList) # button: Not used, but required fo
                                    "gtk-open", GtkResponseType["accept"],
                                    "gtk-cancel", GtkResponseType["cancel"])
     
-    if (dialog$run() == GtkResponseType["accept"]) fileName <- dialog$getFilename()
+    if(dialog$run() == GtkResponseType["accept"]) fileName <- dialog$getFilename()
     dialog$destroy()
+    
+    # Replace backlash: fileName <- "C:\\blablabla\\blablabla"
+    if(grepl("^[a-zA-Z]{1}:\\\\", fileName, fixed=FALSE)) fileName <- gsub("\\", .Platform$file.sep, fileName, fixed=TRUE)
     
     if(button$name == "buttonLoadGenes") 
     {

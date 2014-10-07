@@ -29,11 +29,14 @@ selectNetworkTool <- function(aux, argsList)
     {        
         argsList$gtLinkerDownloadExpander$Show()
         gtkWidgetSetSensitive(argsList$gtLinkerDownloadExpander, TRUE)
+        argsList$plotChecksValues[["plotKeggPw"]]$active <- FALSE
+        gtkWidgetSetSensitive(argsList$plotChecksValues[["plotKeggPw"]], FALSE)
         gtkWidgetSetSensitive(argsList$plotChecksValues[["onlyGoLeaves"]], FALSE)
         
     }else{
         argsList$gtLinkerDownloadExpander$Hide()
         gtkWidgetSetSensitive(argsList$gtLinkerDownloadExpander, FALSE)
+        gtkWidgetSetSensitive(argsList$plotChecksValues[["plotKeggPw"]], TRUE)
         gtkWidgetSetSensitive(argsList$plotChecksValues[["onlyGoLeaves"]], TRUE)
     }    
 }

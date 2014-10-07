@@ -299,9 +299,8 @@ createHtml <- function(htmlFileName, feaResults, jobName, tablesGenes, tablesTer
     
     # Copiar CSS a la carpeta actual...
     cssDir <- file.path(system.file('css', package='FGNet'))
-    cssFile <- paste(cssDir, "functionalNetworks.css", sep="/")
+    cssFile <- paste(cssDir, "functionalNetworks.css", sep=.Platform$file.sep)
     file.copy(cssFile, ".")
-
     
     # Add representative term to DAVID legend
     legendMg <- TRUE

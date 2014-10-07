@@ -158,7 +158,7 @@ fea2incidMat <- function(feaResults, key="Genes", sepChar=NULL, clusterColumn=NU
     # Remove filtered terms from metagroups (only GeneTermLinker)
     if(removeFilteredGtl && key=="Terms")
     {
-        nonFilteredList <- getMGTerms(feaResults$metagroups, grType="Metagroup")
+        nonFilteredList <- getMGTerms(metagroups, grType="Metagroup")
         nonFilteredList <- sapply(nonFilteredList, function(gr){
           paste(gr[,"TermID"], ":", gr[,"TermDescription"], sep="")
         })

@@ -84,14 +84,17 @@ generateNetwork <- function(button, argsList) # button: Not used, but required f
         # Go to the given file directory        
         folder <- strsplit(inputFile, .Platform$file.sep, fixed=TRUE)[[1]]
         folder <- sub(folder[length(folder)],"",inputFile)
-                                    
+                      
         # Create folder
-        if((!file.exists(file.path(folder))) && folder!="")
-        {
-            dir.create(file.path(folder))        
-        }
         currWD <- getwd()
-        setwd(folder)
+        if(folder!="")
+        {
+            if((!file.exists(file.path(folder))))
+            {
+                dir.create(file.path(folder))        
+            }
+            setwd(folder)
+        }
         
         ####################################
         #### Plot networks
