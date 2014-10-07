@@ -353,11 +353,11 @@ functionalNetwork(incidMat_terms, plotType="bipartite")
 <<fig=TRUE,eval=TRUE, heigth=5>>=
 analyzeNetwork(incidMat)
 @
-
+\newpage
 <<fig=TRUE,eval=TRUE, heigth=5>>=
 distMat <- clustersDistance(incidMat)
 @
-
+\newpage
 <<fig=TRUE,eval=TRUE, heigth=5>>=
 goIds <- getTerms(results, returnValue="GO")[[4]]
 plotGoAncestors(goIds, ontology="BP")
