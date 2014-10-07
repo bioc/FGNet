@@ -120,24 +120,24 @@ Package tutorial: \code{vignette("FGNet-vignette")}
 
 
 # Load/format gene list:
-genesYeast <- c("YBL084C", "YDL008W", "YDR118W", "YDR301W", "YDR448W", "YFR036W",
+geneList <- c("YBL084C", "YDL008W", "YDR118W", "YDR301W", "YDR448W", "YFR036W",
     "YGL240W", "YHR166C", "YKL022C", "YLR102C", "YLR115W", "YLR127C", "YNL172W", 
     "YOL149W", "YOR249C")
-geneExpr <- setNames(c(rep(1,10),rep(-1,5)), genesYeast) 
+geneExpr <- setNames(c(rep(1,10),rep(-1,5)), geneList) 
 
 library(org.Sc.sgd.db)
-geneLabels <- unlist(as.list(org.Sc.sgdGENENAME)[genesYeast])
+geneLabels <- unlist(as.list(org.Sc.sgdGENENAME)[geneList])
 names(geneExpr) <- geneLabels[names(geneExpr)] 
 
 # DAVID
-results_David <- fea_david(genesYeast, geneLabels=geneLabels, email="example@email.com")
+results_David <- fea_david(geneList, geneLabels=geneLabels, email="example@email.com")
 
 
 # Available IDs and annotations:
 getIdTypes(DAVIDWebService$new(email="example@email.com"))
 getAllAnnotationCategoryNames(DAVIDWebService$new(email="example@email.com"))
 
-results <- fea_david(genesYeast, geneIdType="ENSEMBL_GENE_ID",
+results <- fea_david(geneList, geneIdType="ENSEMBL_GENE_ID",
     annotations="GOTERM_BP_ALL", email="example@email.com", jobName="yeastDavid")
 
 

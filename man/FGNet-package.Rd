@@ -69,16 +69,16 @@ For more info see the package tutorial: \code{vignette("FGNet-vignette")}
 FGNet_GUI()
 
 # 1. FEA:
-genesYeast <- c("YBL084C", "YDL008W", "YDR118W", "YDR301W", "YDR448W", "YFR036W", 
+genesList <- c("YBL084C", "YDL008W", "YDR118W", "YDR301W", "YDR448W", "YFR036W", 
     "YGL240W", "YHR166C", "YKL022C", "YLR102C", "YLR115W", "YLR127C", "YNL172W", 
     "YOL149W", "YOR249C")
-# Optional: Gene expression
-geneExpr <- setNames(c(rep(1,10),rep(-1,5)), genesYeast)
+# Optional: Gene expression 
+geneExpr <- setNames(c(rep(1,10),rep(-1,5)), genesList)
 
-results <- fea_david(names(genesYeast), email="your@email.com")
+results <- fea_david(genesList, email="example@email.com")
 
 # 2 A) Report:
-FGNet_report(results, geneExpr=genesYeast)
+FGNet_report(results, geneExpr=geneExpr)
 
 # 2 B) Step by step:
 # 2.1. Create incidence matrices:
@@ -86,7 +86,7 @@ incidMat <- fea2incidMat(results)
 incidMat_terms <- fea2incidMat(results, key="Terms")
 
 # 2.2. Explore networks:
-functionalNetwork(incidMat, geneExpr=genesYeast)
+functionalNetwork(incidMat, geneExpr=geneExpr)
 functionalNetwork(incidMat_terms, plotType="bipartite", plotOutput="dynamic")
 getTerms(results)
 

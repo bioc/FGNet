@@ -32,12 +32,12 @@ Package tutorial: \code{vignette("FGNet-vignette")}
 FGNet_GUI()
 
 # To directly input a gene list (i.e. from a previous analysis):
-genesYeast <- c("YBL084C", "YDL008W", "YDR118W", "YDR301W", "YDR448W", "YFR036W", 
+geneList <- c("YBL084C", "YDL008W", "YDR118W", "YDR301W", "YDR448W", "YFR036W", 
     "YGL240W", "YHR166C", "YKL022C", "YLR102C", "YLR115W", "YLR127C", "YNL172W",
     "YOL149W", "YOR249C")
 # Optional gene expression
-genesYeast <- setNames(c(rep(1,10),rep(-1,5)), genesYeast)
+geneExpr <- setNames(c(rep(1,10),rep(-1,5)), geneList)
 
-FGNet_GUI(genesYeast)
+FGNet_GUI(geneExpr)
 }
 }

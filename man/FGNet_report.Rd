@@ -76,21 +76,21 @@ Package tutorial: \code{vignette("FGNet-vignette")}
 
 ##########################
 # DAVID & TopGO
-genesYeast <- c("YBL084C", "YDL008W", "YDR118W", "YDR301W", "YDR448W", "YFR036W", 
+geneList <- c("YBL084C", "YDL008W", "YDR118W", "YDR301W", "YDR448W", "YFR036W", 
     "YGL240W", "YHR166C", "YKL022C", "YLR102C", "YLR115W", "YLR127C", "YNL172W", 
     "YOL149W", "YOR249C")
-geneExpr <- setNames(c(rep(1,10),rep(-1,5)), genesYeast) 
+geneExpr <- setNames(c(rep(1,10),rep(-1,5)), geneList) 
 
 library(org.Sc.sgd.db)
-geneLabels <- unlist(as.list(org.Sc.sgdGENENAME)[genesYeast])
+geneLabels <- unlist(as.list(org.Sc.sgdGENENAME)[geneList])
 names(geneExpr) <- geneLabels[names(geneExpr)] 
 
 # DAVID
-results_David <- fea_david(genesYeast, geneLabels=geneLabels, email="example@email.com")
+results_David <- fea_david(geneList, geneLabels=geneLabels, email="example@email.com")
 FGNet_report(results_David, geneExpr=geneExpr) 
 
 # TopGO
-results_topGO <- fea_topGO(genesYeast, geneIdType="ENSEMBL", 
+results_topGO <- fea_topGO(geneList, geneIdType="ENSEMBL", 
     geneLabels=geneLabels, organism="Sc") 
 FGNet_report(results_topGO, geneExpr=geneExpr)   
 
@@ -107,22 +107,24 @@ FGNet_report(results_gage)
 # Gene-Term Linker: 
 
 # Execute new query:
-geneList <- setNames(c(rep(1,29), rep(-1,30)), # 1=UP, -1=DW
-   c("ADA2", "APC1", "APC11", "APC2", "APC4", "APC5", "APC9", 
+genesYeast <- c("ADA2", "APC1", "APC11", "APC2", "APC4", "APC5", "APC9", 
      "CDC16", "CDC23", "CDC26", "CDC27", "CFT1", "CFT2", "DCP1", "DOC1", "FIP1", 
      "GCN5", "GLC7", "HFI1", "KEM1", "LSM1", "LSM2", "LSM3", "LSM4", "LSM5", 
      "LSM6", "LSM7", "LSM8", "MPE1", "NGG1", "PAP1", "PAT1", "PFS2", "PTA1", 
      "PTI1", "REF2", "RNA14", "RPN1", "RPN10", "RPN11", "RPN13", "RPN2", "RPN3", 
      "RPN5", "RPN6", "RPN8", "RPT1", "RPT3", "RPT6", "SGF11", "SGF29", "SGF73", 
-     "SPT20", "SPT3", "SPT7", "SPT8", "TRA1", "YSH1", "YTH1"))
-                         
-jobID <- fea_gtLinker(geneList=names(geneList),organism="Sc")
+     "SPT20", "SPT3", "SPT7", "SPT8", "TRA1", "YSH1", "YTH1")
+# Optional expression (1=UP, -1=DW):
+genesYeastExpr <- setNames(c(rep(1,29), rep(-1,30)), genesYeast)
+
+
+jobID <- fea_gtLinker(geneList=genesYeast,organism="Sc")
 
 # Load existing query:
 jobID <- 3907019
 
 results_gtLinker <- fea_gtLinker_getResults(jobID=jobID)
-FGNet_report(results_gtLinker, geneExpr=geneList)
+FGNet_report(results_gtLinker, geneExpr=genesYeastExpr)
 
 
 }

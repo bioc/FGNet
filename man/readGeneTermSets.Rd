@@ -4,7 +4,7 @@
 Read gene-term sets
 }
 \description{
-Reads a file containing gene-term sets (output from FEA) and transform it into clusters/metagroups and geneTermSets tables to imput to FGNet.
+Reads a file containing gene-term sets (formatted output from FEA) and transform it into clusters/metagroups and geneTermSets tables to imput to FGNet.
 }
 \usage{
 readGeneTermSets(fileName, tool = NULL, simplifyGage = TRUE)

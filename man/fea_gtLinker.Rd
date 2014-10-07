@@ -127,24 +127,28 @@ Package tutorial: \code{vignette("FGNet-vignette")}
 \dontrun{
     
     
-### Execute new query:
-geneList <- c("ADA2", "APC1", "APC11", "APC2", "APC4", "APC5", "APC9", 
-    "CDC16", "CDC23", "CDC26", "CDC27", "CFT1", "CFT2", "DCP1", "DOC1", "FIP1", 
-    "GCN5", "GLC7", "HFI1", "KEM1", "LSM1", "LSM2", "LSM3", "LSM4", "LSM5", 
-    "LSM6", "LSM7", "LSM8", "MPE1", "NGG1", "PAP1", "PAT1", "PFS2", "PTA1", 
-    "PTI1", "REF2", "RNA14", "RPN1", "RPN10", "RPN11", "RPN13", "RPN2", "RPN3", 
-    "RPN5", "RPN6", "RPN8", "RPT1", "RPT3", "RPT6", "SGF11", "SGF29", "SGF73", 
-    "SPT20", "SPT3", "SPT7", "SPT8", "TRA1", "YSH1", "YTH1")
-jobID <- fea_gtLinker(geneList=geneList,organism="Sc")
+### Execute FEA:
+genesYeast <- c("ADA2", "APC1", "APC11", "APC2", "APC4", "APC5", "APC9", 
+     "CDC16", "CDC23", "CDC26", "CDC27", "CFT1", "CFT2", "DCP1", "DOC1", "FIP1", 
+     "GCN5", "GLC7", "HFI1", "KEM1", "LSM1", "LSM2", "LSM3", "LSM4", "LSM5", 
+     "LSM6", "LSM7", "LSM8", "MPE1", "NGG1", "PAP1", "PAT1", "PFS2", "PTA1", 
+     "PTI1", "REF2", "RNA14", "RPN1", "RPN10", "RPN11", "RPN13", "RPN2", "RPN3", 
+     "RPN5", "RPN6", "RPN8", "RPT1", "RPT3", "RPT6", "SGF11", "SGF29", "SGF73", 
+     "SPT20", "SPT3", "SPT7", "SPT8", "TRA1", "YSH1", "YTH1")
+# Optional expression (1=UP, -1=DW):
+genesYeastExpr <- setNames(c(rep(1,29), rep(-1,30)), genesYeast)
 
-# Load existing query:
+# Submit query
+jobID <- fea_gtLinker(geneList=genesYeast,organism="Sc")
+
+# (Or ID from previous query)
 jobID <- 3907019
 
-### Get results from query:
+### Get results from FEA:
 results <- fea_gtLinker_getResults(jobID=jobID)
 
 # To continue the workflow... (see help for further details)
-FGNet_report(results)
+FGNet_report(results, geneExpr=genesYeastExpr)
 
 incidMat <- fea2incidMat(results)
 functionalNetwork(incidMat)

@@ -34,7 +34,7 @@ Package tutorial: \code{vignette("FGNet-vignette")}
 genesYeast <- c("YBL084C", "YDL008W", "YDR118W", "YDR301W", "YDR448W", "YFR036W", 
     "YGL240W", "YHR166C", "YKL022C", "YLR102C", "YLR115W", "YLR127C", "YNL172W", 
     "YOL149W", "YOR249C")
-results <- fea_david(genesYeast)
+results <- fea_david(genesYeast) # email=example@email.com
 
 # Select keywords
 keywordsTerm(getTerms(results), nChar=100)

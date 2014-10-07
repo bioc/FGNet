@@ -94,17 +94,17 @@ Package tutorial: \code{vignette("FGNet-vignette")}
     
 
 # Load/format gene list:
-genesYeast <- c("YBL084C", "YDL008W", "YDR118W", "YDR301W", "YDR448W", "YFR036W",
+geneList <- c("YBL084C", "YDL008W", "YDR118W", "YDR301W", "YDR448W", "YFR036W",
     "YGL240W", "YHR166C", "YKL022C", "YLR102C", "YLR115W", "YLR127C", "YNL172W",
     "YOL149W", "YOR249C")
-geneExpr <- setNames(c(rep(1,10),rep(-1,5)), genesYeast) 
+geneExpr <- setNames(c(rep(1,10),rep(-1,5)), geneList) 
 
 library(org.Sc.sgd.db)
-geneLabels <- unlist(as.list(org.Sc.sgdGENENAME)[genesYeast])
+geneLabels <- unlist(as.list(org.Sc.sgdGENENAME)[geneList])
 names(geneExpr) <- geneLabels[names(geneExpr)] 
 
 # FEA:
-results <- fea_topGO(genesYeast, geneIdType="ENSEMBL", 
+results <- fea_topGO(geneList, geneIdType="ENSEMBL", 
     geneLabels=geneLabels, organism="Sc") 
 
 # To continue the workflow... (see help for further details)

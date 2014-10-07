@@ -26,7 +26,7 @@ clustersDistance(incidenceMatices, mgCols = NULL)
 		\code{\link[FGNet:FGNet-package]{FGNet}}
 }
 \examples{
-results <- fea_gtLinker_getResults(jobID=1963186, jobName="gtLinker_ej")
+results <- fea_gtLinker_getResults(jobID=1963186, jobName="gtLinker_example")
 incidMatrices <- fea2incidMat(results)
 clustersDistance(incidMatrices)
 }

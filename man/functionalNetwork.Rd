@@ -112,10 +112,10 @@ genesYeast <- c("ADA2", "APC1", "APC11", "APC2", "APC4", "APC5", "APC9",
     "RPN5", "RPN6", "RPN8", "RPT1", "RPT3", "RPT6", "SGF11", "SGF29", "SGF73", 
     "SPT20", "SPT3", "SPT7", "SPT8", "TRA1", "YSH1", "YTH1")
 # Optional gene expression
-genesYeast <- setNames(c(rep(1,29), rep(-1,30)), genesYeast) # 1=UP, -1=DW
+genesYeastExpr <- setNames(c(rep(1,29), rep(-1,30)), genesYeast) # 1=UP, -1=DW
 
 # FEA:
-# jobID <- query_gtLinker(names(genesYeast), organism = "Sc")
+# jobID <- query_gtLinker(genesYeast, organism = "Sc")
 jobID <- 3907019
 results <- fea_gtLinker_getResults(jobID)
 
@@ -123,7 +123,7 @@ results <- fea_gtLinker_getResults(jobID)
 # Gene-based networks:
 incidMat <- fea2incidMat(results, filterAttribute="Silhouette Width")
 
-functionalNetwork(incidMat, geneExpr=genesYeast)
+functionalNetwork(incidMat, geneExpr=genesYeastExpr)
 functionalNetwork(incidMat, plotType="bipartite", plotOutput="dynamic")
 
 getTerms(results)
