@@ -1,6 +1,9 @@
 ################################################################################
 ### Aux functions
 # loadEset
+# selectLoadGs
+# selectNewGs
+
 loadEset <- function(fileName, refSamplesBox, compSamplesBox)
 {
     for(samp in refSamplesBox$getChildren()) refSamplesBox$remove(samp) # Vaciar
@@ -20,6 +23,24 @@ loadEset <- function(fileName, refSamplesBox, compSamplesBox)
     }
 }
 
+selectLoadGs <- function(aux, argsList)
+{
+    argsList$loadGeneSetsFrame$setVisible(TRUE)
+    argsList$newGsBox$setVisible(FALSE)
+    
+    argsList$frameAnnotsGage$label <- "Select annotations (if available):"
+}
+
+selectNewGs <- function(aux, argsList)
+{
+    save(argsList,file="argsList.Rdata")
+    argsList$loadGeneSetsFrame$setVisible(FALSE)
+    argsList$newGsBox$setVisible(TRUE)
+    
+    argsList$frameAnnotsGage$label <- "Annotations:"
+}
+
+
 #################################################################################
 ### Fills GAGE tab
 #################################################################################
@@ -28,10 +49,53 @@ tabGage_fill <- function(mainWindow, allOrgs)
 {
     ########################################################################
     # Fill tab
-    
     tabGage <- gtkVBox(FALSE,0)
     
-    hbox1Gage <- gtkHBoxNew(homogeneous=FALSE, spacing=0)
+    ###############
+    # geneSets=NULL
+    geneSetsFrame <- gtkFrame("Gene sets")
+    gageV2Box <- gtkVBoxNew(homogeneous=FALSE, spacing=5)
+    
+    #### radioFrame Seledt gene set type
+    # Radio button
+    gsRadioFrame <- gtkFrame("")
+    gtkFrameSetShadowType(gsRadioFrame, GtkShadowType["none"])
+    gsRadioBoxH <- gtkHBox(FALSE,3)
+    gsLoadRadio <- gtkRadioButtonNewWithLabelFromWidget(gtkRadioButton(), "Load")
+    gsLoadRadio$"tooltip-text" <- "Load existing gene sets (.gmt or .RData files)"
+    gsLoadRadio$active<-TRUE
+    gsNewRadio <- gtkRadioButtonNewWithLabelFromWidget(gsLoadRadio, "Create new")
+    gsNewRadio$"tooltip-text" <- "Create new gene sets for given IDs and organism."
+    
+    # gSignalConnect at end
+    
+    gsRadioBoxH$packStart(gsLoadRadio, FALSE, FALSE, 5)
+    gsRadioBoxH$packStart(gsNewRadio, FALSE, FALSE, 5)
+    
+#     gsRadioFrame$add(gsRadioBoxV)
+#     tabGage$packStart(gsRadioFrame, expand=FALSE)
+gageV2Box$packStart(gsRadioBoxH, expand = FALSE)
+
+    
+    ###############
+    # Load gene sets
+    # File
+    geneSetsH1Box <- gtkHBox(FALSE,3)
+    loadGeneSetsFrame <- gtkFrame("Load")
+    gtkFrameSetShadowType(loadGeneSetsFrame, GtkShadowType["none"])
+    geneSetsTxt <- gtkEntryNew()
+    geneSetsH1Box$packStart(geneSetsTxt, expand=TRUE)
+    geneSetsTxt$"tooltip-text" <- ".gmt or .RData"
+    # Button load
+    geneSetsButton <- gtkButton("Select file")
+    geneSetsButton$name <- "geneSetsButton"
+    geneSetsH1Box$packStart(geneSetsButton, expand=FALSE)
+    loadGeneSetsFrame$add(geneSetsH1Box)
+    gageV2Box$packStart(loadGeneSetsFrame, expand=FALSE)
+    
+    #######
+    # Hbox - GeneID & spec
+    newGsBox <- gtkHBoxNew(homogeneous=FALSE, spacing=0)
     # geneIdType 
     geneIDsGage <- c("ENTREZID")
     # geneIDsGage <- c("ENTREZID", "ENSEMBL", "ENSEMBLPROT", "ENSEMBLTRANS", "UNIPROT", "SYMBOL") # Los ensemble en algunos org  no estan
@@ -43,7 +107,8 @@ tabGage_fill <- function(mainWindow, allOrgs)
     for(id in geneIDsGage) gtkComboBoxAppendText(comboGeneIdTypeGage, id)
     comboGeneIdTypeGage$setActive(0)  # CUAL?
     frameGeneIdTypeGage$add(comboGeneIdTypeGage)
-    hbox1Gage$packStart(frameGeneIdTypeGage, expand=TRUE)
+    newGsBox$packStart(frameGeneIdTypeGage, expand=TRUE)
+    newGsBox$setVisible(FALSE)
     
     # Organisms
     orgGageBox <- gtkHBoxNew(homogeneous=FALSE, spacing=0)
@@ -58,33 +123,14 @@ tabGage_fill <- function(mainWindow, allOrgs)
     #     orgGageURL <- gtkLinkButtonNewWithLabel("http://www.bioconductor.org/packages/release/BiocViews.html#___OrgDb", label = "[install]", show = TRUE)
     #     orgGageBox$packStart(orgGageURL, expand = FALSE)
     frameOrgGage$add(orgGageBox)
-    hbox1Gage$packStart(frameOrgGage, expand=TRUE)
-    tabGage$packStart(hbox1Gage, expand=FALSE)
-    
-    ###############
-    # geneSets=NULL
-    gageV2Box <- gtkVBoxNew(homogeneous=FALSE, spacing=0)
-    geneSetsFrame <- gtkFrame("Gene sets")
-    geneSetsH1Box <- gtkHBox(FALSE,3)
-    # File
-    loadGeneSetsFrame <- gtkFrame("Load")
-    gtkFrameSetShadowType(loadGeneSetsFrame, GtkShadowType["none"])
-    geneSetsTxt <- gtkEntryNew()
-    geneSetsH1Box$packStart(geneSetsTxt, expand=TRUE)
-    geneSetsTxt$"tooltip-text" <- ".gmt or .RData"
-    # Button load
-    geneSetsButton <- gtkButton("Select file")
-    geneSetsButton$name <- "geneSetsButton"
-    geneSetsH1Box$packStart(geneSetsButton, expand=FALSE)
-    
-    loadGeneSetsFrame$add(geneSetsH1Box)
-    gageV2Box$packStart(loadGeneSetsFrame, expand=FALSE)
+    newGsBox$packStart(frameOrgGage, expand=TRUE)
+    gageV2Box$packStart(newGsBox, expand=FALSE)
     
     # annotations
     #gageV2Box$packStart(gtkLabelNew("*OR*"), expand=FALSE)
     gage_annots <- c("GO Biological Process (BP)","GO Molecular Function (MF)", "GO Cellular Component (CC)", "Kegg pathways", "Reactome pathways")
     names(gage_annots) <- c("GO_BP","GO_MF","GO_CC","KEGG","REACTOME")
-    frameAnnotsGage <- gtkFrame("Select / Generate new gene sets:")
+    frameAnnotsGage <- gtkFrame("Select annotations (if available)")
     gtkFrameSetShadowType(frameAnnotsGage, GtkShadowType["none"])
     annotsAreaGage <- gtkVBoxNew(homogeneous=FALSE, spacing=0)
     frameAnnotsGage$add(annotsAreaGage)
@@ -99,6 +145,25 @@ tabGage_fill <- function(mainWindow, allOrgs)
     
     geneSetsFrame$add(gageV2Box)
     tabGage$packStart(geneSetsFrame, expand=FALSE)
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
     
     # sameDirection=FALSE, compareType="as.group", onlyEssentialTerms=TRUE
     optionsGageBox <- gtkHBoxNew(homogeneous=FALSE, spacing=0)
@@ -128,6 +193,9 @@ tabGage_fill <- function(mainWindow, allOrgs)
                    geneSetsTxt=geneSetsTxt, checkAnnotsGage=checkAnnotsGage, gage_annots=gage_annots,
                    compareTypeTxt=compareTypeTxt, sameDirectionCheck=sameDirectionCheck, onlyEssentialTermsCheck=onlyEssentialTermsCheck)
     
+    # Signalconnects:
+    gSignalConnect(gsLoadRadio, "clicked", selectLoadGs, data=list(parentWindow=mainWindow, loadGeneSetsFrame=loadGeneSetsFrame,newGsBox=newGsBox, frameAnnotsGage=frameAnnotsGage))
+    gSignalConnect(gsNewRadio, "clicked", selectNewGs, data=list(parentWindow=mainWindow, loadGeneSetsFrame=loadGeneSetsFrame,newGsBox=newGsBox, frameAnnotsGage=frameAnnotsGage))
     
     gSignalConnect(geneSetsButton, "clicked", loadFileDialog, data=list(parentWindow=mainWindow, geneSetsTxt=fields$geneSetsTxt))
     
