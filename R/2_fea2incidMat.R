@@ -52,7 +52,7 @@ fea2incidMat <- function(feaResults, key="Genes", sepChar=NULL, clusterColumn=NU
             colnames(tmpFilterAttribute) <- filterAttribute
             filterAttribute <- tmpFilterAttribute
             
-        } else stop("filterAttribute should be a column from the data.frame returned by getResults...().")    
+        } else stop("filterAttribute should be a column from the data.frame returned by one of the fea_ functions.")    
     }
     if(is.null(filterAttribute) && filterThreshold!=0) stop("To filter provide an filterAttribute.")
     key <- capitalize(tolower(key))

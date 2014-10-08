@@ -9,7 +9,7 @@
 
 getTerms <- function(feaResults, returnValue="description") #GO, KEGG
 {    
-    if(!is.list(feaResults)) stop("Please provide the whole output from getResults_david() or getResults_gtLinker().")  # Only Clusters/Metagroups are used. (no need of $GeneTermSets)
+    if(!is.list(feaResults)) stop("Please provide the whole output from one of the fea functions.")  # Only Clusters/Metagroups are used. (no need of $GeneTermSets)
     
                             grNames <- NULL
                             if("clusters" %in% names(feaResults))

@@ -72,7 +72,7 @@ numeric. Value between 0 and 1 for the transparency of the metagroups background
 character. Color for the edges.
 }
   \item{eWidth}{
-numeric. Edge width. Set to 0 not to plot edges.
+numeric. Edge width. Not to plot edges, set eWidth=0 or eColor=NA.
 }
   \item{weighted}{
 logical. If TRUE, edges width will be based on the number of shared gene-term sets.

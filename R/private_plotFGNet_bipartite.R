@@ -9,6 +9,7 @@ plotFGNet_bipartite <- function(metagroupsMatrix, keepAllNodes, plotAllMg, vLayo
     if(!keepAllNodes) genesInManyMg <- which(apply(metagroupsMatrix, 1, sum)>1)
     
     mgJoinedGraph <- NULL
+	mgJoined <- NULL
     if(length(genesInManyMg)<=1)
     {
         warning("There is nothing to plot. There is no intersection between metagroups/clusters.", immediate.=TRUE)
