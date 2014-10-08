@@ -1,23 +1,29 @@
 # also used in toMatrix & clDescriptions
 formatTerms<- function(termTbl)
 {
-    if(any(grepl(":",termTbl, fixed=TRUE)))
+    if(all(grepl("\\(([[:alnum:]]+:[[:alnum:]]+[0-9]+)\\)$", termTbl)))
     {
-        termTbl <- strsplit(termTbl, ":")
-        
-        ret <- lapply(termTbl, function(x) 
-        {
-            if(length(x)<3)
-            {
-                capitalize(paste(paste(x[length(x)],sep=""))) # Drops annotation
-            }else# format ANNOT:ID:Term description...
-            {
-                capitalize(paste(paste(x[3:length(x)], collapse=" "), " (",paste(x[1:2], collapse=":"),")",sep=""))
-            }
-        })
+        ret <- termTbl    
     }else
     {
-        ret <- termTbl
+        if(any(grepl(":",termTbl, fixed=TRUE)))
+        {
+            termTbl <- strsplit(termTbl, ":")
+            
+            ret <- lapply(termTbl, function(x) 
+            {
+                if(length(x)<3)
+                {
+                    capitalize(paste(paste(x[length(x)],sep=""))) # Drops annotation
+                }else# format ANNOT:ID:Term description...
+                {
+                    capitalize(paste(paste(x[3:length(x)], collapse=" "), " (",paste(x[1:2], collapse=":"),")",sep=""))
+                }
+            })
+        }else
+        {
+            ret <- termTbl
+        }
     }
     return(ret)
 }
