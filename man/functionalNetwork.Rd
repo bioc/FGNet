@@ -42,10 +42,10 @@ character. Title to show on the plot.
 character. Text to show at the bottom of the plot (sub-title).
 }
   \item{legendPrefix}{
-character. Label to show next to the cluster/metagroup id in the legend. If FALSE, legend is not shown. In the bipartite network the legens replaces the cluster node label.
+character. Label to show next to the cluster/metagroup id in the legend. In the bipartite network the legens replaces the cluster node label.
 }
   \item{legendText}{
-character. Description of each cluster (shown as the legend).
+character. Description of each cluster (shown as the legend).  If FALSE, legend is not shown.
 }
   \item{geneExpr}{
 numeric. Named vector with the relative expression value of the gene (node). 0 is taken as reference, positive values will be plotted red, negative values green.

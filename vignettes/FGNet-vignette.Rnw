@@ -1,11 +1,10 @@
 % -*- mode: noweb; noweb-default-code-mode: R-mode; -*-
-%\VignetteIndexEntry{UserGuide}
+%\VignetteIndexEntry{FGNet-vignette}
 %\VignetteKeywords{Visualization, Annotation, GO, Pathways, GeneSetEnrichment, Networks, NetworkVisualization}
 %\VignetteDepends{FGNet}
 %\VignettePackage{FGNet}
 \documentclass[a4paper,12pt]{article}
 
-%modify for your R home directory
 \usepackage{amsmath}
 \usepackage{hyperref}
 \usepackage{authblk}
@@ -13,7 +12,6 @@
 \usepackage{float}
 \usepackage[font=small, labelfont=bf, labelsep=period]{caption}
 \usepackage{subfigure} %or subcaption
-\usepackage{enumitem}
 \setlength{\captionmargin}{30pt}
 
 \marginsize{1in}{1in}{0.5in}{0.5in}
@@ -78,7 +76,6 @@ In addition to the networks, FGNet also provides a few functions for further ana
 
 All these functionalities can be accessed directly through the appopiate functions or the graphical user interface (GUI). In addition, FGNet also allows to generate an  \textbf{HTML report} with an overview of these plots and analyses for a specific gene list.\\
 
-
 \begin{figure}[h]
 \centering
 \subfigure{
@@ -139,7 +136,7 @@ These steps are integrated into the Graphical User Interface (GUI), which provid
 
 \subsection{Graphical User Interface (GUI)}
 \label{sec:GUI}
-The most intuitive way to generate a network with FGNet is using its Graphical User Interface (GUI). 
+The Graphical User Interface (GUI) provides access to most FGNet functionalities. To launch the GUI, type in the R console:
 
 <<eval=TRUE>>=
 library(FGNet)
@@ -172,7 +169,7 @@ Once the FEA is ready, you can proceed to generate the HTML report or the indivi
 \label{fig:workflow}
 \end{figure} 
 
-For help or more details on any functions or their arguments, just set a ? before its name. i.e. :
+For help or more details on any functions or their arguments, just set a ? before its name.
 <<eval=FALSE>>=
 ?FGNet_report
 @
@@ -337,28 +334,41 @@ incidMat_terms <- fea2incidMat(results, key="Terms")
 
 These incidence matrices can be plotted and anlyzed in diferent ways:
 <<fig=TRUE, eval=TRUE>>=
-functionalNetwork(incidMat, geneExpr=genesYeastExpr)
+functionalNetwork(incidMat, geneExpr=genesYeastExpr,
+    plotTitleSub="Default gene view")
 @
 <<eval=TRUE>>=
-getTerms(results)[4]
+getTerms(results)[1]
 @
 
-<<eval=FALSE>>=
-functionalNetwork(incidMat_terms, plotType="bipartite", plotOutput="dynamic")
-@
-<<fig=TRUE,eval=TRUE, echo=FALSE>>=
-functionalNetwork(incidMat_terms, plotType="bipartite")
-@
-
-<<fig=TRUE,eval=TRUE, heigth=5>>=
-analyzeNetwork(incidMat)
+\newpage
+<<fig=TRUE, eval=TRUE>>=
+functionalNetwork(incidMat, geneExpr=genesYeastExpr, plotType="bipartite", 
+    plotTitle="Functionanl Network - Bipartite")
 @
 \newpage
-<<fig=TRUE,eval=TRUE, heigth=5>>=
+<<eval=FALSE>>=
+functionalNetwork(incidMat_terms, plotOutput="dynamic")
+@
+
+<<eval=TRUE, fig=TRUE, echo=FALSE, width=10>>=
+functionalNetwork(incidMat_terms, plotTitleSub="Terms network", legendText=FALSE)
+@
+
+<<eval=TRUE, fig=TRUE>>=
+functionalNetwork(incidMat_terms, plotType="bipartite",
+    plotTitleSub="Terms in several metagroups")
+@
+
+\newpage
+<<eval=TRUE, fig=TRUE, width=8>>=
+analyzeNetwork(incidMat)
+@
+<<eval=TRUE, fig=TRUE, width=8>>=
 distMat <- clustersDistance(incidMat)
 @
 \newpage
-<<fig=TRUE,eval=TRUE, heigth=5>>=
+<<eval=TRUE, fig=TRUE>>=
 goIds <- getTerms(results, returnValue="GO")[[4]]
 plotGoAncestors(goIds, ontology="BP")
 @
@@ -366,39 +376,15 @@ plotGoAncestors(goIds, ontology="BP")
 <<eval=FALSE>>=
 keggIds <- getTerms(results, returnValue="KEGG")[[4]]
 plotKegg(keggIds, geneExpr=genesYeastExpr, geneIDtype="GENENAME")
+# Saved as .png in current directory
 @
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 \newpage
+
+\section*{Acknowledgements}
+This work was supported by Instituto de Salud Carlos III and by a grant from the Junta de Castilla y Leon and the European Social Fund to S.A and C.D.
+
 \begin{thebibliography}{6} 
 \bibitem{Huang1} Huang DW, Sherman BT, Lempicki RA. \emph{Systematic and integrative analysis of large gene lists using DAVID Bioinformatics Resources.} Nature Protoc. 2009;4(1):44-57.
 
