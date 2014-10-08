@@ -204,7 +204,7 @@ buildGeneSets <- function(organismDb, geneIDtype, annotations=c("GO_BP","GO_MF",
             names(ret$terms2genes$REACTOME) <- paste(names(ret$terms2genes$REACTOME), ":", termsLabels[names(ret$terms2genes$REACTOME)], sep="")        
         }else{ 
             # Add a field with the term name
-            if(!termID2name %in% names(ret)) ret <- c(ret, list(termID2name=NULL))
+            if(!"termID2name" %in% names(ret)) ret <- c(ret, list(termID2name=NULL))
             ret$termID2name <- c(ret$termID2name, list(REACTOME=termsLabels))
         }        
     }    
