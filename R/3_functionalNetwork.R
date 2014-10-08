@@ -68,7 +68,6 @@ functionalNetwork <- function(incidMatrices, plotType=c("default", "bipartite")[
     {
         if(!is.character(legendText)) stop("legendText should be a character vector containing the description of each cluster.")
         if(ncol(metagroupsMatrix) != length(legendText)) stop("The number of clusters/metagroups in the matrix and the legend do not match.")
-        legendText <- paste(": ", legendText, sep="")
     }    
     
     if(is.null(legendPrefix))
