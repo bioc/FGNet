@@ -200,20 +200,21 @@ Using DAVID requires internet connection. In addition, we recommend to register 
 
 <<eval=TRUE>>=
 library(FGNet)
-geneList1 <- c("YBL084C", "YDL008W", "YDR118W", "YDR301W", "YDR448W", 
-    "YFR036W", "YGL240W", "YHR166C", "YKL022C", "YLR102C", "YLR115W", 
-    "YLR127C", "YNL172W", "YOL149W", "YOR249C")
-# Optional: Gene expression
-geneExpr1 <- setNames(c(rep(1,10),rep(-1,5)), geneList1)
-@
-<<eval=TRUE>>=
+genesMetabolism <- c("YGR175C", "YHR007C", "YMR202W", "YJL167W", 
+"YNL280C", "YGR060W", "YGL001C", "YLR100W", "YLR056W", "YGL012W", 
+"YMR015C", "YML008C", "YHR072W", "YHR190W", "YKL004W", "YBR036C", 
+"YDR294C", "YDR072C", "YKL008C", "YHL003C", "YMR296C", "YDR062W", 
+"YJL134W", "YOR171C", "YLR260W", "YMR298W", "YMR272C", "YPL057C",
+"YDR297W", "YBR265W", "YPL087W", "YBR183W", "YKR053C")
+# To add the gene label/symbol to the plots...
 library(org.Sc.sgd.db)
-geneLabels <- unlist(as.list(org.Sc.sgdGENENAME)[geneList1])
-names(geneExpr1) <- geneLabels[names(geneExpr1)] 
-@ 
+geneLabels <- unlist(as.list(org.Sc.sgdGENENAME)[genesMetabolism])
+# To add gene expression color to the plots...
+gMetabolismExpr <- setNames(rnorm(33,mean=0,sd=3), geneLabels)
+@
 
 <<eval=FALSE>>=
-results_David <- fea_david(geneList1, geneLabels=geneLabels, 
+results_David <- fea_david(genesMetabolism, geneLabels=geneLabels, 
     email="example@email.com")
 @ 
 
@@ -223,7 +224,7 @@ TopGO does not require internet connection since it relies on local databases. H
 
 An example with the previous gene list:
 <<eval=FALSE>>=
-results_topGO <- fea_topGO(geneList1, geneIdType="ENSEMBL", 
+results_topGO <- fea_topGO(genesMetabolism, geneIdType="ENSEMBL", 
     geneLabels=geneLabels, organism="Sc") 
 @
 
@@ -307,8 +308,8 @@ The HTML report function allows to create a comprehensive report including difer
 
 Here is the usage of \emph{FGNet\_report()} for each of the previous examples:
 <<eval=FALSE>>=
-FGNet_report(results_topGO, geneExpr=geneExpr1)  
-FGNet_report(results_David, geneExpr=geneExpr1) 
+FGNet_report(results_topGO, geneExpr=gMetabolismExpr)  
+FGNet_report(results_David, geneExpr=gMetabolismExpr) 
 FGNet_report(results_gtLinker, geneExpr=genesYeastExpr)
 FGNet_report(results_gage)
 @
@@ -512,24 +513,57 @@ functionalNetwork(incidMatTerms, plotType="bipartite",
 
 For more information on the filtered terms see \cite{Fontanillo} or \url{http://gtlinker.cnb.csic.es/gtset/help}.
 
+\subsection{Genes - Terms networks}
 
+To build a genes-terms network, we can use the bipartite plot with the appropiate formating of the input matrices.\\
 
+For many FEA tools it will be enough with appliying the \emph{fea2incidMat()} directly to the \$geneTermSets matrix selecting the gene-term sets we want to plot.
+i.e. gene-term sets in a specific cluster, filter generic terms (terms annotated to more than X genes), etc...\\
 
-\subsection{Filtering and selecting clusters}
-\label{sec:filtering}
-In this section we will analyze with DAVID a list with genes from 2 metabolic pathways in yeast: \emph{ergosterol biosynthesis} and \emph{sphingolipid metabolism}, as an example of a vnetwork with very overlapping clusters.
+Note that this approach might not be appropiate for GeneTerm Linker, since it groups several terms into each gene-term set.
 
-<<eval=TRUE>>=
-genesMetabolism <- c("YGR175C", "YHR007C", "YMR202W", "YJL167W", 
-"YNL280C", "YGR060W", "YGL001C", "YLR100W", "YLR056W", "YGL012W", 
-"YMR015C", "YML008C", "YHR072W", "YHR190W", "YKL004W", "YBR036C", 
-"YDR294C", "YDR072C", "YKL008C", "YHL003C", "YMR296C", "YDR062W", 
-"YJL134W", "YOR171C", "YLR260W", "YMR298W", "YMR272C", "YPL057C",
-"YDR297W", "YBR265W", "YPL087W", "YBR183W", "YKR053C")
-# To add the gene label/symbol to the plots...
-library(org.Sc.sgd.db)
-geneLabels <- unlist(as.list(org.Sc.sgdGENENAME)[genesMetabolism])
+<<eval=TRUE, echo=FALSE>>=
+txtFile <- paste(file.path(system.file('examples', package='FGNet')), "David_Metabolism.txt", sep=.Platform$file.sep)
+feaMetabolism <- format_david(txtFile, jobName="David_Metabolism",geneLabels=geneLabels)
 @
+
+<<eval=FALSE>>=
+feaMetabolism <- fea_david(genesMetabolism, email="...", geneLabels=geneLabels)
+@
+<<eval=TRUE>>=
+gtSets <- feaMetabolism$geneTermSets
+gtSets <- gtSets[gtSets$Cluster %in% c(9),] 
+gtSets <- gtSets[gtSets$Pop.Hits<500,]
+@
+
+Then, create a terms-genes incidence matrix with \emph{fea2incidMat()}, and plot the network...
+<<eval=TRUE>>=
+termsGenes <- t(fea2incidMat(gtSets, clusterColumn="Terms")$clustersMatrix)
+library(R.utils)
+rownames(termsGenes) <- sapply(strsplit(rownames(termsGenes), ":"), 
+    function(x) capitalize(x[length(x)]))
+termsGenes[1:5,1:5]
+@
+
+Network, with genes colored based on their expression and terms on alphabetical order:
+<<fig=TRUE, width=10>>=
+functionalNetwork(t(termsGenes), plotType="bipartite", keepAllNodes=TRUE,
+    legendPrefix="", plotTitle="Genes - Terms network", plotTitleSub="",
+    geneExpr=gMetabolismExpr, plotExpression="Fill")
+@  
+
+
+Color to genes by alphabetical order (from red to pink), terms white:
+<<fig=TRUE>>=
+functionalNetwork(termsGenes, plotType="bipartite", keepAllNodes=TRUE,
+    legendPrefix="", plotTitle="Genes - Terms network", plotTitleSub="")
+@
+
+
+
+\section{Filtering and selecting clusters}
+\label{sec:filtering}
+In this section we will analyze with DAVID a list with genes from 2 metabolic pathways in yeast: \emph{ergosterol biosynthesis} and \emph{sphingolipid metabolism}, as an example of a network with very overlapping clusters.
 
 <<eval=FALSE>>=
 feaMetabolism <- fea_david(genesMetabolism, email="...", geneLabels=geneLabels)
@@ -537,8 +571,6 @@ incidMat <- fea2incidMat(feaMetabolism)
 functionalNetwork(incidMat) 
 @  
 <<fig=TRUE, eval=TRUE, echo=FALSE, width=10>>=
-txtFile <- paste(file.path(system.file('examples', package='FGNet')), "David_Metabolism.txt", sep="/")
-feaMetabolism <- format_david(txtFile, jobName="David_Metabolism",geneLabels=geneLabels)
 incidMat <- fea2incidMat(feaMetabolism)
 functionalNetwork(incidMat) 
 @
@@ -556,7 +588,7 @@ functionalNetwork(incidMatTerms$clustersMatrix, plotType="bipartite",
 @
 
 
-\subsubsection{Filtering based on a \textbf{cluster propperty}}
+\subsection{Filtering based on a \textbf{cluster propperty}}
 The clusters to plot can be selected/filtered based on any propperty that is available in the clusters matrix:
 <<eval=TRUE>>=
 colnames(feaMetabolism$clusters)
@@ -587,7 +619,7 @@ functionalNetwork(incidMatFiltered, eColor=NA,
  
 To use any propperty that is not available in the \$clusters data frame, just add it as column to the dataframe.
  
-\subsubsection{Selecting \textbf{clusters with specific terms or keywords}}
+\subsection{Selecting \textbf{clusters with specific terms or keywords}}
 
 <<eval=TRUE>>=
 keywords <- c("sphingolipid") 
@@ -606,15 +638,15 @@ incidMatSelection <- fea2incidMat(tmpFea,
 functionalNetwork(incidMatSelection, plotType="bipartite", plotOutput="dynamic")
 @ 
 
-\subsubsection{Selecting \textbf{specific groups}}
+\subsection{Selecting \textbf{specific groups}}
 
 \emph{clustersDistance()} allows to explore the overlap between groups:
 <<fig=TRUE,eval=TRUE, width=9>>=
 distMat <- clustersDistance(incidMat)
 @
 
-Let's see clusters 1, 7 and 9:
-<<fig=TRUE, eval=FALSE>>=
+Clusters 1, 7 and 9 seem to be very close (overlapping), let's see:
+<<fig=TRUE, eval=TRUE, width=10>>=
 selectedClusters <- rep(FALSE, nrow(feaMetabolism$clusters))
 selectedClusters[c(1,7,9)] <- TRUE
 
@@ -622,15 +654,15 @@ tmpFea <- feaMetabolism
 tmpFea$clusters <- cbind(tmpFea$clusters, select=selectedClusters)
 incidMatSelection <- fea2incidMat(tmpFea, 
   filterAttribute="select", filterOperator="!=",filterThreshold="TRUE")
-functionalNetwork(incidMatSelection)
+functionalNetwork(incidMatSelection, eColor=NA)
 @
 
-
+\newpage
 \section{Further analyses}
 \emph{fea2incidMat()} can be used to explore the structure of the network. It also returns statistics about the nodes betweeness within each cluster, etc...\\
 
 The example with GeneTerm Linker (Alzheimer):
-<<eval=TRUE, fig=TRUE, width=10>>=
+<<eval=TRUE, fig=TRUE, width=8>>=
 incidMat_alzh <- fea2incidMat(feaAlzheimer)
 stats <- analyzeNetwork(incidMat_alzh)
 @
@@ -640,7 +672,7 @@ stats$intraHubsCount
 @
 
 DAVID's example:
-<<eval=TRUE, fig=TRUE, width=10>>=
+<<eval=TRUE, fig=TRUE, width=8>>=
 incidMat_metab <- fea2incidMat(feaMetabolism)
 analyzeNetwork(incidMat_metab)
 @
