@@ -3,10 +3,6 @@
 # 
 plotFGNet_default <- function(metagroupsMatrix,gtSetsMatrix, vLayout, plotOutput, plotExpression, eWidth, eColor, vColor, vExpr, vSize, vLabelCex, colores, markGroup, trCols, weighted, plotTitle, plotTitleSub, plotLegend, legendPrefix, legendText)
 {
-    if(!is.null(legendText))
-    {
-        colnames(mgJoined) <- paste(colnames(mgJoined), legendText, sep=": ")
-    }
     #####################################################################################################
     #################################### Create Matrices  ###############################################
     nGenes <- nrow(metagroupsMatrix)

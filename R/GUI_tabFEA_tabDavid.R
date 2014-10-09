@@ -60,6 +60,14 @@ selectWs_fillFields <- function(aux, argsList)
         {
             tryCatch( 
             {
+                if(!"RDAVIDWebService" %in% rownames(installed.packages()))
+                {
+                    tryCatch({
+                        source("http://bioconductor.org/biocLite.R")
+                        biocLite("RDAVIDWebService")
+                    }, error = function(e) {})
+                }
+                require("RDAVIDWebService")
                 davidWsConnection <- DAVIDWebService$new(email=argsList$emailText$getText())
                 argsList$davidVars$dav_wsGeneIds <- getIdTypes(davidWsConnection)    
                 argsList$davidVars$dav_wsAnnots <- getAllAnnotationCategoryNames(davidWsConnection)

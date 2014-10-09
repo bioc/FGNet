@@ -60,7 +60,7 @@ fea_david <- function(geneList, geneIdType="ENSEMBL_GENE_ID", geneLabels=NULL, a
             }, error = function(e) {})
         }
         
-        if(!library("RDAVIDWebService", logical.return=TRUE, quietly=TRUE)) stop("Package RDAVIDWebService is required t query DAVID through the webserver. Install the package or set email=NULL to query DAVID through the web API.")
+        if(!library("RDAVIDWebService", logical.return=TRUE, quietly=TRUE)) stop("Package RDAVIDWebService is required to query DAVID through the webserver. Install the package or set email=NULL to query DAVID through the web API.")
         randomNumber <- sample(100000:999999, 1)
         if(is.null(jobName)) jobName <- paste(randomNumber, "_DAVID", sep="")
         downloadFile <- paste(getwd(), .Platform$file.sep, jobName, ".txt", sep="")

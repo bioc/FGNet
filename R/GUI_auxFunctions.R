@@ -103,72 +103,75 @@ loadFileDialog <- function(button, argsList) # button: Not used, but required fo
                                    "gtk-open", GtkResponseType["accept"],
                                    "gtk-cancel", GtkResponseType["cancel"])
     
-    if(dialog$run() == GtkResponseType["accept"]) fileName <- dialog$getFilename()
-    dialog$destroy()
-    
-    # Replace backlash: fileName <- "C:\\blablabla\\blablabla"
-    if(grepl("^[a-zA-Z]{1}:\\\\", fileName, fixed=FALSE)) fileName <- gsub("\\", .Platform$file.sep, fileName, fixed=TRUE)
-    
-    if(button$name == "buttonLoadGenes") 
+    if(dialog$run() == GtkResponseType["accept"]) 
     {
-        ### Read genes...
-        geneList <- as.character(unlist(read.table(fileName, sep="\t")[,1]))
-        geneList <- paste(geneList,collapse="\n")
-        # TO DO: Add file options?
+        fileName <- dialog$getFilename()
         
-        # Add to genes field
-        genesBuffer <- gtkTextBufferNew()
-        gtkTextBufferSetText(genesBuffer, geneList)
-        gtkTextViewSetBuffer(argsList$genesText, genesBuffer)
-    }
-    if(button$name == "buttonSelectExprFile") 
-    {
-        ### Read genes...
-        geneExpr <- read.table(fileName, sep="\t")
-        geneExpr <- paste(paste(geneExpr[,1], geneExpr[,2], sep="\t"), collapse="\n")
-        # TO DO: Add file options?
+        # Replace backlash: fileName <- "C:\\blablabla\\blablabla"
+        if(grepl("^[a-zA-Z]{1}:\\\\", fileName, fixed=FALSE)) fileName <- gsub("\\", .Platform$file.sep, fileName, fixed=TRUE)
         
-        # Add to genes field
-        genesBuffer <- gtkTextBufferNew()
-        gtkTextBufferSetText(genesBuffer, geneExpr)
-        gtkTextViewSetBuffer(argsList$expressionText, genesBuffer)
-    }
-
-    if(button$name == "buttonSelectFeaResults") 
-    {
-        argsList$feaResultsText$setText(fileName)
-
-        # For GeneTerm Linker
-        if(grepl("global_overview.txt",fileName) || grepl("metagroup",fileName))
+        if(button$name == "buttonLoadGenes") 
         {
-            data("FEA_tools", envir = environment())
-            FEA_tools<- get("FEA_tools", envir  = environment())
+            ### Read genes...
+            geneList <- as.character(unlist(read.table(fileName, sep="\t")[,1]))
+            geneList <- paste(geneList,collapse="\n")
+            # TO DO: Add file options?
+            
+            # Add to genes field
+            genesBuffer <- gtkTextBufferNew()
+            gtkTextBufferSetText(genesBuffer, geneList)
+            gtkTextViewSetBuffer(argsList$genesText, genesBuffer)
+        }
+        if(button$name == "buttonSelectExprFile") 
+        {
+            ### Read genes...
+            geneExpr <- read.table(fileName, sep="\t")
+            geneExpr <- paste(paste(geneExpr[,1], geneExpr[,2], sep="\t"), collapse="\n")
+            # TO DO: Add file options?
+            
+            # Add to genes field
+            genesBuffer <- gtkTextBufferNew()
+            gtkTextBufferSetText(genesBuffer, geneExpr)
+            gtkTextViewSetBuffer(argsList$expressionText, genesBuffer)
+        }
     
-            argsList$alreadyDownloadedCheck$active <- TRUE
-            argsList$comboFeaTool$setActive(as.numeric(FEA_tools["GeneTerm Linker", "ID"]))
+        if(button$name == "buttonSelectFeaResults") 
+        {
+            argsList$feaResultsText$setText(fileName)
+    
+            # For GeneTerm Linker
+            if(grepl("global_overview.txt",fileName) || grepl("metagroup",fileName))
+            {
+                data("FEA_tools", envir = environment())
+                FEA_tools<- get("FEA_tools", envir  = environment())
+        
+                argsList$alreadyDownloadedCheck$active <- TRUE
+                argsList$comboFeaTool$setActive(as.numeric(FEA_tools["GeneTerm Linker", "ID"]))
+            }
+            
+            ## Cambiar a changed feaResultsText? cuidado ftlinker (jobID)
+            feaResults <- readFEAresults(feaResultsText=argsList$feaResultsText, comboFeaTool=argsList$comboFeaTool, expressionText=argsList$expressionText,
+                                                                  serverWebReportText=argsList$serverWebReportText, alreadyDownloadedCheck=argsList$alreadyDownloadedCheck, parentWindow=argsList$parentWindow)
         }
         
-        ## Cambiar a changed feaResultsText? cuidado ftlinker (jobID)
-        feaResults <- readFEAresults(feaResultsText=argsList$feaResultsText, comboFeaTool=argsList$comboFeaTool, expressionText=argsList$expressionText,
-                                                              serverWebReportText=argsList$serverWebReportText, alreadyDownloadedCheck=argsList$alreadyDownloadedCheck, parentWindow=argsList$parentWindow)
-    }
+        if(button$name == "buttonImportFeaResults")
+        {
+            argsList$fields$feaResultsImportText$setText(fileName)
+            processFile(fileName, fieldsList=argsList$fields)
+        }
     
-    if(button$name == "buttonImportFeaResults")
-    {
-        argsList$fields$feaResultsImportText$setText(fileName)
-        processFile(fileName, fieldsList=argsList$fields)
+        if(button$name == "esetButton")
+        {
+            argsList$esetTxt$setText(fileName)
+            loadEset(fileName, refSamplesBox=argsList$refSamplesBox, compSamplesBox=argsList$compSamplesBox)
+        }
+        
+        if(button$name == "geneSetsButton")
+        {
+            argsList$geneSetsTxt$setText(fileName)
+        }
     }
-
-    if(button$name == "esetButton")
-    {
-        argsList$esetTxt$setText(fileName)
-        loadEset(fileName, refSamplesBox=argsList$refSamplesBox, compSamplesBox=argsList$compSamplesBox)
-    }
-    
-    if(button$name == "geneSetsButton")
-    {
-        argsList$geneSetsTxt$setText(fileName)
-    }
+    dialog$destroy()    
 } 
 
 ############################################################################################################
@@ -499,22 +502,23 @@ readFEAresults <- function(feaResultsText, comboFeaTool, expressionText, serverW
                 dialog[["vbox"]]$add(gtkLabel(msgText))
                 response <- dialog$run() 
                 dialog$destroy() 
-                stop()
+                #stop()
+            }else{
+                # Save and replace jobID by the downloaded file:
+                jobName <- getJobName(feaResults$fileName)
+                fileName <- paste(jobName,"_feaResults.RData", sep="")
+                fileName <- paste(getwd(), jobName, fileName, sep=.Platform$file.sep)
+                save(feaResults, file=fileName)
+                feaResultsText$setText(fileName) 
+                alreadyDownloadedCheck$active <- TRUE
+                
+                
+                # Add mgs to combo in subnetwork tab
+                # subnw:
+                #                 clSelectClusterFrame$label <- "Select metagroup"
+                #                 clustersId <<- setNames(as.numeric(rownames(feaResults$metagroups))-1, rownames(feaResults$metagroups))
             }
             
-            # Save and replace jobID by the downloaded file:
-            jobName <- getJobName(feaResults$fileName)
-            fileName <- paste(jobName,"_feaResults.RData", sep="")
-            fileName <- paste(getwd(), jobName, fileName, sep=.Platform$file.sep)
-            save(feaResults, file=fileName)
-            feaResultsText$setText(fileName) 
-            alreadyDownloadedCheck$active <- TRUE
-            
-            
-            # Add mgs to combo in subnetwork tab
-            # subnw:
-            #                 clSelectClusterFrame$label <- "Select metagroup"
-            #                 clustersId <<- setNames(as.numeric(rownames(feaResults$metagroups))-1, rownames(feaResults$metagroups))
         }else
         {
             feaResults <- readGeneTermSets(fileName, tool=reportTool,simplifyGage=FALSE) # geneLabels=NULL?

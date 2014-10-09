@@ -70,7 +70,7 @@ generateNetwork <- function(button, argsList) # button: Not used, but required f
                                           c("modal", "destroy-with-parent"), 
                                           "gtk-ok", GtkResponseType["accept"],
                                           show=TRUE)
-        dialog[["vbox"]]$add(gtkLabel("Please provide a file with FEA results to continue."))
+        dialog[["vbox"]]$add(gtkLabel("Please provide a file with the FEA results to continue."))
         response <- dialog$run() 
         dialog$destroy()
         
