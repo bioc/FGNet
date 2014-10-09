@@ -24,8 +24,6 @@ export(plotKegg)
 import(igraph)
 import(png)
 
-import(RGtk2)
-
 importFrom(R.utils, capitalize)
 importFrom(R.utils, decapitalize)
 importFrom(XML, xmlToDataFrame)

@@ -1,6 +1,13 @@
 FGNet_GUI <- function(geneList=NULL)
 {
-    # require(RGtk2)
+    if(!"RGtk2" %in% rownames(installed.packages()))
+    {
+        tryCatch({
+            source("http://bioconductor.org/biocLite.R")
+            biocLite(reactome.db)
+        }, error = function(e) {})
+    }
+    require(RGtk2)
     # feaResults <<- NULL # Global
 
     data("FEA_tools", envir = environment())

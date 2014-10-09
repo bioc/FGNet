@@ -138,7 +138,10 @@ These steps are integrated into the Graphical User Interface (GUI), which provid
 \label{sec:GUI}
 The Graphical User Interface (GUI) provides access to most FGNet functionalities. To launch the GUI, type in the R console:
 
-<<eval=TRUE>>=
+<<eval=TRUE, echo=FALSE>>=
+library(FGNet)
+@
+<<eval=FALSE>>=
 library(FGNet)
 FGNet_GUI()
 @
@@ -150,7 +153,7 @@ FGNet_GUI()
 \end{figure} 
 
 In case you already have a gene list or gene expression from a previous analysis, it is possible to load it directly into the GUI genes field by passing it as argument:
-<<eval=TRUE>>=
+<<eval=FALSE>>=
 geneExpr <- c("YBL084C", "YDL008W", "YDR118W", "YDR301W", "YDR448W", 
     "YFR036W", "YGL240W", "YHR166C", "YKL022C", "YLR102C", "YLR115W", 
     "YLR127C", "YNL172W", "YOL149W", "YOR249C")
