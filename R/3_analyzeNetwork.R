@@ -35,9 +35,9 @@ analyzeNetwork <- function(incidMatrices, fNw=NULL, plotOutput=TRUE, colors=NULL
     ## Plot
     if(plotOutput)
     {
-        if(is.null(colors)) colors <- 2:length(clDegr)
+        if(is.null(colors)) colors <- rep("skyblue1", length(clDegr))
         par(mfrow=c(1,2))
-        boxplot(clDegr, main="Node degree", sub="Global / intra-cluster", outpch=16,outcol=c("black", colors), outlwd=1, boxfill=c("black", colors), medcol=c("black", colors), medlwd = 10, lwd = 1, ylim=c(0,100), ylab="Percentage of total nodes", axes=FALSE)
+        boxplot(clDegr, main="Normalized node degree", sub="Global / intra-cluster", outpch=16,outcol=c("black", colors), outlwd=1, boxfill=c("black", colors), medcol=c("black", colors), medlwd = 10, lwd = 1, ylim=c(0,100), ylab="Percentage of total nodes", axes=FALSE)
         box()
         axis(side=1, labels=names(clDegr), at=1:length(clDegr), las=2)
         axis(side=2, las=1)
@@ -82,7 +82,7 @@ analyzeNetwork <- function(incidMatrices, fNw=NULL, plotOutput=TRUE, colors=NULL
         hubs[,cl] <- clBetw[[cl]][rownames(hubs)]
     }
     hubs[which(is.na(hubs))] <- 0
-    ret[["hubsTable"]] <- hubs
+    ret[["betweenessMatrix"]] <- hubs
     
     hubsList <- lapply(clBetw, function(x){
        names(x[x>=quantile(x,probs=0.75)])

@@ -14,7 +14,7 @@ functionalNetwork(incidMatrices, plotType = c("default", "bipartite")[1],
     plotOutput = "static", plotTitle = "Functional Network", 
     plotTitleSub = NULL, legendPrefix = NULL, legendText = NULL, 
     geneExpr = NULL, plotExpression = c("border", "fill"), 
-    vSize = 12, vLabelCex = 3/4, vLayout = NULL, keepColors = TRUE, 
+    vSize = 12, vLabelCex = 2/3, vLayout = NULL, keepColors = TRUE, 
     bgTransparency = 0.4, eColor = "#323232", eWidth=NULL, weighted = FALSE, 
     keepAllNodes = FALSE, plotAllMg = FALSE)
 }

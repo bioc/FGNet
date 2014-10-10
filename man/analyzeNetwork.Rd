@@ -27,9 +27,9 @@ vector. Colors for the metagroups
 List:
 
 \itemize{ 
-    \item degree, betweeness: Degree and Betweeness of the nodes in the global network (commonClusters) and within each cluster/metagroup (subsets of commonGtSets network).
+    \item degree, betweeness: Degree and Betweeness of the nodes in the global network (commonClusters) and within each cluster/metagroup (subsets of commonGtSets network). The degree is given as percentage, normalized based on the total number of nodes of the network. i.e. a value of 90 in a network of 10 nodes, would mean the actual degree of the node is 9: it is conneded to 9 nodes (90\% of 10)).
     \item transitivity: Transitivity of the networks.
-    \item hubsTable: Betweeness of each node in each cluster.
+    \item betweenessMatrix: Betweeness of each node in each cluster.
     \item hubsList: Nodes selected as hubs in the global network and within each cluster/metagroup (nodes with betweeness over 75\% in the given network/subnetwork).
     \item intraHubsCount: Number of times each node was selected as intra-cluster hub.
 }

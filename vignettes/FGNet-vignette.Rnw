@@ -349,7 +349,7 @@ getTerms(results)[1]
 
 \newpage
 <<eval=FALSE>>=
-functionalNetwork(incidMat_terms, plotOutput="dynamic")
+functionalNetwork(incidMat_terms, plotOutput="dynamic", vLabelCex=0.4)
 @
 
 <<eval=TRUE, fig=TRUE, echo=FALSE, width=10>>=
@@ -406,7 +406,7 @@ FEA_tools
 @
 <<eval=TRUE>>= 
 incidMatFiltered <- fea2incidMat(feaAlzheimer, 
-    filterAttribute="Silhouette Width", filterOperator="<", filterThreshold=0)
+    filterAttribute="Silhouette Width", filterOperator="<", filterThreshold=0.2)
 @
 
 To see which metagroups/clusters have been filtered out and will not be shown in the networks:
@@ -426,9 +426,10 @@ geneList <- rownames(incidMat$metagroupsMatrix)
 geneExpr <- setNames(c(rep(1,40), rep(-1,37)), geneList)
 @
 
-The default plot will plot all the genes/terms in the network, and will return the netwoks as igraph objects and matrices in an invisible list:
+The default plot will plot all the genes/terms in the network, and will return the netwoks as igraph objects and matrices in an invisible list. The argument keepColors determine wether the colors should be consistent, taking into account the filtered groups, or restarted:
 <<fig=TRUE, eval=TRUE>>=
-fNw <- functionalNetwork(incidMatFiltered, geneExpr=geneExpr) 
+fNw <- functionalNetwork(incidMatFiltered, geneExpr=geneExpr, 
+    keepColors=FALSE)
 @
 
 By setting the parameter \emph{PlotType="dynamic"} instead of an static plot, it will create an interactive one. By setting  \emph{PlotType="dynamic"}, it is possible to produce only the network without plotting.
@@ -496,7 +497,7 @@ To plot a network with links between all the terms in the same cluster or metagr
 <<eval=TRUE, echo=TRUE, fig=FALSE>>=
 incidMatTerms <- fea2incidMat(feaAlzheimer$metagroups, clusterColumn="Metagroup", 
     key="Terms",
-    filterAttribute="Silhouette.Width", filterThreshold=0)
+    filterAttribute="Silhouette.Width", filterThreshold=0.2)
 functionalNetwork(incidMatTerms, legendText=FALSE, plotOutput="dynamic")
 @
 <<eval=TRUE, echo=FALSE, fig=TRUE>>=
@@ -508,9 +509,9 @@ Since GeneTerm Linker filters out generic and redundant terms from the final met
 <<eval=TRUE, fig=TRUE, height=5, width=10>>=
 incidMatTerms <- fea2incidMat(feaAlzheimer, key="Terms", removeFilteredGtl=FALSE)
 par(mfrow=c(1,2))
-functionalNetwork(incidMatTerms, 
+functionalNetwork(incidMatTerms, vLabelCex=0.2,
     plotTitle="Including filtered terms", legendText=FALSE)
-functionalNetwork(incidMatTerms, plotType="bipartite", 
+functionalNetwork(incidMatTerms, plotType="bipartite", vLabelCex=0.4,
     plotTitle="Including filtered terms")
 @
 
@@ -571,7 +572,7 @@ In this section we will analyze with DAVID a list with genes from 2 metabolic pa
 <<eval=FALSE>>=
 feaMetabolism <- fea_david(genesMetabolism, email="...", geneLabels=geneLabels)
 incidMat <- fea2incidMat(feaMetabolism)
-functionalNetwork(incidMat) 
+functionalNetwork(incidMat, legendText=FALSE) 
 @  
 <<fig=TRUE, eval=TRUE, echo=FALSE, width=10>>=
 incidMat <- fea2incidMat(feaMetabolism)
@@ -597,7 +598,7 @@ The clusters to plot can be selected/filtered based on any propperty that is ava
 colnames(feaMetabolism$clusters)
 @
 
-i.e. Selecting the clusters with highest Enrichment Score or least genes:
+i.e. Selecting the clusters with highest Enrichment Score or least genes (setting eColor=NA, plots the networks without edges):
 <<fig=TRUE, eval=TRUE, height=5, width=10>>=
 par(mfrow=c(1,2))
 
@@ -666,19 +667,34 @@ functionalNetwork(incidMatSelection, eColor=NA)
 
 The example with GeneTerm Linker (Alzheimer):
 <<eval=TRUE, fig=TRUE, width=8>>=
-incidMat_alzh <- fea2incidMat(feaAlzheimer)
-stats <- analyzeNetwork(incidMat_alzh)
+stats <- analyzeNetwork(incidMatFiltered)
 @
 <<eval=TRUE>>=
 names(stats)
-stats$intraHubsCount
+stats$transitivity
+@
+\$degree and \$betweeness are the values used for the plots. They contain the values for each of the nodes in the global network (commonClusters) and within each cluster/metagroup (subsets of commonGtSets network). The degree is given as percentage, normalized based on the total number of nodes of the network. i.e. a value of 90 in a network of 10 nodes, would mean the actual degree of the node is 9: it is conneded to 9 nodes (90\% of 10)).
+
+The betweeness of each node in each cluster as matrix:
+<<eval=TRUE>>=
+head(stats$betweenessMatrix)
 @
 
-DAVID's example:
+Inter-modular hubs: Nodes with betweeness within the top 75\% in the global network
+<<eval=TRUE>>=
+stats$hubsList$Global
+@
+Intra-modular hubs: Nodes with betweeness within the top 75\% in each cluster sub-network
+<<eval=TRUE>>=
+stats$hubsList$"9"
+@ 
+
+DAVID's example: 
 <<eval=TRUE, fig=TRUE, width=8>>=
 incidMat_metab <- fea2incidMat(feaMetabolism)
 analyzeNetwork(incidMat_metab)
 @
+Notice the structure of the network varies not only depending on the dataset, but also on the tool. Since tools like DAVID link all the nodes/terms within each cluster, their internal normalized degree is always 100\%.
 
 \newpage
 \emph{plotGoAncestors()} and \emph{plotKegg()} also allow to explore the significant gene term sets:

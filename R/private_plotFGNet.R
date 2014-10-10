@@ -18,7 +18,7 @@ plotFGNet <- function(graph2plot, plotType, plotOutput, plotExpression, vertexLa
                 vBorder <- vExpr
             }
             
-            tkplot(graph2plot, layout=vertexLayout, edge.width=eWidth, edge.color=eColor, vertex.label=V(graph2plot)$name, vertex.label.cex=vLabelCex, vertex.color=vColor, vertex.size=vSize, vertex.frame.color=vBorder, vertex.label.color="black")  # vertex.label no estaba especificado para intesection network
+            tkplot(graph2plot, layout=vertexLayout, edge.width=eWidth, edge.color=eColor, vertex.label=V(graph2plot)$name, vertex.label.cex=vLabelCex, vertex.label.family="sans", vertex.color=vColor, vertex.size=vSize, vertex.frame.color=vBorder, vertex.label.color="black")  # vertex.label no estaba especificado para intesection network
         } else
         {
             warning("The dynamic plot is not available for networks without edges, try the 'static' plot.", immediate.=TRUE) # Tkplot error: Error in mapply(function(from, to, id) .tkplot.create.edge: zero-length inputs cannot be mixed with those of non-zero length
@@ -57,7 +57,7 @@ plotFGNet <- function(graph2plot, plotType, plotOutput, plotExpression, vertexLa
         }
         
         if(add) eWidth <-0
-        plot(graph2plot, layout=vertexLayout, edge.width=eWidth, edge.color=eColor, vertex.label=V(graph2plot)$name, vertex.label.cex=vLabelCex, vertex.color=vColor, vertex.size=vSize, vertex.frame.color=vExpr, vertex.label.color="black", add=add)   # en intersect. no estba vertex.label ni vertex.frame.color=vExpr,
+        plot(graph2plot, layout=vertexLayout, edge.width=eWidth, edge.color=eColor, vertex.label=V(graph2plot)$name, vertex.label.cex=vLabelCex, vertex.label.family="sans", vertex.color=vColor, vertex.size=vSize, vertex.frame.color=vExpr, vertex.label.color="black", add=add)   # en intersect. no estba vertex.label ni vertex.frame.color=vExpr,
         title(main=plotTitle, sub=plotTitleSub)    
     }
 }
