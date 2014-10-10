@@ -667,6 +667,8 @@ functionalNetwork(incidMatSelection, eColor=NA)
 
 The example with GeneTerm Linker (Alzheimer):
 <<eval=TRUE, fig=TRUE, width=8>>=
+incidMatFiltered <- fea2incidMat(feaAlzheimer, 
+    filterAttribute="Silhouette Width", filterOperator="<", filterThreshold=0.2)
 stats <- analyzeNetwork(incidMatFiltered)
 @
 <<eval=TRUE>>=
