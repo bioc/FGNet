@@ -354,7 +354,7 @@ submitQuery <- function(button, argsList) # button: Not used, but required for s
                         # http://www.broadinstitute.org/gsea/msigdb/collections.jsp
                         if(grepl(".gmt", geneSets, fixed=TRUE))
                         {
-                            #library(gage)
+                            if(!loadInstPkg("gage", parentWindow=argsList$parentWindow)) stop("Package gage is not available.")
                             geneSets <- readList(geneSets)
                         }else{
                             geneSets <- eval(as.name(load(geneSets)))    

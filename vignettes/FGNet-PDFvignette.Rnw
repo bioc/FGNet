@@ -1,5 +1,5 @@
 % -*- mode: noweb; noweb-default-code-mode: R-mode; -*-
-%\VignetteIndexEntry{FGNet-vignette}
+%\VignetteIndexEntry{FGNet-PDFvignette}
 %\VignetteKeywords{Visualization, Annotation, GO, Pathways, GeneSetEnrichment, Networks, NetworkVisualization}
 %\VignetteDepends{FGNet}
 %\VignettePackage{FGNet}

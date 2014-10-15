@@ -34,8 +34,8 @@
 
 fea_topGO <- function(geneList, geneIdType="ENSEMBL", geneLabels=NULL, organism="Hs", annotations=c("GO_BP","GO_MF","GO_CC"), genesUniverse=NULL, refPackage=NULL, geneID2GO=NULL, nodeSize=5, pValThr=0.01, testStat=NULL, jobName=NULL)
 {
-    # require(topGO)
-    library("GO.db")    
+    if(!loadInstPkg("topGO")) stop("Package topGO is not available.")
+    if(!loadInstPkg("GO.db")) stop("Package GO.db is for fea_topGO.")
     groupGOTerms(where=.GlobalEnv)
 
     ###############################

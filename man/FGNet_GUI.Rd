@@ -27,7 +27,6 @@ Overview of the package: \code{\link[FGNet:FGNet-package]{FGNet}}
 Package tutorial: \code{vignette("FGNet-vignette")}
 }
 \examples{
-\dontrun{
 
 FGNet_GUI()
 
@@ -39,5 +38,4 @@ geneList <- c("YBL084C", "YDL008W", "YDR118W", "YDR301W", "YDR448W", "YFR036W",
 geneExpr <- setNames(c(rep(1,10),rep(-1,5)), geneList)
 
 FGNet_GUI(geneExpr)
-}
 }

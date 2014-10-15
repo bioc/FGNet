@@ -1,8 +1,7 @@
 SOAPQuery <- function(envelope_body, serverWS)
 {
     # Libraries
-    #if (!library(RCurl, logical.return=TRUE)) stop("Library RCurl is required to query GeneTerm Linker server. Install it or perform the query manually at the web and use its job ID to continue the analysis.")
-    #if (!library(XML, logical.return=TRUE)) stop("Library XML is required to query GeneTerm Linker server. Install it or perform the query manually at the web and use its job ID to continue the analysis.")
+    if(!loadInstPkg("RCurl")) stop("Package 'RCurl' is required to query GeneTerm Linker server. Install it or perform the query manually at the web and use its job ID to continue the analysis.")
     
     # Initialize variables
     rHeader  <- basicTextGatherer()

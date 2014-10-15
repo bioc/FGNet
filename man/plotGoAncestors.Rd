@@ -8,8 +8,8 @@ Plots the ancestors in the tree ontology for the given GO terms.
 }
 \usage{
 plotGoAncestors(goIds, tColor = NULL, ontology = NULL,
-    returnLeaves = FALSE, returnGraph = FALSE, plotOutput = "static", 
-    nSize = NULL, labelCex = NULL, asp = NULL, fileName = NULL, height = 1000)
+    plotOutput = "static", nCharTerm = 50, nSize = NULL, labelCex = NULL, 
+    asp = NULL, fileName = NULL, height = 1000)
 }
 \arguments{
   \item{goIds}{
@@ -21,14 +21,11 @@ character. Color for the term (i.e. based on expression).
   \item{ontology}{
 character. If character determines which ontology to plot ("BP"", "MF" or "CC"").
 }
-  \item{returnLeaves}{
-logical. If TRUE the nodes identified as leaves are returned.
-}
-  \item{returnGraph}{
-logical. If TRUE the graph is returned.
-}
   \item{plotOutput}{
 "static", "dynamic" or "none". "static" will generate a standard R plot. "dynamic" will produce an interactive tkplot. "none" will not plot the network.
+}
+  \item{nCharTerm}{
+numeric. Max term size (number of characters). Longer terms will be trimmed.
 }
   \item{nSize}{
 numeric. Determines the node size.
@@ -47,7 +44,7 @@ numeric.  If fileName is provided, height argument for png().
 }
 }
 \value{
-Plot and/or graphs depending on the arguments.
+An \link[base:invisible]{invisible} list with the nodes identified as leaves (\code{leaves}) and the graph (\code{iGraph}).
 }
 
 \seealso{

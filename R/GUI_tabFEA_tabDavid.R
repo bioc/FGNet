@@ -49,7 +49,6 @@ selectWs <- function(aux, argsList)
 # argsList= parentWindow, emailText, comboIdType, annotsArea, optionBoxV
 selectWs_fillFields <- function(aux, argsList)
 {
-    # require(RDAVIDWebService)
     msgTxt <- NULL
     if(argsList$emailText$getText()=="" && argsList$reconnect)
     {
@@ -60,14 +59,8 @@ selectWs_fillFields <- function(aux, argsList)
         {
             tryCatch( 
             {
-                if(!"RDAVIDWebService" %in% rownames(installed.packages()))
-                {
-                    tryCatch({
-                        source("http://bioconductor.org/biocLite.R")
-                        biocLite("RDAVIDWebService")
-                    }, error = function(e) {})
-                }
-                require("RDAVIDWebService")
+                if(!loadInstPkg("RDAVIDWebService")) stop("Package RDAVIDWebService is required to query DAVID through the webserver. Install the package or query DAVID through the web API.")
+
                 davidWsConnection <- DAVIDWebService$new(email=argsList$emailText$getText())
                 argsList$davidVars$dav_wsGeneIds <- getIdTypes(davidWsConnection)    
                 argsList$davidVars$dav_wsAnnots <- getAllAnnotationCategoryNames(davidWsConnection)

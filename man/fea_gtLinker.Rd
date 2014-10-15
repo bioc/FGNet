@@ -124,8 +124,6 @@ Overview of the package: \code{\link[FGNet:FGNet-package]{FGNet}}
 Package tutorial: \code{vignette("FGNet-vignette")}
 }
 \examples{
-\dontrun{
-    
     
 ### Execute FEA:
 genesYeast <- c("ADA2", "APC1", "APC11", "APC2", "APC4", "APC5", "APC9", 
@@ -140,11 +138,12 @@ genesYeastExpr <- setNames(c(rep(1,29), rep(-1,30)), genesYeast)
 
 # Submit query
 jobID <- fea_gtLinker(geneList=genesYeast,organism="Sc")
+jobID
 
-# (Or ID from previous query)
-jobID <- 3907019
 
 ### Get results from FEA:
+jobID <- 3907019 # job ID of the query
+
 results <- fea_gtLinker_getResults(jobID=jobID)
 
 # To continue the workflow... (see help for further details)
@@ -153,5 +152,5 @@ FGNet_report(results, geneExpr=genesYeastExpr)
 incidMat <- fea2incidMat(results)
 functionalNetwork(incidMat)
 
-}
+
 }

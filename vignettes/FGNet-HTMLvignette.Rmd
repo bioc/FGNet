@@ -10,7 +10,7 @@ output:
 
 <!--
 %\VignetteEngine{knitr::knitr}
-%\VignetteIndexEntry{FGNet-vignette}
+%\VignetteIndexEntry{FGNet-HTMLvignette}
 -->
 
 <style type="text/css">
@@ -78,6 +78,16 @@ biocLite("FGNet")
 ```{r, echo=FALSE, message=FALSE}
 library(FGNet)
 ```
+
+To reduce system requirements, only the minimum packages are required to execute FGNet. 
+However, there are several functionalities that require further packages. i.e. the Graphical User Interface (GUI) requires "RGtk2", the FEA analyses might require "RDAVIDWebService", "gage", "topGO" or some annotation packages... etc.
+
+To make sure all FGNet functionalities are available, install the following packages:
+```{r, eval=FALSE}
+biocLite(c("RGtk2", "RCurl", "RDAVIDWebService", "gage", "topGO", "KEGGprofile", "GO.db", "KEGG.db", "reactome.db", "org.Sc.sgd.db"))
+```
+
+
 
 # Creating a network from a list of genes/proteins
 To generate a functional network with FGNet:

@@ -116,7 +116,6 @@ Overview of the package: \code{\link[FGNet:FGNet-package]{FGNet}}
 Package tutorial: \code{vignette("FGNet-vignette")}
 }
 \examples{
-\dontrun{
 
 
 # Load/format gene list:
@@ -130,8 +129,10 @@ geneLabels <- unlist(as.list(org.Sc.sgdGENENAME)[geneList])
 names(geneExpr) <- geneLabels[names(geneExpr)] 
 
 # DAVID
-results_David <- fea_david(geneList, geneLabels=geneLabels, email="example@email.com")
+results_David <- fea_david(geneList, geneLabels=geneLabels) # email="example@email.com"
 
+
+\dontrun{
 
 # Available IDs and annotations:
 getIdTypes(DAVIDWebService$new(email="example@email.com"))
@@ -146,6 +147,7 @@ FGNet_report(results, geneExpr=geneExpr)
 
 incidMat <- fea2incidMat(results)
 functionalNetwork(incidMat)
+
 
 }
 }

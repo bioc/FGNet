@@ -52,15 +52,9 @@ fea_david <- function(geneList, geneIdType="ENSEMBL_GENE_ID", geneLabels=NULL, a
         # importFrom(RDAVIDWebService, setAnnotationCategories)
         # importFrom(RDAVIDWebService, getAllAnnotationCategoryNames)
         # importFrom(RDAVIDWebService, getClusterReportFile)
-        if(!"RDAVIDWebService" %in% rownames(installed.packages()))
-        {
-            tryCatch({
-                    source("http://bioconductor.org/biocLite.R")
-                    biocLite("RDAVIDWebService")
-            }, error = function(e) {})
-        }
         
-        if(!library("RDAVIDWebService", logical.return=TRUE, quietly=TRUE)) stop("Package RDAVIDWebService is required to query DAVID through the webserver. Install the package or set email=NULL to query DAVID through the web API.")
+        if(!loadInstPkg("RDAVIDWebService")) stop("Package RDAVIDWebService is required to query DAVID through the webserver. Install the package or set email=NULL to query DAVID through the web API.")
+        
         randomNumber <- sample(100000:999999, 1)
         if(is.null(jobName)) jobName <- paste(randomNumber, "_DAVID", sep="")
         downloadFile <- paste(getwd(), .Platform$file.sep, jobName, ".txt", sep="")
@@ -131,6 +125,7 @@ fea_david <- function(geneList, geneIdType="ENSEMBL_GENE_ID", geneLabels=NULL, a
     }else
     {
         ## Query through web API
+        if(!loadInstPkg("RCurl")) stop("Package 'RCurl' is required to query DAVID throught the web API. Install it or provide an email to query DAVID through the Web Service.")
         
         if(length(geneList)>400) stop("Maximum number of genes: 400. For more genes register at DAVID Web Service (see help for details).")
         geneList <- paste(geneList, collapse=",")

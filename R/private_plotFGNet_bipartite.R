@@ -9,7 +9,7 @@ plotFGNet_bipartite <- function(metagroupsMatrix, keepAllNodes, plotAllMg, vLayo
     if(!keepAllNodes) genesInManyMg <- which(apply(metagroupsMatrix, 1, sum)>1)
     
     mgJoinedGraph <- NULL
-	mgJoined <- NULL
+    mgJoined <- NULL
     if(length(genesInManyMg)<=1)
     {
         warning("There is nothing to plot. There is no intersection between metagroups/clusters.", immediate.=TRUE)
@@ -50,6 +50,7 @@ plotFGNet_bipartite <- function(metagroupsMatrix, keepAllNodes, plotAllMg, vLayo
         
         # Vertex colors (genes: white, mg:their color)
         vColor <- setNames(c(rep("white", length(genesInManyMg)), colores[colnames(metagroupsMatrix)]), rownames(mgJoined))
+        vShape <- ifelse(vColor=="white", "circle", "square")
         if(is.null(eWidth)) eWidth <- 2
 
         #####################################################################################################
@@ -116,7 +117,7 @@ plotFGNet_bipartite <- function(metagroupsMatrix, keepAllNodes, plotAllMg, vLayo
             # Plot
             if(plotTitleSub=="") paste("Layout: ", layoutName, sep="")
             plotFGNet(graph2plot=mgJoinedGraph, plotType="bipartite", plotOutput=plotOutput, plotExpression=plotExpression, vertexLayout=vertexLayout, eWidth=eWidth, eColor=eColor, vColor=vColor,
-                  vExpr=vExpr, vSize=vSize, vLabelCex=vLabelCex, colores=colores, markGroup=NULL, trCols=NULL,
+                  vExpr=vExpr, vSize=vSize, vLabelCex=vLabelCex, vShape=vShape, colores=colores, markGroup=NULL, trCols=NULL,
                   plotTitle=plotTitle, plotTitleSub=plotTitleSub, plotLegend=plotLegend, legendPrefix=legendPrefix, legendText=legendText)
         }
 

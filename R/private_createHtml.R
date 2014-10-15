@@ -59,14 +59,7 @@ buildTermsTable <- function(termsDescriptions, leaves, boldTerms)
 # Creates the GO tree and returns the link for each metagroup
 goTreeLinks <- function(gtSets, grPrefix, geneExpr, folder, plotGoTree, clusterColumn)
 {   
-    if(!"GO.db" %in% rownames(installed.packages()))
-        {
-            tryCatch({
-                    source("http://bioconductor.org/biocLite.R")
-                    biocLite(GO.db)
-            }, error = function(e) {})
-    } 
-    require(GO.db)
+    if(!loadInstPkg("GO.db")) stop("Package GO.db is required to plot GO trees.")
     
     data("groupTypes", envir = environment())
     groupTypes<- get("groupTypes", envir  = environment())
@@ -153,7 +146,7 @@ goTreeLinks <- function(gtSets, grPrefix, geneExpr, folder, plotGoTree, clusterC
                     fileName <- paste(paste("GO_",grPrefix, cl,"_",db,".png", sep=""),sep="")                    
                     tColor <- NULL
                     if(!is.null(termExprs)) tColor <- gos[[db]]
-                    leaves[[cl]] <- c(leaves[[cl]], plotGoAncestors(names(gos[[db]]), tColor=tColor, ontology=parentsDB[[db]], fileName=fileName, height=1000, returnLeaves=TRUE)[,1])
+                    leaves[[cl]] <- c(leaves[[cl]], plotGoAncestors(names(gos[[db]]), tColor=tColor, ontology=parentsDB[[db]], fileName=fileName, height=1000)$leaves[,1])
                     fileNames[[cl]][[db]] <- paste(folder,fileName, sep="")
                 }
             }

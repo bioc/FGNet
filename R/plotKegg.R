@@ -4,7 +4,7 @@
 
 plotKegg <- function(keggIDs, geneExpr, geneIDtype="ENSEMBL", colType=c("continuous", "discrete"))
 {
-    # require(KEGGprofile)  
+    if(!loadInstPkg("KEGGprofile")) stop("Package KEGGprofile is required to plot KEGG pathways.")
     # Functions used: parse_XMLfile, plot_profile
     # Warning: KEGG.db is deprecated. (KEGG.db is used for downloading all pathways and find significant patways. --> Not used here)
     colType <- colType[1]
@@ -24,7 +24,7 @@ plotKegg <- function(keggIDs, geneExpr, geneIDtype="ENSEMBL", colType=c("continu
         organisms<- get("organisms", envir  = environment())
     }
     orgDb <- organisms[which(organisms[,"keggPrefix"]==keggPrefix),"orgPackage"]    
-    require(orgDb, character.only = TRUE)
+    if(!loadInstPkg(orgDb)) stop(paste("Package '", orgDb, "' is not available.", sep=""))
     orgDb <- eval(parse(text=orgDb))
     
     # Check provided ID (for compatibility with report and DAVID)
@@ -96,7 +96,7 @@ plotKegg <- function(keggIDs, geneExpr, geneIDtype="ENSEMBL", colType=c("continu
         }else
         {
             pathwayNames <- setNames(rep("profile", length(keggIDs)), keggIDs) 
-            if(require(KEGG.db))
+            if(loadInstPkg("KEGG.db"))
             {
                 pathwayNames <- unlist(AnnotationDbi::as.list(KEGGPATHID2NAME)[keggIDs])
             }        

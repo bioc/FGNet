@@ -63,7 +63,6 @@ For more info see the package tutorial: \code{vignette("FGNet-vignette")}
     [4] Alexa A, and Rahnenfuhrer J (2010) topGO: Enrichment analysis for Gene Ontology. R package version 2.16.0. URL: \url{http://www.bioconductor.org/packages/release/bioc/html/topGO.html}
 }
 \examples{
-\dontrun{
 
 # GUI:
 FGNet_GUI()
@@ -75,7 +74,7 @@ genesList <- c("YBL084C", "YDL008W", "YDR118W", "YDR301W", "YDR448W", "YFR036W",
 # Optional: Gene expression 
 geneExpr <- setNames(c(rep(1,10),rep(-1,5)), genesList)
 
-results <- fea_david(genesList, email="example@email.com")
+results <- fea_david(genesList) # email="example@email.com"
 
 # 2 A) Report:
 FGNet_report(results, geneExpr=geneExpr)
@@ -90,10 +89,9 @@ functionalNetwork(incidMat, geneExpr=geneExpr)
 functionalNetwork(incidMat_terms, plotType="bipartite", plotOutput="dynamic")
 getTerms(results)
 
-analyzeNetwork(incidMat)
+nwStats <- analyzeNetwork(incidMat)
 clustersDistance(incidMat)
 
-}
 }
 \keyword{ package }
 \keyword{ interface }

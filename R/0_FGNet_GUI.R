@@ -1,13 +1,7 @@
 FGNet_GUI <- function(geneList=NULL)
 {
-    if(!"RGtk2" %in% rownames(installed.packages()))
-    {
-        tryCatch({
-            source("http://bioconductor.org/biocLite.R")
-            biocLite(reactome.db)
-        }, error = function(e) {})
-    }
-    require(RGtk2)
+    if(!loadInstPkg("RGtk2")) stop("Package RGtk2 is required to use the GUI.")
+    
     # feaResults <<- NULL # Global
 
     data("FEA_tools", envir = environment())
