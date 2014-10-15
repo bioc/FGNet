@@ -42,9 +42,6 @@ tabTopGo_fill <- function(mainWindow, allOrgs)
     frameOrgTopGo <- gtkFrame("Organism")
     gtkFrameSetShadowType(frameOrgTopGo, GtkShadowType["none"])
     orgTopGoBox$packStart(comboOrgTopGo, expand = TRUE)
-    # Installed automatically by buildGeneSets
-    #     orgTopGoURL <- gtkLinkButtonNewWithLabel("http://www.bioconductor.org/packages/release/BiocViews.html#___OrgDb", label = "[install]", show = TRUE)
-    #     orgTopGoBox$packStart(orgTopGoURL, expand = FALSE)
     frameOrgTopGo$add(orgTopGoBox)
     hbox1TopGO$packStart(frameOrgTopGo, expand=TRUE)
     tabTopGo$packStart(hbox1TopGO, expand=FALSE)
@@ -75,9 +72,8 @@ tabTopGo_fill <- function(mainWindow, allOrgs)
     refPackageTxt$"tooltip-text" <- "The chip package is used to estimate all the measured genes (gene universe). If blank, the organism package will be used."
     refPackageBox$packStart(refPackageTxt, expand = TRUE)
     # Installed automatically by buildGeneSets()
-    # refPackageURL <- gtkLinkButtonNewWithLabel("http://www.bioconductor.org/packages/release/BiocViews.html#___ChipDb", label = "[install]", show = TRUE)
-    # refPackageURL$"tooltip-text" <- "Restart the GUI after installing new packages." ## required?
-    # refPackageBox$packStart(refPackageURL, expand = FALSE)
+    refPackageURL <- gtkLinkButtonNewWithLabel("http://www.bioconductor.org/packages/release/BiocViews.html#___ChipDb", label = "[install]", show = TRUE)
+    refPackageBox$packStart(refPackageURL, expand = FALSE)
     refPackageFrame$add(refPackageBox)
     tabTopGo$packStart(refPackageFrame, expand = FALSE)
     

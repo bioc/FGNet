@@ -216,6 +216,7 @@ submitQuery <- function(button, argsList) # button: Not used, but required for s
     }else
     {
         msgText <- NULL
+        statusTxt <- NULL
         if(activeTool == "Imported text file")
         {
             response <- GtkResponseType["accept"]
@@ -267,7 +268,7 @@ submitQuery <- function(button, argsList) # button: Not used, but required for s
                     {
                         msgText <- paste("Query submited.\nYour job ID is ",queryReply, ". \nIt will be ready in a few minutes.",sep="")
                         if(is.null(jobName)) jobName <- paste(queryReply, "_gtLinker",sep="")
-                        statusBar <- queryReply
+                        statusTxt <- queryReply
                         argsList$serverWebReportText$setText(serverWeb)
                     }
                 }
@@ -394,10 +395,9 @@ submitQuery <- function(button, argsList) # button: Not used, but required for s
                         queryReply <- NULL
                     }
                 }
-            
-                statusBar <- jobName
-                }# End queries
-            argsList$statusbar$push(argsList$statusbar$getContextId("info"), paste("FEA ready: ", statusBar, sep=""))
+                statusTxt <- jobName
+            }# End queries
+            argsList$statusbar$push(argsList$statusbar$getContextId("info"), paste("FEA ready: ", statusTxt, sep=""))
         }
     
         if(!is.null(msgText))
