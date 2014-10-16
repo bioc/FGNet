@@ -2,15 +2,19 @@
 title: "FGNet"
 subtitle: Functional Gene Networks derived from biological enrichment analyses
 output:
+  html_document:
+    toc: no
   pdf_document:
     toc: yes
-  html_document:
-    toc: yes
+  word_document: default
 ---
 
 <!--
 %\VignetteEngine{knitr::knitr}
-%\VignetteIndexEntry{FGNet-HTMLvignette}
+%\VignetteIndexEntry{FGNet}
+%\VignetteKeywords{Visualization, Annotation, GO, Pathways, GeneSetEnrichment, Networks, NetworkVisualization}
+%\VignetteDepends{FGNet}
+%\VignettePackage{FGNet}
 -->
 
 <style type="text/css">
@@ -30,6 +34,36 @@ table img{
 }
 </style>
 
+
+# FGNet
+
+**Functional Gene Networks derived from biological enrichment analyses** 
+
+1. [Introduction to FGNet](#introduction-to-fgnet)
+    - Biological functional analysis
+    - Functional network 
+2. [Installation](#installation)
+3. [Creating a network from a list of genes/proteins](#creating-a-network-from-a-list-of-genes-proteins)
+    - Graphical User Interface (GUI)
+    - In R code...
+        - Functional Enrichment Analysis (FEA)
+        - HTML report
+        - Individual networks
+4. [Editing and creating new networks](#editing-and-creating-new-networks)
+    - Incidence matrices
+    - Functional network
+    - Bipartite and intersection network
+    - Terms networks
+    - Genes - Terms networks
+5. [Filtering and selecting clusters](#filtering-and-selecting-clusters)
+    - Filtering based on a cluster *propperty*
+    - Selecting clusters with specific *terms or keywords*
+    - Selecting *specific groups*
+6. [Further analyses](#further-analyses)
+    - analyzeNetwork() 
+    - plotGoAncestors() and plotKegg()
+7. [Acknowledgements](#acknowledgements)
+8. [References](#references)
 
 # Introduction to FGNet
 
@@ -64,10 +98,8 @@ All these functionalities can be accessed directly through the appopiate functio
 
 Examples of functional network for different analyses: 
 
-|      |      |      |
-|:-----|:-----|:-----|
 |![ssDavid](nwExample1.png)            |![ssGtlinker](nwExample2.png)        |![ssGtlinker](nwExample3.png)        |
-
+|:-----|:-----|:-----|
     
 # Installation
 To install *FGNet* from *Bioconductor*, type in your R console:
@@ -250,9 +282,10 @@ FGNet can also be applied to an analysis performed at DAVID and GeneTerm Linker 
 
 To import these results into FGNet, use DAVID's `download file` or GeneTerm linker's `job ID`, and the functions `format_david()` or `fea_gtLinker_getResults()`:
 
-| David | Gene-term Linker |
-|:-----|:-----|
+
 |![ssDavid](ssDavid.png)            |![ssGtlinker](ssGtlinker.png)        |
+|:-----|:-----|
+| David | Gene-term Linker |
 
 ```{r, eval=FALSE}
 results <- format_david("http://david.abcc.ncifcrf.gov/data/download/90128.txt")
@@ -319,7 +352,7 @@ functionalNetwork(incidMat_terms, plotType="bipartite",
     plotTitleSub="Terms in several metagroups")
 ```
 
-#Advanced example: editing and creating new networks
+#Editing and creating new networks
 
 In this section we will use the functional analysis of an Alzheimer dataset ([GSE4757](http://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE4757)):
 ```{r}
