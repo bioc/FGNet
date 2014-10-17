@@ -108,7 +108,8 @@ plotKegg <- function(keggIDs, geneExpr, geneIDtype="ENSEMBL", colType=c("continu
         { 
             if(!file.exists(paste(keggPrefix,pwId, ".xml",sep=""))) 
             {
-                # download_KEGGfile(pathway_id=pwId, specis = keggPrefix)
+                download_KEGGfile(pathway_id=pwId, species = keggPrefix)
+                
                 # Uses (webLinks?):
                 #             http://www.genome.jp/kegg-bin/download?entry=05130&format=kgml
                 #             http://www.genome.jp/kegg/pathway/hsa/hsa05130.png
@@ -116,8 +117,8 @@ plotKegg <- function(keggIDs, geneExpr, geneIDtype="ENSEMBL", colType=c("continu
                 #             http://rest.kegg.jp/get/hsa05130/image
                 #             http://rest.kegg.jp/get/hsa05130/kgml       
                 
-                download.file(paste("http://rest.kegg.jp/get/", keggPrefix,pwId, "/kgml",sep=""),  paste(keggPrefix,pwId, ".xml",sep=""))
-                download.file(paste("http://rest.kegg.jp/get/", keggPrefix,pwId, "/image",sep=""),  paste(keggPrefix,pwId, ".png",sep=""))            
+                # download.file(paste("http://rest.kegg.jp/get/", keggPrefix,pwId, "/kgml",sep=""),  paste(keggPrefix,pwId, ".xml",sep=""))
+                # download.file(paste("http://rest.kegg.jp/get/", keggPrefix,pwId, "/image",sep=""),  paste(keggPrefix,pwId, ".png",sep=""))            
             }
             XML2database <- parse_XMLfile(pathway_id=pwId, species = keggPrefix)
             try(temp <- plot_profile(cbind(allG), bg_col=cbind(colsAllG),text_col="black", border_col="black", type="bg", pathway_name=paste(keggPrefix,pwId, sep=""), KEGG_database=XML2database, magnify=1, pathway_min=1))    

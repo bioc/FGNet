@@ -1,20 +1,16 @@
 ---
 title: "FGNet"
-subtitle: Functional Gene Networks derived from biological enrichment analyses
+subtitle: "Functional Gene Networks derived from biological enrichment analyses"
 output:
   html_document:
-    toc: no
+    toc: yes
+    highlight: pygments
   pdf_document:
     toc: yes
-  word_document: default
 ---
-
 <!--
-%\VignetteEngine{knitr::knitr}
+%\VignetteEngine{knitr::rmarkdown}
 %\VignetteIndexEntry{FGNet}
-%\VignetteKeywords{Visualization, Annotation, GO, Pathways, GeneSetEnrichment, Networks, NetworkVisualization}
-%\VignetteDepends{FGNet}
-%\VignettePackage{FGNet}
 -->
 
 <style type="text/css">
@@ -34,6 +30,10 @@ table img{
 }
 </style>
 
+```{r pre,echo=FALSE,results='hide'}
+library(knitr)
+opts_chunk$set(warning=FALSE,message=FALSE,cache=TRUE)
+```
 
 # FGNet
 
@@ -56,16 +56,17 @@ table img{
     - Terms networks
     - Genes - Terms networks
 5. [Filtering and selecting clusters](#filtering-and-selecting-clusters)
-    - Filtering based on a cluster *propperty*
+    - Filtering based on a cluster *property*
     - Selecting clusters with specific *terms or keywords*
     - Selecting *specific groups*
-6. [Further analyses](#further-analyses)
+6. [Other auxiliary functions](#other-auxiliary-functions)
     - analyzeNetwork() 
-    - plotGoAncestors() and plotKegg()
-7. [Acknowledgements](#acknowledgements)
+    - plotGoAncestors() 
+    - plotKegg()
+7. [Acknowledgments](#acknowledgments)
 8. [References](#references)
 
-# Introduction to FGNet
+# 1. Introduction to FGNet
 
 FGNet allows to perform a Functional Enrichment Analysis (FEA) on a list of genes or expression set, and transform the results into networks. The resulting functional networks provide an overview of the biological functions of the genes/terms, and allows to easily see links between genes, overlap between clusters, finding key genes... etc.
 
@@ -94,14 +95,14 @@ In the **bipartite**  network, the nodes are of two types, allowing to link the 
 
 In addition to the networks, FGNet also provides a few functions for further analysis. These functions allow to get a **distance matrix** , which represents the similarity between the groups based on the genes they share with each other (binary distance), and the distribution of **degree and betweenness**  within the network and subnetworks, in order to find the most important genes (hubs).
 
-All these functionalities can be accessed directly through the appopiate functions or the graphical user interface (GUI). In addition, FGNet also allows to generate an  **HTML report**  with an overview of these plots and analyses for a specific gene list.
+All these functionalities can be accessed directly through the appropriate functions or the graphical user interface (GUI). In addition, FGNet also allows to generate an  **HTML report**  with an overview of these plots and analyses for a specific gene list.
 
 Examples of functional network for different analyses: 
 
 |![ssDavid](nwExample1.png)            |![ssGtlinker](nwExample2.png)        |![ssGtlinker](nwExample3.png)        |
 |:-----|:-----|:-----|
     
-# Installation
+# 2. Installation
 To install *FGNet* from *Bioconductor*, type in your R console:
 ```{r, eval=FALSE}
 source("http://bioconductor.org/biocLite.R")
@@ -116,15 +117,15 @@ However, there are several functionalities that require further packages. i.e. t
 
 To make sure all FGNet functionalities are available, install the following packages:
 ```{r, eval=FALSE}
-biocLite(c("RGtk2", "RCurl", "RDAVIDWebService", "gage", "topGO", "KEGGprofile", "GO.db", "KEGG.db", "reactome.db", "org.Sc.sgd.db"))
+biocLite(c("RGtk2", "RCurl",
+    "RDAVIDWebService", "gage", "topGO", "KEGGprofile", 
+    "GO.db", "KEGG.db", "reactome.db", "org.Sc.sgd.db"))
 ```
 
-
-
-# Creating a network from a list of genes/proteins
+# 3. Creating a network from a list of genes/proteins
 To generate a functional network with FGNet:
     
-1.  Perform a Functional Enrichment Analisis (FEA) on a list of genes or expression set.
+1.  Perform a Functional Enrichment Analysis (FEA) on a list of genes or expression set.
     
     |FEA tool         |Online?  |Input          |Annotations        |
     |:----------------|:---------|:--------------|:------------------|
@@ -141,9 +142,11 @@ These steps are integrated into the Graphical User Interface (GUI), which provid
 
 ## Graphical User Interface (GUI)
 
-The Graphical User Interface (GUI) provides access to most FGNet functionalities. To launch the GUI, type in the R console:
+The Graphical User Interface (GUI) provides access to most FGNet functionalities in Windows and Linux (The current version of the GUI is not available for Mac OS X Snow Leopard).
 
-```
+To launch the GUI, type in the R console:
+
+```{r, eval=FALSE}
 library(FGNet)
 FGNet_GUI()
 ```
@@ -162,7 +165,7 @@ FGNet_GUI(geneExpr)
 ```
 
 ## In R code...
-The first step in the workflow is always is to perform a Functional Enrichment Analisis (FEA) on a list of genes or expression set. 
+The first step in the workflow is always is to perform a Functional Enrichment Analysis (FEA) on a list of genes or expression set. 
 
 Once the FEA is ready, you can proceed to generate the HTML report or the individual network/analyses:
 
@@ -176,57 +179,22 @@ For help or more details on any functions or their arguments, just set a ? befor
 
 ### Functional Enrichment Analysis (FEA)
 
-Since the arguments required to perform the FEA deppends on the tool, there are several FEA functions:
+Since the arguments required to perform the FEA depends on the tool, there are several FEA functions:
 
 | FEA tool  | Function | Output group type |
 |----------|---------|---------|
 | DAVID | `fea_david()` | Clusters |
-| TopGO | `fea_topGO()` | Gene-term sets |
+| TopGO | `fea_topGO()` | No grouping |
 | Gene-Term Linker | `fea_gtLinker()` & `fea_gtLinker_getResults()` | Metagroups |
 | Gage | `fea_gage()` | Clusters |
 | Other | `format_feaResults()` | |
 
-    
-**DAVID**
-
-Using DAVID requires internet connection. In addition, we recommend to register at http://david.abcc.ncifcrf.gov/webservice/register.htm to perform the queries through its Web Service.
-
-
-```{r, results="hide", message=FALSE}
-genesMetabolism <- c("YGR175C", "YHR007C", "YMR202W", "YJL167W", 
-                     "YNL280C", "YGR060W", "YGL001C", "YLR100W", "YLR056W", "YGL012W", 
-                     "YMR015C", "YML008C", "YHR072W", "YHR190W", "YKL004W", "YBR036C", 
-                     "YDR294C", "YDR072C", "YKL008C", "YHL003C", "YMR296C", "YDR062W", 
-                     "YJL134W", "YOR171C", "YLR260W", "YMR298W", "YMR272C", "YPL057C",
-                     "YDR297W", "YBR265W", "YPL087W", "YBR183W", "YKR053C")
-# To add the gene label/symbol to the plots...
-library(org.Sc.sgd.db)
-geneLabels <- unlist(as.list(org.Sc.sgdGENENAME)[genesMetabolism])
-# To add gene expression color to the plots...
-gMetabolismExpr <- setNames(rnorm(33,mean=0,sd=3), geneLabels)
-```
-
+All the FEA functions and `FGNet_report()` save the results in the current working directory. 
 ```{r, eval=FALSE}
-results_David <- fea_david(genesMetabolism, geneLabels=geneLabels, 
-                           email="example@email.com")
+getwd()
 ```
 
-**TopGO**
-    
-TopGO does not require internet connection since it relies on local databases. However, the results from topGO are provided as individual gene-term sets, not grouped into clusters.
-
-An example with the previous gene list:
-
-```{r, eval=FALSE}
-results_topGO <- fea_topGO(genesMetabolism, geneIdType="ENSEMBL", 
-                           geneLabels=geneLabels, organism="Sc") 
-```
-
-
-**Gene-Term Linker**
-    
-Since the analysis with Gene-Term Linker usually takes several minutes to be ready, the workflow is divided in two steps: (1) sending the analysis request, and (2) retrieving the results:
-
+Here is an example analyzing a gene list with the different tools:
 ```{r}
 genesYeast <- c("ADA2", "APC1", "APC11", "APC2", "APC4", "APC5", "APC9", "CDC16", 
                 "CDC23", "CDC26", "CDC27", "CFT1", "CFT2", "DCP1", "DOC1", "FIP1", 
@@ -236,19 +204,54 @@ genesYeast <- c("ADA2", "APC1", "APC11", "APC2", "APC4", "APC5", "APC9", "CDC16"
                 "RPN13", "RPN2", "RPN3", "RPN5", "RPN6", "RPN8", "RPT1", "RPT3", 
                 "RPT6", "SGF11", "SGF29", "SGF73", "SPT20", "SPT3", "SPT7", "SPT8", 
                 "TRA1", "YSH1", "YTH1")
+
+library(org.Sc.sgd.db)
+geneLabels <- unlist(as.list(org.Sc.sgdGENENAME))
+genesYeast <- sort(geneLabels[which(geneLabels %in% genesYeast)])
+
 # Optional: Gene expression (1=UP, -1=DW)
-genesYeastExpr <- setNames(c(rep(1,29), rep(-1,30)),genesYeast) 
+genesYeastExpr <- setNames(c(rep(1,28), rep(-1,30)),genesYeast) 
+
 ```
+    
+**DAVID**
+
+Using DAVID requires internet connection. In addition, we recommend to register at http://david.abcc.ncifcrf.gov/webservice/register.htm to perform the queries through its Web Service.
+
+By default, `geneIdType="ENSEMBL_GENE_ID"`. To replace the gene IDs by readable names in the plots and HTML report, use the argument `geneLabels`. To see the gene IDs supported by DAVID's Web Service, use: `getIdTypes(DAVIDWebService$new(email=...))`.
 
 ```{r, eval=FALSE}
-jobID <- fea_gtLinker(geneList=genesYeast,organism="Sc")
+feaResults_David <- fea_david(names(genesYeast), geneLabels=genesYeast, 
+                           email="example@email.com")
+?fea_david
+```
+
+**TopGO**
+    
+Since TopGO uses local databases, it does not require internet connection. 
+
+The results from topGO are provided as individual gene-term sets not grouped into clusters. FGNet treats each *gene-term set* as a single cluster.
+
+
+```{r, eval=FALSE}
+feaResults_topGO <- fea_topGO(genesYeast, geneIdType="GENENAME", organism="Sc") 
+?fea_topGO
+```
+
+**Gene-Term Linker**
+    
+Since the analysis with Gene-Term Linker usually takes several minutes to be ready, the workflow is divided in two steps: (1) sending the analysis request, and (2) retrieving the results:
+
+```{r, eval=FALSE}
+jobID <- fea_gtLinker(geneList=genesYeast, organism="Sc")
+?fea_gtLinker
 ```
 
 once the analysis is ready...
 
 ```{r}
 jobID <- 3907019
-results_gtLinker <- fea_gtLinker_getResults(jobID=jobID, organism="Sc")
+feaResults_gtLinker <- fea_gtLinker_getResults(jobID=jobID, organism="Sc")
 ```
 
 **Gage**
@@ -256,12 +259,25 @@ results_gtLinker <- fea_gtLinker_getResults(jobID=jobID, organism="Sc")
 As a GSA approach, instead of performing the functional enrichment over a gene list, gage requires a raw expression set and the samples to compare:
 
 ```{r, eval=FALSE}
-library(gage); data(gse16873)
-results_gage <- fea_gage(eset=gse16873, 
-                         refSamples=grep('HN',colnames(gse16873), ignore.case =T), 
-                         compSamples=grep('DCIS',colnames(gse16873), ignore.case=T), 
-                         geneIdType="ENTREZID", organism="Hs", annotations="REACTOME")
-FGNet_report(results_gage)
+library(gage)
+data(gse16873)
+
+# Set gene labels? (they need to have unique identifiers)
+library(org.Hs.eg.db)
+geneSymbols <- select(org.Hs.eg.db,columns="SYMBOL",keytype="ENTREZID", 
+    keys=rownames(gse16873))
+
+geneLabels <- geneSymbols$SYMBOL
+names(geneLabels) <- geneSymbols$ENTREZID
+head(geneLabels)
+
+# gage:
+feaResults_gage <- fea_gage(eset=gse16873, 
+                         refSamples=grep('HN',colnames(gse16873)), 
+                         compSamples=grep('DCIS',colnames(gse16873)), 
+                         geneLabels=geneLabels, annotations="REACTOME",
+                         geneIdType="ENTREZID", organism="Hs")
+?fea_gage
 ```
 
 **Other tools**
@@ -288,19 +304,19 @@ To import these results into FGNet, use DAVID's `download file` or GeneTerm link
 | David | Gene-term Linker |
 
 ```{r, eval=FALSE}
-results <- format_david("http://david.abcc.ncifcrf.gov/data/download/90128.txt")
-results <- fea_gtLinker_getResults(jobID=3907019)
+feaResults_David <- format_david("http://david.abcc.ncifcrf.gov/data/download/90128.txt")
+feaResults_gtLinker <- fea_gtLinker_getResults(jobID=3907019)
 ```
 
 ### HTML report
-The HTML report function allows to create a comprehensive report including diferent views of the Functional Network, the cluster/metagroup legend, and some further statistics directly directly from a gene list. 
+The HTML report function allows to create a comprehensive report including different views of the Functional Network, the cluster/metagroup legend, and some further statistics directly directly from a gene list. 
 
 Here is the code to use `FGNet_report()` with each of the previous examples:
 ```{r, eval=FALSE}
-FGNet_report(results_topGO, geneExpr=gMetabolismExpr)  
-FGNet_report(results_David, geneExpr=gMetabolismExpr) 
-FGNet_report(results_gtLinker, geneExpr=genesYeastExpr)
-FGNet_report(results_gage)
+FGNet_report(feaResults_David, geneExpr=genesYeastExpr, plotKeggPw=FALSE)
+FGNet_report(feaResults_topGO, geneExpr=genesYeastExpr)  
+FGNet_report(feaResults_gtLinker, geneExpr=genesYeastExpr)
+FGNet_report(feaResults_gage)
 ```
 
 By default, the clusters included in these reports are filtered out to get cleaner results. The default values depend on the tool, and can be modified through FGNet_report arguments:
@@ -310,7 +326,7 @@ FEA_tools[,4:6]
 ```
 
 ```{r, eval=FALSE}
-FGNet_report(results_gtLinker, filterThreshold=0.3)
+FGNet_report(feaResults_gtLinker, filterThreshold=0.3)
 ```
 
 ```{r, eval=FALSE}
@@ -319,17 +335,17 @@ FGNet_report(results_gtLinker, filterThreshold=0.3)
 
 
 ### Individual networks
-To generate specific networks rather than the full report, after the FEA is ready, use `fea2incidMat()` to generate the incidence matrices that represent the networks:
+After the FEA is ready, it is also possible to generate specific networks rather than the full report. Here is a simple example on how to use  `fea2incidMat()` to generate the incidence matrices that represent the networks and plot them.  There are more detailed examples on how to edit and explore the networks in sections [Editing and creating new networks](#editing-and-creating-new-networks) and [Filtering and selecting clusters](#filtering-and-selecting-clusters).
 
 ```{r}
-results <- results_gtLinker
-incidMat <- fea2incidMat(results)
+feaResults <- feaResults_gtLinker
+incidMat <- fea2incidMat(feaResults)
 incidMat$metagroupsMatrix[1:5, 1:5]
-incidMat_terms <- fea2incidMat(results, key="Terms")
+incidMat_terms <- fea2incidMat(feaResults, key="Terms")
 incidMat_terms$metagroupsMatrix[5:10, 1:5]
 ```
 
-These incidence matrices can be plotted and anlyzed in diferent ways:
+These incidence matrices can be plotted and analyzed in different ways:
 
 ```{r Default functional network}
 functionalNetwork(incidMat, geneExpr=genesYeastExpr,
@@ -337,7 +353,7 @@ functionalNetwork(incidMat, geneExpr=genesYeastExpr,
 ```
 
 ```{r}
-getTerms(results)[1]
+getTerms(feaResults)[1]
 ```
 
 ```{r, eval=FALSE}
@@ -352,7 +368,7 @@ functionalNetwork(incidMat_terms, plotType="bipartite",
     plotTitleSub="Terms in several metagroups")
 ```
 
-#Editing and creating new networks
+# 4. Editing and creating new networks
 
 In this section we will use the functional analysis of an Alzheimer dataset ([GSE4757](http://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE4757)):
 ```{r}
@@ -376,9 +392,9 @@ getTerms(feaAlzheimer)[3:4]
 
 ## Incidence matrices
 
-The FEA results should be transformed into incidence matrices to create the netwok. These matrices are the internal representation of the network: they contain which genes are in each metagroup or cluster and in each gene-term set. Therefore, it is in this step where the main shape of the network is determined. 
+The FEA results should be transformed into incidence matrices to create the network. These matrices are the internal representation of the network: they contain which genes are in each metagroup or cluster and in each gene-term set. Therefore, it is in this step where the main shape of the network is determined. 
 
-The function to create the incidence matrices is `fea2incidMat()`. It allows to filter out clusters, decide wether the networks should be gene-based or term-based, stablish the groups to link the genes/terms, etc...
+The function to create the incidence matrices is `fea2incidMat()`. It allows to filter out clusters, decide whether the networks should be gene-based or term-based, establish the groups to link the genes/terms, etc...
 
 We will start the example creating a simple gene-based network:
 
@@ -409,8 +425,6 @@ To see which metagroups/clusters have been filtered out and will not be shown in
 incidMatFiltered$filteredOut
 ```
 
-
-
 For more on selecting and filtering groups see section '[filtering](#filtering-and-selecting-clusters)'.
 To build the [networks based on terms](#terms-networks), use the argument `key="Terms"`.
 
@@ -421,19 +435,18 @@ In case there is available expression data, it can be used for representation in
 
 ```{r}
 # (Fake expression data)
-geneList <- rownames(incidMat$metagroupsMatrix)
-geneExpr <- setNames(c(rep(1,40), rep(-1,37)), geneList)
+genesAlz <- rownames(incidMat$metagroupsMatrix)
+genesAlzExpr <- setNames(c(rep(1,50), rep(-1,27)), genesAlz) 
 ```
 
-The `default` plot will plot all the genes/terms in the network, and will return the netwoks as igraph objects and matrices in an invisible list. The argument `keepColors` determine wether the colors should be consistent, taking into account the filtered groups, or restarted:
+The `default` plot will plot all the genes/terms in the network, and will return the networks as igraph objects and matrices in an invisible list. The argument `keepColors` determine whether the colors should be consistent, taking into account the filtered groups, or restarted:
 ```{r}
-fNw <- functionalNetwork(incidMatFiltered, geneExpr=geneExpr, 
-    keepColors=FALSE)
+fNw <- functionalNetwork(incidMatFiltered, geneExpr=genesAlzExpr, keepColors=FALSE)
 ```
 
 By setting the parameter `plotOutput="dynamic"` instead of an static plot, it will create an interactive one. By setting  `plotOutput="none"`, it is possible to produce only the network without plotting.
 ```{r, eval=FALSE}
-functionalNetwork(incidMatFiltered, geneExpr=geneExpr, plotOutput="dynamic") 
+functionalNetwork(incidMatFiltered, geneExpr=genesAlzExpr, plotOutput="dynamic") 
 fNw <- functionalNetwork(incidMatFiltered, plotOutput="none") 
 ```
 
@@ -463,7 +476,7 @@ functionalNetwork(incidMatFiltered, vLayout=saveLayout)
 ```
 
 ## Bipartite and intersection network
-The default `bipartite` version of the functional network plots the *intersection network*: a simplified functional network, containing only the nodes in several metagroups and the metagroups they belong to. In this network, metagroup nodes (the coloured noces) can be seen as a cluster of all the genes/proteins that belong only to that metagroup:
+The default `bipartite` version of the functional network plots the *intersection network*: a simplified functional network, containing only the nodes in several metagroups and the metagroups they belong to. In this network, metagroup nodes (the coloured nodes) can be seen as a cluster of all the genes/proteins that belong only to that metagroup:
 
 ```{r}
 mgKeyTerm <- keywordsTerm(getTerms(feaAlzheimer), 
@@ -473,8 +486,8 @@ functionalNetwork(incidMatFiltered, plotType="bipartite", legendText=mgKeyTerm)
 
 To plot a full bipartite network including all the nodes, just set `keepAllNodes=TRUE`:
 ```{r}
-functionalNetwork(incidMatFiltered, geneExpr=geneExpr, plotType="bipartite",
-    keepAllNodes=TRUE, plotTitleSub="Bipartite network will all nodes")
+functionalNetwork(incidMatFiltered, geneExpr=genesAlzExpr, plotType="bipartite",
+    keepAllNodes=TRUE, plotTitleSub="Bipartite network will all nodes", legendText=mgKeyTerm)
 ```
 
 ## Terms networks
@@ -525,24 +538,24 @@ For more information on the filtered terms see ([Fontanillo et al](#references))
 
 ## Genes - Terms networks
 
-To build a genes-terms network, we can use the bipartite plot with the appropiate formating of the input matrices.
+To build a genes-terms network, we can use the bipartite plot with the appropriate formatting of the input matrices.
 
-For many FEA tools it will be enough with appliying the `fea2incidMat()` directly to the `$geneTermSets` matrix selecting the gene-term sets we want to plot.
+For many FEA tools it will be enough with applying the `fea2incidMat()` directly to the `$geneTermSets` matrix selecting the gene-term sets we want to plot.
 i.e. gene-term sets in a specific cluster, filter generic terms (terms annotated to more than X genes), etc...
 
-Note that this approach might not be appropiate for GeneTerm Linker, since it groups several terms into each gene-term set.
+Note that this approach might not be appropriate for GeneTerm Linker, since it groups several terms into each gene-term set.
 
 ```{r}
-txtFile <- paste(file.path(system.file('examples', package='FGNet')), "David_Metabolism.txt", sep=.Platform$file.sep)
-feaMetabolism <- format_david(txtFile, jobName="David_Metabolism",geneLabels=geneLabels)
+txtFile <- paste(file.path(system.file('examples', package='FGNet')), "DAVID_Yeast_raw.txt", sep=.Platform$file.sep)
+feaResults_David <- format_david(txtFile, jobName="David_example", geneLabels=genesYeast)
 ```
 
 ```{r, eval=FALSE}
-feaMetabolism <- fea_david(genesMetabolism, email="...", geneLabels=geneLabels)
+feaResults_David <- fea_david(names(genesYeast), email="...", geneLabels=genesYeast)
 ```
 
 ```{r}
-gtSets <- feaMetabolism$geneTermSets
+gtSets <- feaResults_David$geneTermSets
 gtSets <- gtSets[gtSets$Cluster %in% c(9),] 
 gtSets <- gtSets[gtSets$Pop.Hits<500,]
 ```
@@ -561,7 +574,7 @@ Network with genes colored based on their expression and terms on alphabetical o
 ```{r}
 functionalNetwork(t(termsGenes), plotType="bipartite", keepAllNodes=TRUE,
     legendPrefix="", plotTitle="Genes - Terms network", plotTitleSub="",
-    geneExpr=gMetabolismExpr, plotExpression="Fill")
+    geneExpr=genesYeastExpr, plotExpression="Fill")
 ```  
 
 Network with genes colored by alphabetical order (from red to pink), terms white:
@@ -570,23 +583,17 @@ functionalNetwork(termsGenes, plotType="bipartite", keepAllNodes=TRUE,
     legendPrefix="", plotTitle="Genes - Terms network", plotTitleSub="")
 ```
 
-#Filtering and selecting clusters
+# 5. Filtering and selecting clusters
 
-In this section we will analyze with DAVID a list with genes from 2 metabolic pathways in yeast: *ergosterol biosynthesis* and *sphingolipid metabolism*, as an example of a network with very overlapping clusters.
-
-```{r, eval=FALSE}
-feaMetabolism <- fea_david(genesMetabolism, email="...", geneLabels=geneLabels)
-incidMat <- fea2incidMat(feaMetabolism)
-functionalNetwork(incidMat, legendText=FALSE) 
-```
+As an example of analysis of a network with very overlapping clusters, we will use the yeast gene list analyzed with DAVID:
 
 ```{r}
-incidMat <- fea2incidMat(feaMetabolism)
+incidMat <- fea2incidMat(feaResults_David)
 functionalNetwork(incidMat) 
 ```
 
 ```{r}
-incidMatTerms <- fea2incidMat(feaMetabolism, key="Terms")
+incidMatTerms <- fea2incidMat(feaResults_David, key="Terms")
 ```
 
 ```{r, eval=FALSE}
@@ -599,13 +606,12 @@ functionalNetwork(incidMatTerms$clustersMatrix, plotType="bipartite",
  plotTitle="Terms in several clusters")
 ```
 
+## Filtering based on a cluster property
 
-## Filtering based on a cluster *propperty*
-
-The clusters to plot can be selected/filtered based on any propperty that is available in the clusters matrix:
+The clusters to plot can be selected/filtered based on any property that is available in the clusters matrix:
 
 ```{r}
-colnames(feaMetabolism$clusters)
+colnames(feaResults_David$clusters)
 ```
 
 i.e. Selecting the clusters with highest Enrichment Score or least genes (setting `eColor=NA`, plots the networks without edges):
@@ -614,65 +620,69 @@ i.e. Selecting the clusters with highest Enrichment Score or least genes (settin
 par(mfrow=c(1,2))
 
 # Highest enrichment score
-filterProp <- as.numeric(as.character(
-    feaMetabolism$clusters$ClusterEnrichmentScore))
+filterProp <- as.numeric(as.character(feaResults_David$clusters$ClusterEnrichmentScore))
 quantile(filterProp, c(0.10, 0.25, 0.5, 0.75, 0.9))
-incidMatFiltered <- fea2incidMat(feaMetabolism, 
+incidMatFiltered <- fea2incidMat(feaResults_David, 
     filterAttribute="ClusterEnrichmentScore",
-    filterOperator="<", filterThreshold=10)
+    filterOperator="<", filterThreshold=7.65)
 functionalNetwork(incidMatFiltered, eColor=NA,
     plotTitle="Highest enrichment score")
 
 # Lowest genes
-quantile(as.numeric(as.character(feaMetabolism$clusters$nGenes)),
+quantile(as.numeric(as.character(feaResults_David$clusters$nGenes)),
     c(0.10, 0.25, 0.5, 0.75, 0.9))
-incidMatFiltered <- fea2incidMat(feaMetabolism, 
- filterAttribute="nGenes", filterOperator=">", filterThreshold=15)
-functionalNetwork(incidMatFiltered, eColor=NA,
-    plotTitle="Smaller clusters")
+incidMatFiltered <- fea2incidMat(feaResults_David, 
+ filterAttribute="nGenes", filterOperator=">", filterThreshold=20)
+functionalNetwork(incidMatFiltered, plotTitle="Smallest clusters")
 ```
  
-To use any propperty that is not available in the `$clusters` data frame, just add it as column to the dataframe.
+To use any property that is not available in the `$clusters` data frame, just add it as column to the dataframe.
  
-## Selecting clusters with specific *terms or keywords*
+## Selecting clusters with specific keywords
 
 ```{r}
-keywords <- c("sphingolipid") 
-selectedClusters <- sapply(getTerms(feaMetabolism), 
+keywordsTerm(getTerms(feaResults_David), nChar=100)
+
+keywords <- c("hydrolase") 
+selectedClusters <- sapply(getTerms(feaResults_David), 
     function(x) 
     any(grep(paste("(", paste(keywords, collapse="|") ,")",sep=""), tolower(x))))
 ```
 ```{r, eval=FALSE}
-getTerms(feaMetabolism)[selectedClusters]
+getTerms(feaResults_David)[selectedClusters]
 ```
 ```{r}
-tmpFea <- feaMetabolism
+tmpFea <- feaResults_David
 tmpFea$clusters <- cbind(tmpFea$clusters, keywords=selectedClusters)
 incidMatSelection <- fea2incidMat(tmpFea, 
  filterAttribute="keywords", filterOperator="!=",filterThreshold="TRUE")
-functionalNetwork(incidMatSelection, plotType="bipartite", plotOutput="dynamic")
+functionalNetwork(incidMatSelection, plotType="bipartite")
 ```
 
-## Selecting *specific groups*
+## Selecting specific groups
 
 `clustersDistance()` allows to explore the overlap between groups:
 ```{r}
 distMat <- clustersDistance(incidMat)
 ```
 
-Clusters 1, 7 and 9 seem to be very close (overlapping), let's see:
-```{r}
-selectedClusters <- rep(FALSE, nrow(feaMetabolism$clusters))
-selectedClusters[c(1,7,9)] <- TRUE
+```{r, echo=FALSE, results='hide'}
+dev.off()
+```
 
-tmpFea <- feaMetabolism
+Clusters 4, 1 and 2 seem to be completely overlapping (distance 0). While cluster 11 does not have any intersection with clusters 8 and 9. Let's see:
+```{r}
+selectedClusters <- rep(FALSE, nrow(feaResults_David$clusters))
+selectedClusters[c(8,9,11)] <- TRUE
+
+tmpFea <- feaResults_David
 tmpFea$clusters <- cbind(tmpFea$clusters, select=selectedClusters)
 incidMatSelection <- fea2incidMat(tmpFea, 
   filterAttribute="select", filterOperator="!=",filterThreshold="TRUE")
 functionalNetwork(incidMatSelection, eColor=NA)
 ```
 
-#Further analyses
+# 6. Other auxiliary functions
 
 ## analyzeNetwork() 
 `analyzeNetwork()` can be used to explore the structure of the network. It also returns statistics about the nodes betweeness within each cluster, etc...
@@ -688,7 +698,7 @@ names(stats)
 stats$transitivity
 ```
 
-`$degree` and `$betweeness` are the values used for the plots. They contain the values for each of the nodes in the global network (commonClusters) and within each cluster/metagroup (subsets of commonGtSets network). The degree is given as percentage, normalized based on the total number of nodes of the network. i.e. a value of 90 in a network of 10 nodes, would mean the actual degree of the node is 9: it is conneded to 9 nodes (90% of 10)).
+`$degree` and `$betweeness` are the values used for the plots. They contain the values for each of the nodes in the global network (commonClusters) and within each cluster/metagroup (subsets of commonGtSets network). The degree is given as percentage, normalized based on the total number of nodes of the network. i.e. a value of 90 in a network of 10 nodes, would mean the actual degree of the node is 9: it is connected to 9 nodes (90% of 10)).
 
 The betweeness of each node in each cluster as matrix:
 ```{r}
@@ -707,7 +717,7 @@ stats$hubsList$"9"
 
 DAVID's example: 
 ```{r}
-incidMat_metab <- fea2incidMat(feaMetabolism)
+incidMat_metab <- fea2incidMat(feaResults_David)
 analyzeNetwork(incidMat_metab)
 ```
 
@@ -715,18 +725,16 @@ Note the structure of the network varies not only depending on the dataset, but 
 
 
 
-## plotGoAncestors() and plotKegg()
+## plotGoAncestors()
 
 `plotGoAncestors()` and `plotKegg()` also allow to explore the significant gene term sets:
 ```{r}
-goIds <- getTerms(feaMetabolism, returnValue="GO")[[10]]
+goIds <- getTerms(feaResults_David, returnValue="GO")[[7]]
 plotGoAncestors(goIds, ontology="MF", nCharTerm=40)
 ```
 
+## plotKegg()
 ```{r, eval=FALSE}
-genesAlz <- rownames(fea2incidMat(feaAlzheimer)$metagroupsMatrix)
-genesAlzExpr <- setNames(c(rep(1,50), rep(-1,27)),genesAlz) 
-
 keggIds <- getTerms(feaAlzheimer, returnValue="KEGG")[[3]]
 plotKegg("hsa05010", geneExpr=genesAlzExpr, geneIDtype="GENENAME")
 # Saved as .png in current directory
@@ -734,10 +742,10 @@ plotKegg("hsa05010", geneExpr=genesAlzExpr, geneIDtype="GENENAME")
 
 ![Alzheimer pathway](hsa05010_Alzheimer_disease.png)
 
-# Acknowledgements
-This work was supported by Instituto de Salud Carlos III and by a grant from the Junta de Castilla y Leon and the European Social Fund to S.A and C.D.
+# 7. Acknowledgments
+This work was supported by Instituto de Salud Carlos III [Research Projects PS09/00843 and PI12/00624] and by a grant from the Junta de Castilla y Leon and the European Social Fund to S.A and C.D.
 
-# References 
+# 8. References 
 * Huang DW, Sherman BT, Lempicki RA. *Systematic and integrative analysis of large gene lists using DAVID Bioinformatics Resources.* Nature Protoc. 2009;4(1):44-57.
 
 * Huang DW, Sherman BT, Lempicki RA. *Bioinformatics enrichment tools: paths toward the comprehensive functional analysis of large gene lists.* Nucleic Acids Res. 2009;37(1):1-13.

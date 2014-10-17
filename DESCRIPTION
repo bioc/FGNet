@@ -2,14 +2,14 @@ Package: FGNet
 Type: Package
 Title: Functional gene networks derived from biological enrichment analyses
 Description: Build and visualize functional gene and term networks from clustering of enrichment analyses in multiple annotation spaces. The package includes a graphical user interface (GUI) and functions to perform the functional enrichment analysis through DAVID, GeneTerm Linker, gage (GSA) and topGO.
-Version: 3.1.1
+Version: 3.1.2
 Date: 2014-10-01
 Author: Sara Aibar, Celia Fontanillo, Conrad Droste and Javier De Las Rivas.
 Maintainer: Sara Aibar <saibar@usal.es>
 Depends: R (>= 2.15)
 VignetteBuilder: knitr
 Imports: igraph (>= 0.6), hwriter, R.utils, XML,  plotrix, reshape2, RColorBrewer, png
-Suggests: RGtk2, RCurl, RDAVIDWebService, gage, topGO, KEGGprofile, GO.db, KEGG.db, reactome.db, RUnit, BiocGenerics, org.Sc.sgd.db, knitr, AnnotationDbi
+Suggests: RGtk2, RCurl, RDAVIDWebService, gage, topGO, KEGGprofile, GO.db, KEGG.db, reactome.db, RUnit, BiocGenerics, org.Sc.sgd.db, knitr, rmarkdown, AnnotationDbi
 License: GPL (>= 2)
 URL: http://www.cicancer.org
 LazyLoad: yes

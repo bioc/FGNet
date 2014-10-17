@@ -241,6 +241,9 @@ submitQuery <- function(button, argsList) # button: Not used, but required for s
             ##### GeneTerm Linker
             if(activeTool =="GeneTerm Linker")
             {
+                # Check libraries (ask install through dialog)
+                if(!loadInstPkg("RCurl", parentWindow=argsList$parentWindow)) stop("Package 'RCurl' is required to get the FEA results from GeneTerm Linker server.")
+                
                 queryArgs <- argsList$tabFEA$toolTabs$tabGTL$queryArgs    
                 
                 ## Get arguments queryArgs <- tabFEA$tabDavid$queryArgs 
@@ -289,6 +292,15 @@ submitQuery <- function(button, argsList) # button: Not used, but required for s
                     annotations <- unlist(sapply(queryArgs$annotsArea$getChildren(), function(anot) if(anot$active) return(anot$label)))
                     email <- queryArgs$emailText$getText()
                     if(email=="" || !gtkWidgetGetSensitive(queryArgs$frameEmail)) email <- NULL
+                    
+                    # Check libraries (ask install through dialog)
+                    if(!is.null(email))
+                    {
+                        if(!loadInstPkg("RDAVIDWebService", parentWindow=argsList$parentWindow)) stop("Package RDAVIDWebService is required to query DAVID through the webserver. Install the package or set email=NULL to query DAVID through the web API.")
+                    }else{
+                        if(!loadInstPkg("RCurl", parentWindow=argsList$parentWindow)) stop("Package 'RCurl' is required to query DAVID throught the web API. Install it or provide an email to query DAVID through the Web Service.")
+                    }
+                        
                     argsWS <- eval(parse(text=paste("c(",queryArgs$argsText$getText(), ")", sep="")))
                     
                     # Submit query
@@ -305,6 +317,10 @@ submitQuery <- function(button, argsList) # button: Not used, but required for s
                     
                 if(activeTool =="topGO")
                 { 
+                    # Check libraries (ask install through dialog)
+                    if(!loadInstPkg("topGO", parentWindow=argsList$parentWindow)) stop("Package topGO is not available.")
+                    if(!loadInstPkg("GO.db", parentWindow=argsList$parentWindow)) stop("Package GO.db is for fea_topGO.")
+                    
                     queryArgs <- argsList$tabFEA$toolTabs$tabTopGo$queryArgs
                     
                     ## Get arguments
@@ -335,6 +351,8 @@ submitQuery <- function(button, argsList) # button: Not used, but required for s
                 
                 if(activeTool =="gage")
                 { 
+                    # Check libraries (ask install through dialog)
+                    if(!loadInstPkg("gage", parentWindow=argsList$parentWindow)) stop("Package 'gage' is not available.")
                     queryArgs <- argsList$tabFEA$toolTabs$tabGage$queryArgs    
                     
                     ## Get arguments
@@ -355,7 +373,6 @@ submitQuery <- function(button, argsList) # button: Not used, but required for s
                         # http://www.broadinstitute.org/gsea/msigdb/collections.jsp
                         if(grepl(".gmt", geneSets, fixed=TRUE))
                         {
-                            if(!loadInstPkg("gage", parentWindow=argsList$parentWindow)) stop("Package gage is not available.")
                             geneSets <- readList(geneSets)
                         }else{
                             geneSets <- eval(as.name(load(geneSets)))    

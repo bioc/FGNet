@@ -160,6 +160,7 @@ fea_gtLinker_getResults <- function(jobID=NULL, organism=NULL, jobName=NULL, alr
         if(!jobReady) 
         {
             warning("The analysis has not finished yet or the jobID does not exist.")
+            setwd(currWD)
             return(NULL)
         } else  # jobReady
         {
@@ -178,9 +179,14 @@ fea_gtLinker_getResults <- function(jobID=NULL, organism=NULL, jobName=NULL, alr
                 message(paste("Results downloaded to folder '", folder, "'", sep=""))
             }, error = function(e) {
                 message(e)
+                setwd(currWD)
                 return(e$message)
             })
-            if(!is.null(downAttempt)) return(downAttempt)
+            if(!is.null(downAttempt)) 
+            {
+                setwd(currWD)
+                return(downAttempt)
+            }
         }
     }# End download
     

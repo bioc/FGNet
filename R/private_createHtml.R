@@ -464,15 +464,15 @@ createHtml <- function(htmlFileName, feaResults, jobName, tablesGenes, tablesTer
         }        
         if(tool=="DAVID")
         {    
-            attrs <- c("", # "Silhouette  only in GtLinker
-                                 paste("Score: ", signif(as.numeric(as.character(globalMetagroups[mg, "EnrichmentScore"])),2),sep=""),
-                                 paste("minPval: ", signif(as.numeric(as.character(globalMetagroups[mg, "minPval"])),2),sep=""))
+            attrs <- c(paste("Score: ", signif(as.numeric(as.character(globalMetagroups[mg, "ClusterEnrichmentScore"])),2),sep=""),
+                                 "","")
         }    
         if(tool=="topGO")
         {    
+            pVal <- signif(as.numeric(gsub("< ", "", as.character(globalMetagroups[mg, "classic"]))),2)                
             attrs <- c("", # "Silhouette  only in GtLinker
                        paste("Num annotated: ", signif(as.numeric(as.character(globalMetagroups[mg, "Annotated"])),2),sep=""),
-                       paste("P-val: ", signif(as.numeric(as.character(globalMetagroups[mg, "classic"])),2),sep=""))
+                       paste("P-val: ", pVal, sep=""))
         }    
         if(tool=="gage")
         {    
@@ -480,9 +480,6 @@ createHtml <- function(htmlFileName, feaResults, jobName, tablesGenes, tablesTer
 #                        paste("Score: ", signif(as.numeric(as.character(globalMetagroups[mg, "EnrichmentScore"])),2),sep=""),
 #                        paste("minPval: ", signif(as.numeric(as.character(globalMetagroups[mg, "minPval"])),2),sep=""))
         }    
-        
-        
-        
         
         tmpGenes <- sort(unlist(strsplit(as.character(globalMetagroups[mg, "Genes"]), ",")))
         if(!is.null(geneExpr))
@@ -525,7 +522,7 @@ createHtml <- function(htmlFileName, feaResults, jobName, tablesGenes, tablesTer
     }
     
     #bgCols <- c(strsplit(paste(substr(colores, 1, 7)[rownames(globalMetagroups)], "#FFFFFF", collapse=" "), split=" ")[[1]],"#FFFFFF")
-    borderCols <- paste('border-color:', strsplit(paste(substr(colores, 1, 7), substr(colores, 1, 7), collapse=" "), split=" ")[[1]], sep="")
+    borderCols <- paste('border-color:', strsplit(paste(substr(colores, 1, 7), substr(colores, 1, 7), collapse=" "), split=" ")[[1]], sep="") #x2
     hwrite(termsTable, p, border=1, class=rep(c('mgHeader', 'Terms'), length(termsTable)/2), row.style=borderCols, dim=c(length(termsTable),1))
     
     # Explanation of asterisc (there are terms in several metagroups):

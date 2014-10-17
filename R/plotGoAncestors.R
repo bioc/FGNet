@@ -45,12 +45,13 @@ plotGoAncestors <- function(goIds, tColor=NULL, ontology=NULL, plotOutput="stati
     }
     adjList <- adjList[which(adjList[,1]!="all"),, drop=FALSE]
     adjList <- adjList[,c("child","parent","rel"), drop=FALSE]
-        
+
     #### Plot
     #adjList <- as.matrix(do.call(rbind.data.frame, adjList)) # unir
     goGraph <- graph.edgelist(adjList[,c("child","parent"), drop=FALSE], directed=TRUE)
     missingNodes <- rownames(goIds)[!goIds %in% unique(as.vector(adjList))]
     goGraph <- goGraph + vertex(missingNodes)
+    finalLeaves <- NULL
     if(vcount(goGraph)>0)
     {
         goGraph <- set.edge.attribute(goGraph, "type", value=adjList[,"rel"])

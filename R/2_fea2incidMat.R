@@ -112,7 +112,8 @@ fea2incidMat <- function(feaResults, key="Genes", sepChar=NULL, clusterColumn=NU
             if(nrow(geneTermSets)==0) stop(paste("All metagroups/clusters have ", colnames(filterAttribute), filterOperator, filterThreshold,". Try modifying the filter threshold.", sep=""))
             
             # Sort
-            filterAttribute <- filterAttribute[order(filterAttribute[,1], decreasing=TRUE), , drop=FALSE]
+            # filterAttribute <- filterAttribute[order(filterAttribute[,1], decreasing=TRUE), , drop=FALSE]
+            
             if(filtByCluster)
             {
                 sortedGeneTermSets <- NULL

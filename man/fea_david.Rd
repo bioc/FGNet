@@ -122,11 +122,11 @@ Package tutorial: \code{vignette("FGNet-vignette")}
 geneList <- c("YBL084C", "YDL008W", "YDR118W", "YDR301W", "YDR448W", "YFR036W",
     "YGL240W", "YHR166C", "YKL022C", "YLR102C", "YLR115W", "YLR127C", "YNL172W", 
     "YOL149W", "YOR249C")
-geneExpr <- setNames(c(rep(1,10),rep(-1,5)), geneList) 
 
 library(org.Sc.sgd.db)
 geneLabels <- unlist(as.list(org.Sc.sgdGENENAME)[geneList])
-names(geneExpr) <- geneLabels[names(geneExpr)] 
+
+geneExpr <- setNames(c(rep(1,10),rep(-1,5)), geneLabels) 
 
 # DAVID
 results_David <- fea_david(geneList, geneLabels=geneLabels) # email="example@email.com"
@@ -146,7 +146,7 @@ results <- fea_david(geneList, geneIdType="ENSEMBL_GENE_ID",
 FGNet_report(results, geneExpr=geneExpr)
 
 incidMat <- fea2incidMat(results)
-functionalNetwork(incidMat)
+functionalNetwork(incidMat, geneExpr=geneExpr)
 
 
 }

@@ -52,7 +52,7 @@ plotFGNet <- function(graph2plot, plotType, plotOutput, plotExpression, vertexLa
             {
                 if(!any(is.na(suppressWarnings(as.numeric(names(colores)))))) colorOrder <- order(as.numeric(names(colores)))
                 else colorOrder <- order(names(colores))
-                legend(-1.4, -1.4, legend=paste(legendPrefix, names(colores)[colorOrder], legendText, sep=""), fill=colores[colorOrder], bty="n", xjust=0, yjust=0)
+                legend(-1.35, -1.35, legend=paste(legendPrefix, names(colores)[colorOrder], legendText, sep=""), fill=colores[colorOrder], bty="n", xjust=0, yjust=0)
             }
         }
         if(add) eWidth <-0

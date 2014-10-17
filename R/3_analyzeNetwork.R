@@ -35,7 +35,7 @@ analyzeNetwork <- function(incidMatrices, fNw=NULL, plotOutput=TRUE, colors=NULL
     ## Plot
     if(plotOutput)
     {
-        if(is.null(colors)) colors <- rep("skyblue1", length(clDegr))
+        if(is.null(colors)) colors <- rep("white", length(clDegr))
         par(mfrow=c(1,2))
         boxplot(clDegr, main="Normalized node degree", sub="Global / intra-cluster", outpch=16,outcol=c("black", colors), outlwd=1, boxfill=c("black", colors), medcol=c("black", colors), medlwd = 10, lwd = 1, ylim=c(0,100), ylab="Percentage of total nodes", axes=FALSE)
         box()

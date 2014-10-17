@@ -64,17 +64,24 @@ For more info see the package tutorial: \code{vignette("FGNet-vignette")}
 }
 \examples{
 
+\dontrun{
 # GUI:
 FGNet_GUI()
+}
+
 
 # 1. FEA:
-genesList <- c("YBL084C", "YDL008W", "YDR118W", "YDR301W", "YDR448W", "YFR036W", 
+geneList <- c("YBL084C", "YDL008W", "YDR118W", "YDR301W", "YDR448W", "YFR036W", 
     "YGL240W", "YHR166C", "YKL022C", "YLR102C", "YLR115W", "YLR127C", "YNL172W", 
     "YOL149W", "YOR249C")
-# Optional: Gene expression 
-geneExpr <- setNames(c(rep(1,10),rep(-1,5)), genesList)
+    
+library(org.Sc.sgd.db)
+geneLabels <- unlist(as.list(org.Sc.sgdGENENAME)[geneList])
 
-results <- fea_david(genesList) # email="example@email.com"
+# Optional: Gene expression 
+geneExpr <- setNames(c(rep(1,10),rep(-1,5)), geneLabels)
+
+results <- fea_david(geneList, geneLabels=geneLabels) # email="example@email.com"
 
 # 2 A) Report:
 FGNet_report(results, geneExpr=geneExpr)

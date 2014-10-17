@@ -9,7 +9,8 @@ loadInstPkg <- function(pkgName, parentWindow=NULL)
     
     if(!pkgName %in% rownames(installed.packages()))
     {
-        if(interactive() && any(grepl("RGtk2", unlist(sessionInfo()))))
+        #if(interactive() && any(grepl("RGtk2", unlist(sessionInfo()))))
+        if(!is.null(parentWindow))
         {
             # GUI dialog
             dialog <- gtkDialogNewWithButtons("Package installation required", parentWindow,
@@ -22,7 +23,8 @@ loadInstPkg <- function(pkgName, parentWindow=NULL)
             dialog$destroy()
             
             if(response == GtkResponseType["yes"]) response <- "y"
-        }else{ 
+        }else
+        { 
             # Console
             response <- readline(paste("Package '",pkgName, "' is required but not installed. Install now? (y/n) \n", sep=""))
         }

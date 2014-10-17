@@ -59,7 +59,7 @@ selectWs_fillFields <- function(aux, argsList)
         {
             tryCatch( 
             {
-                if(!loadInstPkg("RDAVIDWebService")) stop("Package RDAVIDWebService is required to query DAVID through the webserver. Install the package or query DAVID through the web API.")
+                if(!loadInstPkg("RDAVIDWebService", parentWindow=argsList$parentWindow)) stop("Package RDAVIDWebService is required to query DAVID through the webserver. Install the package or query DAVID through the web API.")
 
                 davidWsConnection <- DAVIDWebService$new(email=argsList$emailText$getText())
                 argsList$davidVars$dav_wsGeneIds <- getIdTypes(davidWsConnection)    
