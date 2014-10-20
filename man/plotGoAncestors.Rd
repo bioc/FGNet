@@ -63,9 +63,8 @@ plotGoAncestors(c("GO:0051603", "GO:0019941", "GO:0051128","GO:0044265"),
 
 # From analysis:
 txtFile <- paste(file.path(system.file('examples', package='FGNet')),
-    "David_Metabolism.txt", sep="/")
+    "DAVID_Yeast_raw.txt", sep="/")
 results <- format_david(txtFile, jobName="DavidAnalysis")
 
-plotGoAncestors(getTerms(results, returnValue="GO")$"Cluster 1")
-plotGoAncestors(getTerms(results, returnValue="GO")$"Cluster 2", ontology="MF")
+plotGoAncestors(getTerms(results, returnValue="GO")$"Cluster 7", ontology="MF")
 }

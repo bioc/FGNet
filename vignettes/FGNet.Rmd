@@ -3,7 +3,7 @@ title: "FGNet"
 subtitle: "Functional Gene Networks derived from biological enrichment analyses"
 output:
   html_document:
-    toc: yes
+    toc: no
     highlight: pygments
   pdf_document:
     toc: yes
@@ -39,7 +39,7 @@ opts_chunk$set(warning=FALSE,message=FALSE,cache=TRUE)
 
 **Functional Gene Networks derived from biological enrichment analyses** 
 
-1. [Introduction to FGNet](#introduction-to-fgnet)
+1. [Introduction to FGNet](#introduction-to-fgnet)   
     - Biological functional analysis
     - Functional network 
 2. [Installation](#installation)
@@ -66,6 +66,7 @@ opts_chunk$set(warning=FALSE,message=FALSE,cache=TRUE)
 7. [Acknowledgments](#acknowledgments)
 8. [References](#references)
 
+<a id="introduction-to-fgnet"></a> 
 # 1. Introduction to FGNet
 
 FGNet allows to perform a Functional Enrichment Analysis (FEA) on a list of genes or expression set, and transform the results into networks. The resulting functional networks provide an overview of the biological functions of the genes/terms, and allows to easily see links between genes, overlap between clusters, finding key genes... etc.
@@ -102,7 +103,9 @@ Examples of functional network for different analyses:
 |![ssDavid](nwExample1.png)            |![ssGtlinker](nwExample2.png)        |![ssGtlinker](nwExample3.png)        |
 |:-----|:-----|:-----|
     
+<a id="installation"></a> 
 # 2. Installation
+
 To install *FGNet* from *Bioconductor*, type in your R console:
 ```{r, eval=FALSE}
 source("http://bioconductor.org/biocLite.R")
@@ -122,7 +125,10 @@ biocLite(c("RGtk2", "RCurl",
     "GO.db", "KEGG.db", "reactome.db", "org.Sc.sgd.db"))
 ```
 
+
+<a id="creating-a-network-from-a-list-of-genes-proteins"></a> 
 # 3. Creating a network from a list of genes/proteins
+
 To generate a functional network with FGNet:
     
 1.  Perform a Functional Enrichment Analysis (FEA) on a list of genes or expression set.
@@ -368,6 +374,8 @@ functionalNetwork(incidMat_terms, plotType="bipartite",
     plotTitleSub="Terms in several metagroups")
 ```
 
+
+<a id="editing-and-creating-new-networks"></a> 
 # 4. Editing and creating new networks
 
 In this section we will use the functional analysis of an Alzheimer dataset ([GSE4757](http://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE4757)):
@@ -583,6 +591,7 @@ functionalNetwork(termsGenes, plotType="bipartite", keepAllNodes=TRUE,
     legendPrefix="", plotTitle="Genes - Terms network", plotTitleSub="")
 ```
 
+<a id="filtering-and-selecting-clusters"></a> 
 # 5. Filtering and selecting clusters
 
 As an example of analysis of a network with very overlapping clusters, we will use the yeast gene list analyzed with DAVID:
@@ -682,6 +691,7 @@ incidMatSelection <- fea2incidMat(tmpFea,
 functionalNetwork(incidMatSelection, eColor=NA)
 ```
 
+<a id="other-auxiliary-functions"></a> 
 # 6. Other auxiliary functions
 
 ## analyzeNetwork() 
@@ -742,10 +752,14 @@ plotKegg("hsa05010", geneExpr=genesAlzExpr, geneIDtype="GENENAME")
 
 ![Alzheimer pathway](hsa05010_Alzheimer_disease.png)
 
+<a id="acknowledgments"></a> 
 # 7. Acknowledgments
+
 This work was supported by Instituto de Salud Carlos III [Research Projects PS09/00843 and PI12/00624] and by a grant from the Junta de Castilla y Leon and the European Social Fund to S.A and C.D.
 
+<a id="references"></a> 
 # 8. References 
+
 * Huang DW, Sherman BT, Lempicki RA. *Systematic and integrative analysis of large gene lists using DAVID Bioinformatics Resources.* Nature Protoc. 2009;4(1):44-57.
 
 * Huang DW, Sherman BT, Lempicki RA. *Bioinformatics enrichment tools: paths toward the comprehensive functional analysis of large gene lists.* Nucleic Acids Res. 2009;37(1):1-13.

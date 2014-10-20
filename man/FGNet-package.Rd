@@ -24,7 +24,7 @@ If you have any issue, you can contact us at: <jrivas at usal.es>
 \seealso{
 \code{\link[FGNet:FGNet_GUI]{FGNet_GUI()}} provides a Graphical User Interface (GUI) to most of the functionalities of the package: Performing a Functional Enrichment Analysis (FEA) of a list of genes, and analyzing it through the functional networks. 
 
-1. The Functional Enrichment Analysis an be performed through several tools:
+1. The Functional Enrichment Analysis can be performed through several tools:
 
 \itemize{
 \item{DAVID [1]: \code{\link[FGNet:fea_david]{fea_david()}} (Requires internet connection)}

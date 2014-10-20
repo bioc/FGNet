@@ -45,23 +45,36 @@ Package tutorial: \code{vignette("FGNet-vignette")}
 }
 \examples{
 
-geneList<- c("YPL087W", "YDR297W", "YBR183W", "YMR296C", "YKL004W", "YPL057C", 
-    "YOR171C", "YMR272C", "YHL003C", "YDR072C", "YMR298W", "YBR036C", "YLR260W", 
-    "YKL008C", "YDR294C", "YBR265W", "YJL134W", "YKR053C", "YDR062W", "YML008C", 
-    "YGL001C", "YHR190W", "YGL012W", "YMR015C", "YJL167W", "YHR072W", "YLR100W", 
-    "YMR202W", "YLR056W", "YGR060W", "YGR175C", "YHR007C", "YNL280C")
-geneExpr <- setNames(sample(c(-1,0,1,NA), length(geneList), replace=TRUE), geneList) 
+###################################
+# Gene info
+genesYeast <- c("ADA2", "APC1", "APC11", "APC2", "APC4", "APC5", "APC9", "CDC16", 
+    "CDC23", "CDC26", "CDC27", "CFT1", "CFT2", "DCP1", "DOC1", "FIP1", 
+    "GCN5", "GLC7", "HFI1", "KEM1", "LSM1", "LSM2", "LSM3", "LSM4", 
+    "LSM5", "LSM6", "LSM7", "LSM8", "MPE1", "NGG1", "PAP1", "PAT1", 
+    "PFS2", "PTA1", "PTI1", "REF2", "RNA14", "RPN1", "RPN10", "RPN11", 
+    "RPN13", "RPN2", "RPN3", "RPN5", "RPN6", "RPN8", "RPT1", "RPT3", 
+    "RPT6", "SGF11", "SGF29", "SGF73", "SPT20", "SPT3", "SPT7", "SPT8", 
+    "TRA1", "YSH1", "YTH1")
 
-plotKegg("sce00100", geneExpr, geneIDtype="ENSEMBL")
+# Gene expression (1=UP, -1=DW)
+genesYeastExpr <- setNames(c(rep(1,29), rep(-1,30)), genesYeast)
 
 
-# From analysis:
+###################################
+# Plot pathway
+
+# Specific pathway
+plotKegg("sce04111", genesYeastExpr, geneIDtype="GENENAME")
+
+
+
+# Pathways from analysis:
 txtFile <- paste(file.path(system.file('examples', package='FGNet')), 
-    "David_Metabolism.txt", sep="/")
+    "DAVID_Yeast_raw.txt", sep="/")
 results <- format_david(txtFile, jobName="DavidAnalysis")
 
 keggTerms <- unlist(getTerms(results, returnValue="KEGG"))
 
-plotKegg(keggTerms, geneExpr, geneIDtype="ENSEMBL")
+# plotKegg(keggTerms, ... geneIDtype="ENSEMBL")
 
 }
