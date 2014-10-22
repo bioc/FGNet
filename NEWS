@@ -13,7 +13,7 @@ CHANGES IN VERSION 3.0
 NEW FEATURES
 
     o Graphical User Interface (GUI)
-    o New FEA tools: topGO and gage (GSA)
+    o New FEA tools: topGO and GAGE (GSEA)
     o Plot gene expression (up/down) in the functional networks (Available since devel. version 2.1)
     o plotGoAncestors, plotKegg
 

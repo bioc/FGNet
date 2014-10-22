@@ -56,9 +56,10 @@ opts_chunk$set(warning=FALSE,message=FALSE,cache=TRUE)
     - Terms networks
     - Genes - Terms networks
 5. [Filtering and selecting clusters](#filtering-and-selecting-clusters)
-    - Filtering based on a cluster *property*
+    - Filtering based on a *cluster* property
     - Selecting clusters with specific *terms or keywords*
     - Selecting *specific groups*
+    - Filtering based on a *gene-term set* property
 6. [Other auxiliary functions](#other-auxiliary-functions)
     - analyzeNetwork() 
     - plotGoAncestors() 
@@ -69,20 +70,23 @@ opts_chunk$set(warning=FALSE,message=FALSE,cache=TRUE)
 <a id="introduction-to-fgnet"></a> 
 # 1. Introduction to FGNet
 
-FGNet allows to perform a Functional Enrichment Analysis (FEA) on a list of genes or expression set, and transform the results into networks. The resulting functional networks provide an overview of the biological functions of the genes/terms, and allows to easily see links between genes, overlap between clusters, finding key genes... etc.
+FGNet allows to perform a Functional Enrichment Analysis (FEA) on a list of genes or expression set, and transform the results into networks. The resulting functional networks provide an overview of the biological functions of the genes/terms, and allows to easily see links between genes, overlap between clusters, finding key genes, etc.
 
+FGNet takes as imput a query list of genes selected by the user, and builds and displays networks of genes based in the existence of common functional terms that are enriched in certain subsets of genes of the list. By doing this, the tool allows disclosing groups/clusters of genes that have similar annotations and so they may have similar biological function in the cell. The discovery of molecular machines or functional modules within the cell (i.e. genes or proteins that work together to perform a biological process in the cells) is essential in modern molecular medicine and systems biology, because many times we do not know which are the gene partners playing in the same roles in a pathological state. FGNet is a tool that helps to create functional connections between different genes/proteins based on annotations. By grouping similar, redundant and homogeneous annotation content from the same or different biological resources into gene-term groups, the biological interpretation of large gene lists moves from a gene centric approach (where each gene is independent) to a functional-module centric approach (where the genes are interconnected). In this way, FGNet can provide a better representation of complex biological processes and reveal associations between genes.
 
 ## Biological functional analysis
 
 After obtaining a list of genes or proteins from an experiment or omic studies (microarrays, RNAseq, mass spectrometry, etc), the next step is usually to perform a functional analysis of the genes to search for the biological functions or processes in which they are involved. In order to facilitate the analysis of large lists of genes, multiple functional enrichment tools have been developed. These tools search for the genes in biological databases (i.e. GO, Kegg, Interpro), and test whether any biological annotations are over-represented in the query gene list compared to what would be expected in the whole population. However, the raw output from a functional enrichment analysis often provides dozens or hundreds of terms, and it still requires a lot of time and attention to go through the whole list of genes and annotations. A way to simplify this task is grouping genes and terms which often appear together and create associated networks: the Functional Networks.
 
-FGNet builds the functional networks, based on a previous functional analysis. The package provides the functions to perform the FEA through these specific tools:
+FGNet builds the functional networks, based on data from a previous functional enrichment analysis (FEA). The package provides the functions to perform the FEA through four specific tools:
     
-* Functional Annotation Clustering from **DAVID**, which measures relationships among annotation terms based on their co-association with genes within the query gene list ([Huang et al](#references)). This type of clustering mostly results in groups of highly related terms, such as synonymous annotations from different annotation spaces (i.e. Glycolysis in KEGG and GO-BP), which also share most of their genes.     
-* **GeneTerm Linker**, a post-enrichment tool, which focuses on clearing and sorting the results from a previous enrichment analysis. This is achieved by filtering little informative terms (i.e. *cellular process*) and redundant annotations (i.e. *metabolic process* and *primary metabolic process*). The remaining gene-term sets are grouped into `metagroups` based on their shared genes and terms (*reciprocal linkage*) ([Fontanillo et al](#references)).
-* **Gage** ([Alexa et al](#references)), a Gene Set Analysis (GSA) tool. It allows to search for pathways that are altered in any way (i.e. some genes UP and some DOWN), or altered consistently in the same direction (UP or DOWN). It can also cluster the resulting enriched gene-term sets.
-* **TopGO** ([Luo et al](#references)), a modular enrichment analysis method for the Gene Ontology (GO) that can be applied offline.
+* **DAVID** with Functional Annotation Clustering (DAVID-FAC), which measures relationships among annotation terms based on their co-association with subsets of genes within the query gene list ([Huang et al](#references)). This type of clustering mostly results in groups of highly related terms, such as synonymous annotations from different annotation spaces (i.e. term "glycolysis" in KEGG and GO-BP), which also share most of their genes. This tool provides great coverage but does not avoid redundant terms and very general terms (like "signal transduction" or "regulation of transciption" that correspond to specific terms in Gene Ontology, GO). 
 
+* **GeneTerm Linker**, a post-enrichment tool, which focuses on clearing and sorting the results from a previous modular enrichment analysis. This is achieved by filtering general terms with low information content (i.e. *cellular process* or *protein binding*) and redundant annotations (i.e. *metabolic process* and *primary metabolic process*). The remaining gene-term sets are grouped into `metagroups` based on their shared genes and terms (using a reciprocal linkage approach) ([Fontanillo et al](#references)).
+
+* **TopGO** ([Alexa et al](#references)), an enrichment analysis tool based on Gene Ontology (GO) that tests GO terms while accounting for the topology of the GO graph to eliminate local similarities and dependencies between GO terms. TopGO does not provide clusters, and therefore the functional network is built using only the gene-term sets. TopGO can be applied off-line.
+
+* **GAGE* ([Luo et al](#references)), a gene set enrichment analysis (GSEA) tool. It searches for functional enrichment in gene sets (i.e. KEGG pathways, Reactome, GO) and allows including a signal value -like expression changes- to rank the genes and then to identify the enrichment in functional terms that are altered (i.e. changed in genes UP and DOWN) or altered consistently in one direction (UP or DOWN). GAGE also clusters the resulting enriched gene-term sets and can be applied off-line.
 
 To build the network based on other *other tools*, the raw output should be saved into a text file which contains the enriched terms and their genes. (For more details see function `format_results()`).
 
@@ -138,7 +142,7 @@ To generate a functional network with FGNet:
     |DAVID            |Yes       |Gene list      |Many               |
     |Gene-Term Linker |Yes       |Gene list      |GO, KEGG, Interpro |
     |TopGO            |No        |Gene list      |GO                 |
-    |Gage (GSA)       |No        |Expression set |Any gene set       |
+    |GAGE (GSEA)      |No        |Expression set |Any gene set       |
 
 
 2.  Create an [HTML report](#html-report) with multiple views of the networks and analyses.
@@ -192,7 +196,7 @@ Since the arguments required to perform the FEA depends on the tool, there are s
 | DAVID | `fea_david()` | Clusters |
 | TopGO | `fea_topGO()` | No grouping |
 | Gene-Term Linker | `fea_gtLinker()` & `fea_gtLinker_getResults()` | Metagroups |
-| Gage | `fea_gage()` | Clusters |
+| GAGE | `fea_gage()` | Clusters |
 | Other | `format_feaResults()` | |
 
 All the FEA functions and `FGNet_report()` save the results in the current working directory. 
@@ -260,9 +264,9 @@ jobID <- 3907019
 feaResults_gtLinker <- fea_gtLinker_getResults(jobID=jobID, organism="Sc")
 ```
 
-**Gage**
+**GAGE**
     
-As a GSA approach, instead of performing the functional enrichment over a gene list, gage requires a raw expression set and the samples to compare:
+As a GSEA approach, instead of performing the functional enrichment over a gene list, gage requires a raw expression set and the samples to compare:
 
 ```{r, eval=FALSE}
 library(gage)
@@ -277,7 +281,7 @@ geneLabels <- geneSymbols$SYMBOL
 names(geneLabels) <- geneSymbols$ENTREZID
 head(geneLabels)
 
-# gage:
+# GAGE:
 feaResults_gage <- fea_gage(eset=gse16873, 
                          refSamples=grep('HN',colnames(gse16873)), 
                          compSamples=grep('DCIS',colnames(gse16873)), 
@@ -615,7 +619,7 @@ functionalNetwork(incidMatTerms$clustersMatrix, plotType="bipartite",
  plotTitle="Terms in several clusters")
 ```
 
-## Filtering based on a cluster property
+## Filtering based on a *cluster* property
 
 The clusters to plot can be selected/filtered based on any property that is available in the clusters matrix:
 
@@ -668,9 +672,9 @@ incidMatSelection <- fea2incidMat(tmpFea,
 functionalNetwork(incidMatSelection, plotType="bipartite")
 ```
 
-## Selecting specific groups
+## Selecting specific clusters
 
-`clustersDistance()` allows to explore the overlap between groups:
+`clustersDistance()` allows to explore the overlap between clusters:
 ```{r}
 distMat <- clustersDistance(incidMat)
 ```
@@ -689,6 +693,50 @@ tmpFea$clusters <- cbind(tmpFea$clusters, select=selectedClusters)
 incidMatSelection <- fea2incidMat(tmpFea, 
   filterAttribute="select", filterOperator="!=",filterThreshold="TRUE")
 functionalNetwork(incidMatSelection, eColor=NA)
+```
+
+## Filtering based on a *gene-term set* property
+
+In some ocasions, it might also be useful to filter out gene-term sets within a cluster. i.e. The terms in the top of the GO ontologies are annotated to many genes and make most clusters overalp. 
+
+To filter out terms, (1) filter or select the terms in the the `feaReults$geneTermSets` data frame, (2) save it as text file, and (3) import it with `readGeneTermSets()`
+
+In this case, we will use DAVID's example, and keep the terms thar are annotated to less than 100 genes in yeast:
+```{r, eval=FALSE}
+# Same analysis, setting overlap to 6:
+feaResults_David_ov6 <- fea_david(names(genesYeast), geneLabels=genesYeast, email="example@email.com",
+    argsWS=c(overlap=6, initialSeed=3, finalSeed=3, linkage=0.5, kappa=50))
+```
+```{r, echo=FALSE}
+txtFile <- paste(file.path(system.file('examples', package='FGNet')), "DAVID_Yeast_overl6_raw.txt", sep=.Platform$file.sep)
+feaResults_David_ov6 <- format_david(txtFile, jobName="David_example", geneLabels=genesYeast)
+```
+
+```{r}
+# Filter/select
+sum(feaResults_David_ov6$geneTermSets$Pop.Hits < 100)
+gtSets <- feaResults_David_ov6$geneTermSets[feaResults_David_ov6$geneTermSets$Pop.Hits < 100,]
+# Save 
+write.table(gtSets, file="david_filteredGtsets.txt", sep="\t", col.names = TRUE, quote=FALSE)
+# Load with "readGeneTermSets"
+feaResults_filteredGtsets <- readGeneTermSets("david_filteredGtsets.txt", tool="DAVID")
+# ...
+functionalNetwork(fea2incidMat(feaResults_filteredGtsets))  
+```
+
+To explore the distribution of genes-terms in a specific organism: 
+```{r, eval=FALSE}
+# Yeast
+library(org.Sc.sgd.db)
+goGenesCountSc <- table(sapply(as.list(org.Sc.sgdGO2ORF), length))
+barplot(goGenesCountSc, main="Number of genes annotated to GO term (Sc) ", 
+    xlab="Number of genes", ylab="Number of GO terms")
+
+# Human
+library(org.Hs.eg.db)
+goGenesCountHs <- table(sapply(as.list(org.Hs.egGO2EG), length))
+barplot(goGenesCountHs, main="Number of genes annotated to GO term (Human)", 
+    xlab="Number of genes", ylab="Number of GO terms")
 ```
 
 <a id="other-auxiliary-functions"></a> 

@@ -561,10 +561,10 @@ createHtml <- function(htmlFileName, feaResults, jobName, tablesGenes, tablesTer
     hwrite('</div>', p, br=FALSE)  
     # hwrite("<i>(Transitivity measures the probability that the adjacent vertices of a vertex are connected)</i>", p, br=TRUE)
 
-    hwrite("<br><b>Inter-modular hubs (whole network):</b> ", p, br=TRUE)
+    hwrite("<br><b>Possible inter-modular hubs (whole network):</b> ", p, br=TRUE)
     hwrite(paste(nwStats$hubsList$Global, collapse=", "), p, br=TRUE)
     
-    hwrite(paste("<br><b>Intra-modular hubs (within each ", tolower(grType),"):</b>", sep=""), p, br=TRUE)
+    hwrite(paste("<br><b>Possible intra-modular hubs (within each ", tolower(grType),"):</b>", sep=""), p, br=TRUE)
     intraModularHubs <- nwStats$hubsList[names(nwStats$hubsList)!="Global"]
     # Lista
     # hwrite("Hub list:", p, br=TRUE)
@@ -576,7 +576,7 @@ createHtml <- function(htmlFileName, feaResults, jobName, tablesGenes, tablesTer
     # Comunes
     if(length(nwStats$intraHubsCount)>0) 
     {
-        hwrite("<br>Most common hubs: ", p, br=FALSE)
+        hwrite("<br>Most common possible hubs: ", p, br=FALSE)
         hwrite(names(nwStats$intraHubsCount), p,border=0, class='matrix', br=TRUE)
     }else{
         hwrite("(There are no hubs in more than one cluster)", p, br=TRUE)

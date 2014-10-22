@@ -17,7 +17,7 @@ character. File name of the .txt file.
 character. Tool used for the FEA (row name from \code{data(FEA_tools); FEA_tools})
 }
   \item{simplifyGage}{
-logical. Only for gage: Wether to simplify the results and keep only the essential terms in the clustes.
+logical. Only for GAGE: Wether to simplify the results and keep only the essential terms in the clustes.
 }
 }
 \value{

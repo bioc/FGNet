@@ -101,7 +101,7 @@ fea_gage <- function(eset, refSamples, compSamples, geneIdType, geneLabels=NULL,
 
     fileName <- paste(jobName, "_rawGageResults.RData", sep="")
     save(resultGage, file=fileName) 
-    message(paste("Raw gage results saved as ", fileName, sep=""))
+    message(paste("Raw GAGE results saved as ", fileName, sep=""))
     
     # GS redundancy
     gageGrouped <- list()

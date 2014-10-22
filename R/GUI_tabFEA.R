@@ -169,7 +169,7 @@ tabFEA_fill <- function(mainWindow, statusbar, geneList)
     gtkNotebookInsertPage(tabsTools, tabDavid$tabDavid, position = FEA_tools["DAVID","ID"],  tab.label = gtkLabelNew("DAVID"))
     gtkNotebookInsertPage(tabsTools, tabGTL$tabGTL, position = FEA_tools["GeneTerm Linker","ID"], tab.label = gtkLabelNew("GeneTerm Linker"))
     gtkNotebookInsertPage(tabsTools, tabTopGo$tabTopGo, position = FEA_tools["topGO","ID"], tab.label = gtkLabelNew("topGO"))
-    gtkNotebookInsertPage(tabsTools, tabGage$tabGage, position = FEA_tools["gage","ID"], tab.label = gtkLabelNew("gage"))
+    gtkNotebookInsertPage(tabsTools, tabGage$tabGage, position = FEA_tools["gage","ID"], tab.label = gtkLabelNew("GAGE"))
     gtkNotebookInsertPage(tabsTools, tabOther$tabOther, position = FEA_tools["Imported text file","ID"], tab.label = gtkLabelNew("Other"))  # TO DO
 
     frame.Tools$add(tabsTools)

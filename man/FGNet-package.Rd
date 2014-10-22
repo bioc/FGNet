@@ -6,7 +6,7 @@
 Functional gene networks derived from biological enrichment analyses
 }
 \description{
-Build and visualize functional gene and term networks from clustering of enrichment analyses in multiple annotation spaces. The package includes a graphical user interface (GUI) and functions to perform the functional enrichment analysis through DAVID, GeneTerm Linker, gage (GSA) and topGO.
+Build and visualize functional gene and term networks from clustering of enrichment analyses in multiple annotation spaces. The package includes a graphical user interface (GUI) and functions to perform the functional enrichment analysis through DAVID, GeneTerm Linker, gage (GSEA) and topGO.
 }
 \details{
 \tabular{ll}{
@@ -30,9 +30,9 @@ If you have any issue, you can contact us at: <jrivas at usal.es>
 \item{DAVID [1]: \code{\link[FGNet:fea_david]{fea_david()}} (Requires internet connection)}
 \item{GeneTerm Linker [2]: \code{\link[FGNet:fea_gtLinker]{fea_gtLinker()}} & \code{fea_gtLinker_getResults()}
  (Requires internet connection)}
-\item{\link[gage:gage]{gage} [3]: \code{\link[FGNet:fea_gage]{fea_gage()}} (GSA analysis. For offline use requires gene sets or installed database packages)}
-\item{\link[topGO:getSigGroups]{topGO} [4]: \code{\link[FGNet:fea_topGO]{fea_topGO()}} (Only supports GO. For offline use requires having installed the required database packages)}
-    
+ \item{\link[topGO:getSigGroups]{topGO} [3]: \code{\link[FGNet:fea_topGO]{fea_topGO()}} (Only supports GO. For offline use requires having installed the required database packages)}
+ \item{\link[gage:gage]{GAGE} [4]: \code{\link[FGNet:fea_gage]{fea_gage()}} (GSEA analysis. For offline use requires gene sets or installed database packages)}
+
 There are also a few functions to import the results from a previous FEA analysis: \code{\link[FGNet:format_david]{format_david()}}, \code{format_results()} and \code{\link[FGNet:readGeneTermSets]{readGeneTermSets()}}.    
 
 }
@@ -58,9 +58,11 @@ For more info see the package tutorial: \code{vignette("FGNet-vignette")}
 	
 	[2] Huang DW, Sherman BT, Lempicki RA (2009) Bioinformatics enrichment tools: paths toward the comprehensive functional analysis of large gene lists. Nucleic Acids Res. 37(1):1-13. URL: \url{http://david.abcc.ncifcrf.gov/}
     
-    [3] Luo W, Friedman MS, Shedden K, Hankenson KD, Woolf PJ (2009) GAGE: generally applicable gene set enrichment for pathway analysis. BMC Bioinformatics. 10:161. URL: \url{http://www.bioconductor.org/packages/release/bioc/html/gage.html}
+	[3] Alexa A, and Rahnenfuhrer J (2010) topGO: Enrichment analysis for Gene Ontology. R package version 2.16.0. URL: \url{http://www.bioconductor.org/packages/release/bioc/html/topGO.html}
     
-    [4] Alexa A, and Rahnenfuhrer J (2010) topGO: Enrichment analysis for Gene Ontology. R package version 2.16.0. URL: \url{http://www.bioconductor.org/packages/release/bioc/html/topGO.html}
+	[4] Luo W, Friedman MS, Shedden K, Hankenson KD, Woolf PJ (2009) GAGE: generally applicable gene set enrichment for pathway analysis. BMC Bioinformatics. 10:161. URL: \url{http://www.bioconductor.org/packages/release/bioc/html/gage.html}
+    
+    
 }
 \examples{
 
