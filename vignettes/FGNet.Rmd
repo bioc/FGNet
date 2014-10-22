@@ -72,7 +72,7 @@ opts_chunk$set(warning=FALSE,message=FALSE,cache=TRUE)
 
 FGNet allows to perform a Functional Enrichment Analysis (FEA) on a list of genes or expression set, and transform the results into networks. The resulting functional networks provide an overview of the biological functions of the genes/terms, and allows to easily see links between genes, overlap between clusters, finding key genes, etc.
 
-FGNet takes as imput a query list of genes selected by the user, and builds and displays networks of genes based in the existence of common functional terms that are enriched in certain subsets of genes of the list. By doing this, the tool allows disclosing groups/clusters of genes that have similar annotations and so they may have similar biological function in the cell. The discovery of molecular machines or functional modules within the cell (i.e. genes or proteins that work together to perform a biological process in the cells) is essential in modern molecular medicine and systems biology, because many times we do not know which are the gene partners playing in the same roles in a pathological state. FGNet is a tool that helps to create functional connections between different genes/proteins based on annotations. By grouping similar, redundant and homogeneous annotation content from the same or different biological resources into gene-term groups, the biological interpretation of large gene lists moves from a gene centric approach (where each gene is independent) to a functional-module centric approach (where the genes are interconnected). In this way, FGNet can provide a better representation of complex biological processes and reveal associations between genes.
+FGNet takes as input a query list of genes selected by the user, and builds and displays networks of genes based in the existence of common functional terms that are enriched in certain subsets of genes of the list. By doing this, the tool allows disclosing groups/clusters of genes that have similar annotations and so they may have similar biological function in the cell. The discovery of molecular machines or functional modules within the cell (i.e. genes or proteins that work together to perform a biological process in the cells) is essential in modern molecular medicine and systems biology, because many times we do not know which are the gene partners playing in the same roles in a pathological state. FGNet is a tool that helps to create functional connections between different genes/proteins based on annotations. By grouping similar, redundant and homogeneous annotation content from the same or different biological resources into gene-term groups, the biological interpretation of large gene lists moves from a gene centric approach (where each gene is independent) to a functional-module centric approach (where the genes are interconnected). In this way, FGNet can provide a better representation of complex biological processes and reveal associations between genes.
 
 ## Biological functional analysis
 
@@ -80,7 +80,7 @@ After obtaining a list of genes or proteins from an experiment or omic studies (
 
 FGNet builds the functional networks, based on data from a previous functional enrichment analysis (FEA). The package provides the functions to perform the FEA through four specific tools:
     
-* **DAVID** with Functional Annotation Clustering (DAVID-FAC), which measures relationships among annotation terms based on their co-association with subsets of genes within the query gene list ([Huang et al](#references)). This type of clustering mostly results in groups of highly related terms, such as synonymous annotations from different annotation spaces (i.e. term "glycolysis" in KEGG and GO-BP), which also share most of their genes. This tool provides great coverage but does not avoid redundant terms and very general terms (like "signal transduction" or "regulation of transciption" that correspond to specific terms in Gene Ontology, GO). 
+* **DAVID** with Functional Annotation Clustering (DAVID-FAC), which measures relationships among annotation terms based on their co-association with subsets of genes within the query gene list ([Huang et al](#references)). This type of clustering mostly results in groups of highly related terms, such as synonymous annotations from different annotation spaces (i.e. term "glycolysis" in KEGG and GO-BP), which also share most of their genes. This tool provides great coverage but does not avoid redundant terms and very general terms (like "signal transduction" or "regulation of transcription" that correspond to specific terms in Gene Ontology, GO). 
 
 * **GeneTerm Linker**, a post-enrichment tool, which focuses on clearing and sorting the results from a previous modular enrichment analysis. This is achieved by filtering general terms with low information content (i.e. *cellular process* or *protein binding*) and redundant annotations (i.e. *metabolic process* and *primary metabolic process*). The remaining gene-term sets are grouped into `metagroups` based on their shared genes and terms (using a reciprocal linkage approach) ([Fontanillo et al](#references)).
 
@@ -743,7 +743,7 @@ barplot(goGenesCountHs, main="Number of genes annotated to GO term (Human)",
 # 6. Other auxiliary functions
 
 ## analyzeNetwork() 
-`analyzeNetwork()` can be used to explore the structure of the network. It also returns statistics about the nodes betweeness within each cluster, etc...
+`analyzeNetwork()` can be used to explore the structure of the network. It also returns statistics about the nodes betweenness within each cluster, etc...
 
 The example with GeneTerm Linker (Alzheimer):
 ```{r}
@@ -756,19 +756,19 @@ names(stats)
 stats$transitivity
 ```
 
-`$degree` and `$betweeness` are the values used for the plots. They contain the values for each of the nodes in the global network (commonClusters) and within each cluster/metagroup (subsets of commonGtSets network). The degree is given as percentage, normalized based on the total number of nodes of the network. i.e. a value of 90 in a network of 10 nodes, would mean the actual degree of the node is 9: it is connected to 9 nodes (90% of 10)).
+`$degree` and `$betweenness` are the values used for the plots. They contain the values for each of the nodes in the global network (commonClusters) and within each cluster/metagroup (subsets of commonGtSets network). The degree is given as percentage, normalized based on the total number of nodes of the network. i.e. a value of 90 in a network of 10 nodes, would mean the actual degree of the node is 9: it is connected to 9 nodes (90% of 10)).
 
-The betweeness of each node in each cluster as matrix:
+The betweenness of each node in each cluster as matrix:
 ```{r}
-head(stats$betweenessMatrix)
+head(stats$betweennessMatrix)
 ```
 
-**Inter-modular hubs:** Nodes with betweeness within the top 75% in the global network
+**Inter-modular hubs:** Nodes with betweenness within the top 75% in the global network
 ```{r}
 stats$hubsList$Global
 ```
 
-**Intra-modular hubs:** Nodes with betweeness within the top 75% in each cluster sub-network
+**Intra-modular hubs:** Nodes with betweenness within the top 75% in each cluster sub-network
 ```{r}
 stats$hubsList$"9"
 ``` 

@@ -16,10 +16,10 @@ analyzeNetwork <- function(incidMatrices, fNw=NULL, plotOutput=TRUE, colors=NULL
     glBetw <- round(sort(betweenness(clNw), decreasing=TRUE))
     # Global degree
     glDegr <- round(sort((igraph::degree(clNw)/(length(V(clNw))-1)*100), decreasing=TRUE),digits=2)
-    # Equivalent to boxplot: cbind(degree=round(summary(glDegr))[-4], betweeness=round(summary(glBetw))[-4])
+    # Equivalent to boxplot: cbind(degree=round(summary(glDegr))[-4], betweenness=round(summary(glBetw))[-4])
     
     
-    ## Cluster betweeness (intra-modular hub)
+    ## Cluster betweenness (intra-modular hub)
     genesMg <- apply(clMatrix,2, function(x) names(x)[which(x==1)])
     clSubgraphs <- list()
     clBetw <- list(Global=glBetw)
@@ -42,7 +42,7 @@ analyzeNetwork <- function(incidMatrices, fNw=NULL, plotOutput=TRUE, colors=NULL
         axis(side=1, labels=names(clDegr), at=1:length(clDegr), las=2)
         axis(side=2, las=1)
         
-        boxplot(c(0,clBetw[-1]), main="Node betweeness", sub="Global / intra-cluster", outpch=16, outcol=c("white", colors),outlwd=1, boxfill=c("white", colors), medcol=c("white", colors), medlwd = 10, lwd = 1, axes=FALSE)
+        boxplot(c(0,clBetw[-1]), main="Node betweenness", sub="Global / intra-cluster", outpch=16, outcol=c("white", colors),outlwd=1, boxfill=c("white", colors), medcol=c("white", colors), medlwd = 10, lwd = 1, axes=FALSE)
         maxBetwGlobal <- max(clBetw$Global)
         if(maxBetwGlobal>0) 
         {
@@ -66,7 +66,7 @@ analyzeNetwork <- function(incidMatrices, fNw=NULL, plotOutput=TRUE, colors=NULL
     
     # Node degree and betweenness:
     ret[["degree"]] <- clDegr
-    ret[["betweeness"]] <- clBetw
+    ret[["betweenness"]] <- clBetw
     
     # Clustering coeficient. Transitivity measures the probability that the adjacent vertices of a vertex are connected.
     ret[["transitivity"]] <- c(commonClustersNw=transitivity(clNw, type="undirected"), commonGtSetsNw=transitivity(gtsNw, type="undirected"))

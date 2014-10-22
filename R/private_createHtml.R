@@ -561,10 +561,10 @@ createHtml <- function(htmlFileName, feaResults, jobName, tablesGenes, tablesTer
     hwrite('</div>', p, br=FALSE)  
     # hwrite("<i>(Transitivity measures the probability that the adjacent vertices of a vertex are connected)</i>", p, br=TRUE)
 
-    hwrite("<br><b>Possible inter-modular hubs (whole network):</b> ", p, br=TRUE)
+    hwrite("<br><b>Potential inter-modular hubs (whole network):</b> ", p, br=TRUE)
     hwrite(paste(nwStats$hubsList$Global, collapse=", "), p, br=TRUE)
     
-    hwrite(paste("<br><b>Possible intra-modular hubs (within each ", tolower(grType),"):</b>", sep=""), p, br=TRUE)
+    hwrite(paste("<br><b>Potential intra-modular hubs (within each ", tolower(grType),"):</b>", sep=""), p, br=TRUE)
     intraModularHubs <- nwStats$hubsList[names(nwStats$hubsList)!="Global"]
     # Lista
     # hwrite("Hub list:", p, br=TRUE)
