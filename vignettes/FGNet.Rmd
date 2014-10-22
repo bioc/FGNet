@@ -39,7 +39,7 @@ opts_chunk$set(warning=FALSE,message=FALSE,cache=TRUE)
 
 **Functional Gene Networks derived from biological enrichment analyses** 
 
-1. [Introduction to FGNet](#introduction-to-fgnet)   
+1. [Introduction to FGNet](#introduction-to-fgnet)
     - Biological functional analysis
     - Functional network 
 2. [Installation](#installation)
