@@ -10,14 +10,8 @@
 # if(is.null(genesUniverse)) genesUniverse <- refList(organism, geneIDtype)
 refList <- function(dbPackage, geneIdType)
 {
-    if(!dbPackage %in% rownames(installed.packages()))
-    {
-        tryCatch({
-                    source("http://bioconductor.org/biocLite.R")
-                    biocLite(dbPackage)
-        }, error = function(e) {})
-    }    
-    library(dbPackage, character.only = TRUE)
+    if(!loadInstPkg(dbPackage)) stop(paste("Package", dbPackage, "is not available."))
+
     pkg.db <- eval(parse(text=dbPackage))
     columns(pkg.db)
     
@@ -38,34 +32,15 @@ buildGeneSets <- function(organismDb, geneIDtype, annotations=c("GO_BP","GO_MF",
     # Check and load required libraries
     if("REACTOME" %in% annotations) 
     {
-        if(!"reactome.db" %in% rownames(installed.packages()))
-        {
-            tryCatch({
-                    source("http://bioconductor.org/biocLite.R")
-                    biocLite(reactome.db)
-            }, error = function(e) {})
-        }
-        
-        if(!library(reactome.db,logical.return=TRUE)) 
+        if(!loadInstPkg("reactome.db")) 
         {
             warning("Package 'reactome.db' is required to build REACTOME sets.")
             annotations <- annotations[which(!annotations%in%"REACTOME")]
         }
     }
-    if(!organismDb %in% rownames(installed.packages()))
-    {
-        message(paste(organismDb, " package not available. Installing..."))
-        tryCatch( 
-            {   
-                source("http://bioconductor.org/biocLite.R")
-                biocLite(organismDb)
-            }, error = function(e) 
-            {
-                stop(paste("It is not possible to install the organism package. Check your internet connection.",e,sep="\n"))
-            })     
-    }
-    
-    require(organismDb, character.only = TRUE)    
+
+    if(!loadInstPkg(organismDb)) stop("The organism package is not available.")
+
     org.db <- eval(parse(text=organismDb))
     
     if(!geneIDtype %in% columns(org.db)) stop(paste("geneIDtype not available for ",organismDb,". \nAvailable columns: ",paste(columns(org.db), collapse=", "), sep=""))
@@ -90,15 +65,7 @@ buildGeneSets <- function(organismDb, geneIDtype, annotations=c("GO_BP","GO_MF",
         ret$terms2genes <- c(ret$terms2genes, GO2geneID)
         ret$asTable <- c(ret$asTable, list(GO=tableGoGenes))
      
-        if(!"GO.db" %in% rownames(installed.packages()))
-        {
-            tryCatch({
-                    source("http://bioconductor.org/biocLite.R")
-                    biocLite(GO.db)
-            }, error = function(e) {})
-        }
-        
-        if(library(GO.db,logical.return=TRUE))
+        if(loadInstPkg("GO.db")) 
         {
             termsLabels <- select(GO.db, keys=unlist(sapply(ret$terms2genes, names)), columns="TERM", keytype="GOID")  # ONLY annotations NEEDS TO BE GO!
             termsLabels <- split(termsLabels$TERM, termsLabels$GOID)# (as list for consistency with other annotationss)
@@ -135,14 +102,7 @@ buildGeneSets <- function(organismDb, geneIDtype, annotations=c("GO_BP","GO_MF",
             ret$terms2genes <- c(ret$terms2genes, list(KEGG=kegg2genes))
             ret$asTable <- c(ret$asTable, list(KEGG=tableKeggGenes))
             
-            if(!"KEGG.db" %in% rownames(installed.packages()))
-            {
-                 tryCatch({
-                    source("http://bioconductor.org/biocLite.R")
-                    biocLite("KEGG.db")
-                }, error = function(e) {})
-            }
-            if(library(KEGG.db,logical.return=TRUE))
+            if(loadInstPkg("KEGG.db")) 
             {
                 # Labels...
                 termsLabels <- AnnotationDbi::as.list(KEGGPATHID2NAME)

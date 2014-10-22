@@ -28,9 +28,9 @@ list or matrix. Raw output (list) from \code{\link[FGNet:fea2incidMat]{fea2incid
 
 Default network: Nodes are either genes or terms. Edges join nodes in common gene-term sets. Background and node color represent cluster/metagroup. White nodes are in several  clusters/metagroups.
 
-Bipartite network: Nodes are genes or terms and their clusters. 
+Bipartite network: Nodes are genes or terms (circles) and their clusters (squares). 
 By default it keeps only the genes or terms in more than one cluster or metagroup, which represents a simplified version of the functional network.
-
+Node shape is only available in the "static" output.
 }
   \item{plotOutput}{
 "static", "dynamic" or "none". "static" will generate a standard R plot. "dynamic" will produce an interactive tkplot (metagroups background cannot be drawn). "none" will not plot the network.

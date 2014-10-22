@@ -21,6 +21,13 @@ To generate the functional network, first execute or import the Functional Anali
 Opens the GUI. No value is returned. The results of the analyses will be saved in the current working directory.
 }
 
+\note{
+
+Available for Windows and Linux.
+The current version of the GUI is not available for Mac OS X Snow Leopard.
+
+}
+
 \seealso{
 Overview of the package: \code{\link[FGNet:FGNet-package]{FGNet}}
 
@@ -28,6 +35,7 @@ Package tutorial: \code{vignette("FGNet-vignette")}
 }
 \examples{
 \dontrun{
+
 
 FGNet_GUI()
 
@@ -39,5 +47,6 @@ geneList <- c("YBL084C", "YDL008W", "YDR118W", "YDR301W", "YDR448W", "YFR036W",
 geneExpr <- setNames(c(rep(1,10),rep(-1,5)), geneList)
 
 FGNet_GUI(geneExpr)
+
 }
 }

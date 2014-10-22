@@ -75,6 +75,8 @@ format_gtLinker <- function(jobName, organism)
 # results <- fea_gtLinker_getResults(jobID)
 fea_gtLinker_getResults <- function(jobID=NULL, organism=NULL, jobName=NULL, alreadyDownloaded=FALSE, keepTrying=FALSE, serverWeb="http://gtlinker.cnb.csic.es", serverWS="http://gtlinker.cnb.csic.es:8182") 
 {
+    if(!loadInstPkg("RCurl")) stop("Package 'RCurl' is required to get the FEA results from GeneTerm Linker server.")
+
     # Check arguments
     if(is.numeric(jobID)) jobID <- as.character(jobID)
     if(!is.character(jobID) && !alreadyDownloaded) stop("jobID not valid.")
@@ -158,6 +160,7 @@ fea_gtLinker_getResults <- function(jobID=NULL, organism=NULL, jobName=NULL, alr
         if(!jobReady) 
         {
             warning("The analysis has not finished yet or the jobID does not exist.")
+            setwd(currWD)
             return(NULL)
         } else  # jobReady
         {
@@ -176,9 +179,14 @@ fea_gtLinker_getResults <- function(jobID=NULL, organism=NULL, jobName=NULL, alr
                 message(paste("Results downloaded to folder '", folder, "'", sep=""))
             }, error = function(e) {
                 message(e)
+                setwd(currWD)
                 return(e$message)
             })
-            if(!is.null(downAttempt)) return(downAttempt)
+            if(!is.null(downAttempt)) 
+            {
+                setwd(currWD)
+                return(downAttempt)
+            }
         }
     }# End download
     

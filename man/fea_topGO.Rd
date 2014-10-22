@@ -91,26 +91,28 @@ Package tutorial: \code{vignette("FGNet-vignette")}
 
 \examples{
 \dontrun{
-    
 
 # Load/format gene list:
 geneList <- c("YBL084C", "YDL008W", "YDR118W", "YDR301W", "YDR448W", "YFR036W",
-    "YGL240W", "YHR166C", "YKL022C", "YLR102C", "YLR115W", "YLR127C", "YNL172W",
+    "YGL240W", "YHR166C", "YKL022C", "YLR102C", "YLR115W", "YLR127C", "YNL172W", 
     "YOL149W", "YOR249C")
-geneExpr <- setNames(c(rep(1,10),rep(-1,5)), geneList) 
 
 library(org.Sc.sgd.db)
 geneLabels <- unlist(as.list(org.Sc.sgdGENENAME)[geneList])
-names(geneExpr) <- geneLabels[names(geneExpr)] 
 
-# FEA:
+geneExpr <- setNames(c(rep(1,10),rep(-1,5)), geneLabels) 
+
+# FEA (using directly the gene names): 
+results <- fea_topGO(geneLabels, geneIdType="GENENAME", organism="Sc") 
+
+# FEA (using the gene ID, and replacing it by the label after the FEA): 
 results <- fea_topGO(geneList, geneIdType="ENSEMBL", 
     geneLabels=geneLabels, organism="Sc") 
 
 # To continue the workflow... (see help for further details)
 FGNet_report(results, geneExpr=geneExpr)
 
-incidMat <- fea2incidMat(results)
+incidMat <- fea2incidMat(results, geneExpr=geneExpr)
 functionalNetwork(incidMat)
     
     

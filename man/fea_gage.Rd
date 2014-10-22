@@ -1,10 +1,10 @@
 \name{fea_gage}
 \alias{fea_gage}
 \title{
-FEA - gage
+FEA - GAGE
 }
 \description{
-Performs the functional enrichment analysis and clustering through gage [1] (GSA).
+Performs the functional enrichment analysis and clustering through GAGE [1] (GSEA).
 }
 \usage{
 fea_gage(eset, refSamples, compSamples, geneIdType, geneLabels=NULL, 
@@ -49,13 +49,13 @@ logical. Should all the genes in the geneSet be altered in the same direction (u
 logical. Wether to simplify the results and keep only the essential terms in the clustes.
 }
   \item{compareType}{
-character: 'as.group', 'unpaired', '1ongroup'... See \link[gage:gage]{gage} for details.
+character: 'as.group', 'unpaired', '1ongroup'... See \link[gage:gage]{GAGE} for details.
 }
   \item{jobName}{
 character. Folder name and prefix for the files.
 }
   \item{\dots}{
-other arguments to pass to gage.
+other arguments to pass to GAGE.
 }
 }
 \value{
@@ -79,7 +79,7 @@ other arguments to pass to gage.
     \item Terms: Term in the gene-term set.
     \item Genes: Genes in the gene-term set.
     \item GenesIDs: In case GeneLabels was provided, original gene ID.
-    \item Other stats provided by \link[gage:gage]{gage}: p.geomean, stat.mean, p.val, q.val, set.size
+    \item Other stats provided by \link[gage:gage]{GAGE}: p.geomean, stat.mean, p.val, q.val, set.size
 }
 \code{fileName}: .txt file with the FEA results.
 \code{genesFC}: Fold change.

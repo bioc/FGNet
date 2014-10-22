@@ -47,7 +47,7 @@ character. Character separating diferent terms in the same field (i.e. ",", ";",
 character. Tool used for the FEA (row name from \code{data(FEA_tools); FEA_tools})
 }
   \item{simplifyGage}{
-logical. For internal use, only for gage. Determines wether to keep non essential terms in the final clusters.
+logical. For internal use, only for GAGE. Determines wether to keep non essential terms in the final clusters.
 }
   \item{\dots}{
 Further argumets to pass to "read.table"

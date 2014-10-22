@@ -29,11 +29,7 @@ format_david <- function(fileName, jobName=NULL, geneLabels=NULL, moveFile=FALSE
     # Download file    
     if(isURL) 
     {
-        if(!url.exists(fileName))
-        {
-            setwd(currWD)
-            stop("Download URL (fileName) is not available.")
-        }
+        setwd(currWD)
         downloadedFileName <- paste(jobName, "_raw.txt", sep="")
         download.file(fileName, destfile=downloadedFileName, quiet=TRUE)
         fileName <- downloadedFileName

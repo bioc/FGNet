@@ -31,39 +31,8 @@ importFrom(plotrix, color.scale)
 importFrom(reshape2, melt)
 importFrom(RColorBrewer, brewer.pal)
 
-importFrom(topGO, annFUN.db)
-importFrom(topGO, annFUN.gene2GO)
-importFrom(topGO, getSigGroups)
-importFrom(topGO, GenTable)
-importFrom(topGO, genesInTerm)
-importFrom(topGO, sigGenes)
-importFrom(topGO, GOFisherTest)
-importFrom(topGO, groupGOTerms)
-
-
-
-
-
-importFrom(gage,gage)
-importFrom(gage,esset.grp)
-importFrom(gage,readList)
-
-importFrom(KEGGprofile, parse_XMLfile)
-importFrom(KEGGprofile, plot_profile)
-
 importFrom(hwriter,hwrite)
 importFrom(hwriter,hwriteImage)
 importFrom(hwriter,openPage)
 importFrom(hwriter,closePage)
-
-importFrom(RCurl, parseHTTPHeader)
-importFrom(RCurl, basicTextGatherer)
-importFrom(RCurl, getCurlHandle)
-importFrom(RCurl, getURL)
-importFrom(RCurl, postForm)
-importFrom(RCurl, url.exists)
-importFrom(RCurl, curlPerform)
-
-importFrom(BiocInstaller, biocLite)
-
 

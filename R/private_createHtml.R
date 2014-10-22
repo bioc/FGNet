@@ -59,14 +59,7 @@ buildTermsTable <- function(termsDescriptions, leaves, boldTerms)
 # Creates the GO tree and returns the link for each metagroup
 goTreeLinks <- function(gtSets, grPrefix, geneExpr, folder, plotGoTree, clusterColumn)
 {   
-    if(!"GO.db" %in% rownames(installed.packages()))
-        {
-            tryCatch({
-                    source("http://bioconductor.org/biocLite.R")
-                    biocLite(GO.db)
-            }, error = function(e) {})
-    } 
-    require(GO.db)
+    if(!loadInstPkg("GO.db")) stop("Package GO.db is required to plot GO trees.")
     
     data("groupTypes", envir = environment())
     groupTypes<- get("groupTypes", envir  = environment())
@@ -153,7 +146,7 @@ goTreeLinks <- function(gtSets, grPrefix, geneExpr, folder, plotGoTree, clusterC
                     fileName <- paste(paste("GO_",grPrefix, cl,"_",db,".png", sep=""),sep="")                    
                     tColor <- NULL
                     if(!is.null(termExprs)) tColor <- gos[[db]]
-                    leaves[[cl]] <- c(leaves[[cl]], plotGoAncestors(names(gos[[db]]), tColor=tColor, ontology=parentsDB[[db]], fileName=fileName, height=1000, returnLeaves=TRUE)[,1])
+                    leaves[[cl]] <- c(leaves[[cl]], plotGoAncestors(names(gos[[db]]), tColor=tColor, ontology=parentsDB[[db]], fileName=fileName, height=1000)$leaves[,1])
                     fileNames[[cl]][[db]] <- paste(folder,fileName, sep="")
                 }
             }
@@ -471,15 +464,15 @@ createHtml <- function(htmlFileName, feaResults, jobName, tablesGenes, tablesTer
         }        
         if(tool=="DAVID")
         {    
-            attrs <- c("", # "Silhouette  only in GtLinker
-                                 paste("Score: ", signif(as.numeric(as.character(globalMetagroups[mg, "EnrichmentScore"])),2),sep=""),
-                                 paste("minPval: ", signif(as.numeric(as.character(globalMetagroups[mg, "minPval"])),2),sep=""))
+            attrs <- c(paste("Score: ", signif(as.numeric(as.character(globalMetagroups[mg, "ClusterEnrichmentScore"])),2),sep=""),
+                                 "","")
         }    
         if(tool=="topGO")
         {    
+            pVal <- signif(as.numeric(gsub("< ", "", as.character(globalMetagroups[mg, "classic"]))),2)                
             attrs <- c("", # "Silhouette  only in GtLinker
                        paste("Num annotated: ", signif(as.numeric(as.character(globalMetagroups[mg, "Annotated"])),2),sep=""),
-                       paste("P-val: ", signif(as.numeric(as.character(globalMetagroups[mg, "classic"])),2),sep=""))
+                       paste("P-val: ", pVal, sep=""))
         }    
         if(tool=="gage")
         {    
@@ -487,9 +480,6 @@ createHtml <- function(htmlFileName, feaResults, jobName, tablesGenes, tablesTer
 #                        paste("Score: ", signif(as.numeric(as.character(globalMetagroups[mg, "EnrichmentScore"])),2),sep=""),
 #                        paste("minPval: ", signif(as.numeric(as.character(globalMetagroups[mg, "minPval"])),2),sep=""))
         }    
-        
-        
-        
         
         tmpGenes <- sort(unlist(strsplit(as.character(globalMetagroups[mg, "Genes"]), ",")))
         if(!is.null(geneExpr))
@@ -532,7 +522,7 @@ createHtml <- function(htmlFileName, feaResults, jobName, tablesGenes, tablesTer
     }
     
     #bgCols <- c(strsplit(paste(substr(colores, 1, 7)[rownames(globalMetagroups)], "#FFFFFF", collapse=" "), split=" ")[[1]],"#FFFFFF")
-    borderCols <- paste('border-color:', strsplit(paste(substr(colores, 1, 7), substr(colores, 1, 7), collapse=" "), split=" ")[[1]], sep="")
+    borderCols <- paste('border-color:', strsplit(paste(substr(colores, 1, 7), substr(colores, 1, 7), collapse=" "), split=" ")[[1]], sep="") #x2
     hwrite(termsTable, p, border=1, class=rep(c('mgHeader', 'Terms'), length(termsTable)/2), row.style=borderCols, dim=c(length(termsTable),1))
     
     # Explanation of asterisc (there are terms in several metagroups):
@@ -571,10 +561,10 @@ createHtml <- function(htmlFileName, feaResults, jobName, tablesGenes, tablesTer
     hwrite('</div>', p, br=FALSE)  
     # hwrite("<i>(Transitivity measures the probability that the adjacent vertices of a vertex are connected)</i>", p, br=TRUE)
 
-    hwrite("<br><b>Inter-modular hubs (whole network):</b> ", p, br=TRUE)
+    hwrite("<br><b>Potential inter-modular hubs (whole network):</b> ", p, br=TRUE)
     hwrite(paste(nwStats$hubsList$Global, collapse=", "), p, br=TRUE)
     
-    hwrite(paste("<br><b>Intra-modular hubs (within each ", tolower(grType),"):</b>", sep=""), p, br=TRUE)
+    hwrite(paste("<br><b>Potential intra-modular hubs (within each ", tolower(grType),"):</b>", sep=""), p, br=TRUE)
     intraModularHubs <- nwStats$hubsList[names(nwStats$hubsList)!="Global"]
     # Lista
     # hwrite("Hub list:", p, br=TRUE)
@@ -586,7 +576,7 @@ createHtml <- function(htmlFileName, feaResults, jobName, tablesGenes, tablesTer
     # Comunes
     if(length(nwStats$intraHubsCount)>0) 
     {
-        hwrite("<br>Most common hubs: ", p, br=FALSE)
+        hwrite("<br>Most common possible hubs: ", p, br=FALSE)
         hwrite(names(nwStats$intraHubsCount), p,border=0, class='matrix', br=TRUE)
     }else{
         hwrite("(There are no hubs in more than one cluster)", p, br=TRUE)

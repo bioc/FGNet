@@ -2,7 +2,7 @@
 # graphCommonGTsets = functionalNetwork (default)
 # mgJoinedGraph = intersectionNetwork (bipartite)
 
-plotFGNet <- function(graph2plot, plotType, plotOutput, plotExpression, vertexLayout, eWidth, eColor, vColor, vExpr, vSize, vLabelCex, colores, markGroup=NULL, trCols=NULL, plotTitle, plotTitleSub, plotLegend, legendPrefix, legendText)
+plotFGNet <- function(graph2plot, plotType, plotOutput, plotExpression, vertexLayout, eWidth, eColor, vColor, vExpr, vSize, vLabelCex, vShape="circle", colores, markGroup=NULL, trCols=NULL, plotTitle, plotTitleSub, plotLegend, legendPrefix, legendText)
 {
     #####################################################################################################
     #########################################  Draw PLOTS  ##############################################
@@ -31,7 +31,7 @@ plotFGNet <- function(graph2plot, plotType, plotOutput, plotExpression, vertexLa
             add <- FALSE
             if(plotExpression == "border")
             {
-                plot(graph2plot, layout=vertexLayout, edge.width=eWidth, edge.color=eColor, vertex.color=vExpr, vertex.frame.color=vExpr,  vertex.label="",  vertex.size=ifelse(vExpr=="#888888",0,vSize+3)) 
+                plot(graph2plot, layout=vertexLayout, edge.width=eWidth, edge.color=eColor, vertex.color=vExpr, vertex.frame.color=vExpr, vertex.label="",  vertex.size=ifelse(vExpr=="#888888",0,vSize+3)) 
                 add <- TRUE
             }
             
@@ -52,12 +52,11 @@ plotFGNet <- function(graph2plot, plotType, plotOutput, plotExpression, vertexLa
             {
                 if(!any(is.na(suppressWarnings(as.numeric(names(colores)))))) colorOrder <- order(as.numeric(names(colores)))
                 else colorOrder <- order(names(colores))
-                legend(-1.2, -1.2, legend=paste(legendPrefix, names(colores)[colorOrder], legendText, sep=""), fill=colores[colorOrder], bty="n", xjust=0, yjust=0)
+                legend(-1.35, -1.35, legend=paste(legendPrefix, names(colores)[colorOrder], legendText, sep=""), fill=colores[colorOrder], bty="n", xjust=0, yjust=0)
             }
         }
-        
         if(add) eWidth <-0
-        plot(graph2plot, layout=vertexLayout, edge.width=eWidth, edge.color=eColor, vertex.label=V(graph2plot)$name, vertex.label.cex=vLabelCex, vertex.label.family="sans", vertex.color=vColor, vertex.size=vSize, vertex.frame.color=vExpr, vertex.label.color="black", add=add)   # en intersect. no estba vertex.label ni vertex.frame.color=vExpr,
+        plot(graph2plot, layout=vertexLayout, edge.width=eWidth, edge.color=eColor, vertex.label=V(graph2plot)$name, vertex.label.cex=vLabelCex, vertex.label.family="sans", vertex.color=vColor, vertex.size=vSize, vertex.frame.color=vExpr, vertex.shape=vShape, vertex.label.color="black", add=add)   # en intersect. no estaba vertex.label ni vertex.frame.color=vExpr,
         title(main=plotTitle, sub=plotTitleSub)    
     }
 }

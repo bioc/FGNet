@@ -1,16 +1,10 @@
-plotGoAncestors <- function(goIds, tColor=NULL, ontology=NULL, returnLeaves=FALSE,returnGraph=FALSE, plotOutput="static", nSize=NULL,labelCex=NULL, asp=NULL, fileName=NULL, height=1000)
+plotGoAncestors <- function(goIds, tColor=NULL, ontology=NULL, plotOutput="static", nCharTerm=50, nSize=NULL,labelCex=NULL, asp=NULL, fileName=NULL, height=1000)
 {
     #### DB
     if(!is.list(ontology))
     {
-        if(!"GO.db" %in% rownames(installed.packages()))
-        {
-            tryCatch({
-                    source("http://bioconductor.org/biocLite.R")
-                    biocLite(GO.db)
-            }, error = function(e) {})
-        }
-        require(GO.db)
+        if(!loadInstPkg("GO.db")) stop("Package GO.db is required to plot GO trees.")
+        
         # ontology == NULL: only OK if all GO ids are from the same DB 
         # ontology == character: selected DB is used
         # ontology == list: for internal use
@@ -51,12 +45,13 @@ plotGoAncestors <- function(goIds, tColor=NULL, ontology=NULL, returnLeaves=FALS
     }
     adjList <- adjList[which(adjList[,1]!="all"),, drop=FALSE]
     adjList <- adjList[,c("child","parent","rel"), drop=FALSE]
-        
+
     #### Plot
     #adjList <- as.matrix(do.call(rbind.data.frame, adjList)) # unir
     goGraph <- graph.edgelist(adjList[,c("child","parent"), drop=FALSE], directed=TRUE)
     missingNodes <- rownames(goIds)[!goIds %in% unique(as.vector(adjList))]
     goGraph <- goGraph + vertex(missingNodes)
+    finalLeaves <- NULL
     if(vcount(goGraph)>0)
     {
         goGraph <- set.edge.attribute(goGraph, "type", value=adjList[,"rel"])
@@ -65,6 +60,7 @@ plotGoAncestors <- function(goIds, tColor=NULL, ontology=NULL, returnLeaves=FALS
         goTerms <- sapply(V(goGraph)$name, function(x)
         {
             term <- capitalize(GOTERM[[x]]@Term)
+            
             if (BP) # Shorten terms...
             {
                 term <- gsub("( process)$", " pr.", term)
@@ -72,7 +68,19 @@ plotGoAncestors <- function(goIds, tColor=NULL, ontology=NULL, returnLeaves=FALS
                 term <- gsub("( development)$", " dev.", term, perl=TRUE)
                 term <- gsub("Development ", "Dev. ", term)
             }
-            gsub("(.*) (.*) (.*)", "\\1 \n\\2 \\3", term)
+            # Trim terms
+            if(nchar(term)>nCharTerm) term <- paste(substr(term, 1, nCharTerm),"...", sep="")
+            
+            # split in two lines
+            #gsub("(.*) (.*) (.*)", "\\1 \n\\2 \\3", term)
+            spaceLoc <- gregexpr(" ", term, fixed=TRUE)[[1]]
+            if((spaceLoc[1]!=-1) && (length(spaceLoc)>1))
+            {
+                spaceLoc <- spaceLoc[ceiling(length(spaceLoc)/2)]
+                term <- paste(substr(term, 1, spaceLoc-1), substr(term, spaceLoc+1, nchar(term)), sep="\n")
+            }
+
+            term
         })
         names(goTerms) <- NULL
         goGraph <- set.vertex.attribute(goGraph, "term", value=goTerms) # comprobar
@@ -163,7 +171,9 @@ plotGoAncestors <- function(goIds, tColor=NULL, ontology=NULL, returnLeaves=FALS
         finalLeaves <- cbind(sort(sapply(V(goGraph)$name[finalLeaves], function(x) capitalize(GOTERM[[x]]@Term))))
         finalLeaves <- cbind(rownames(finalLeaves), finalLeaves)
     }
-    if(returnLeaves) return(finalLeaves)
-    if(returnGraph) return(goGraph)
+   
+    
+    ret <- list(iGraph=goGraph, leaves=finalLeaves)
+    invisible(ret)
 }
 

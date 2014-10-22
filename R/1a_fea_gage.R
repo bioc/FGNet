@@ -28,7 +28,7 @@
 ##############################################
 fea_gage <- function(eset, refSamples, compSamples, geneIdType, geneLabels=NULL, organism="Hs", annotations=c("GO_BP","GO_MF","GO_CC","KEGG","REACTOME"), geneSets=NULL, sameDirection=FALSE, onlyEssentialTerms=TRUE, compareType="as.group", jobName=NULL, ...)
 {        
-    # require(gage)
+    if(!loadInstPkg("gage")) stop("Package gage is not available.")
     
     queryArgs <- list(queryArgsAsCharacter(match.call()))
     
@@ -101,7 +101,7 @@ fea_gage <- function(eset, refSamples, compSamples, geneIdType, geneLabels=NULL,
 
     fileName <- paste(jobName, "_rawGageResults.RData", sep="")
     save(resultGage, file=fileName) 
-    message(paste("Raw gage results saved as ", fileName, sep=""))
+    message(paste("Raw GAGE results saved as ", fileName, sep=""))
     
     # GS redundancy
     gageGrouped <- list()

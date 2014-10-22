@@ -43,7 +43,7 @@ Package tutorial: \code{vignette("FGNet-vignette")}
 # Select file:
 txtFile <- "http://david.abcc.ncifcrf.gov/data/download/901234901248.txt"
 txtFile <- paste(file.path(system.file('examples', package='FGNet')), 
-    "David_Metabolism.txt", sep="/")
+    "DAVID_Yeast_raw.txt", sep="/")
 
 # Read:
 results <- format_david(txtFile, jobName="DavidAnalysis")
