@@ -82,7 +82,7 @@ analyzeNetwork <- function(incidMatrices, fNw=NULL, plotOutput=TRUE, colors=NULL
         hubs[,cl] <- clBetw[[cl]][rownames(hubs)]
     }
     hubs[which(is.na(hubs))] <- 0
-    ret[["betweenessMatrix"]] <- hubs
+    ret[["betweennessMatrix"]] <- hubs
     
     hubsList <- lapply(clBetw, function(x){
        names(x[x>=quantile(x,probs=0.75)])
