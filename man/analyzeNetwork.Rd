@@ -29,7 +29,7 @@ List:
 \itemize{ 
     \item degree, betweenness: Degree and Betweenness of the nodes in the global network (commonClusters) and within each cluster/metagroup (subsets of commonGtSets network). The degree is given as percentage, normalized based on the total number of nodes of the network. i.e. a value of 90 in a network of 10 nodes, would mean the actual degree of the node is 9: it is conneded to 9 nodes (90\% of 10)).
     \item transitivity: Transitivity of the networks.
-    \item betweenessMatrix: Betweenness of each node in each cluster.
+    \item betweennessMatrix: Betweenness of each node in each cluster.
     \item hubsList: Nodes selected as potential hubs in the global network and within each cluster/metagroup (nodes with betweenness over 75\% in the given network/subnetwork).
     \item intraHubsCount: Number of times each node was selected as potential intra-cluster hub.
 }

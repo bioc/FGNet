@@ -80,7 +80,7 @@ After obtaining a list of genes or proteins from an experiment or omic studies (
 
 FGNet builds the functional networks, based on data from a previous functional enrichment analysis (FEA). The package provides the functions to perform the FEA through four specific tools:
     
-* **DAVID** with Functional Annotation Clustering (DAVID-FAC), which measures relationships among annotation terms based on their co-association with subsets of genes within the query gene list ([Huang et al](#references)). This type of clustering mostly results in groups of highly related terms, such as synonymous annotations from different annotation spaces (i.e. term "glycolysis" in KEGG and GO-BP), which also share most of their genes. This tool provides great coverage but does not avoid redundant terms and very general terms (like "signal transduction" or "regulation of transcription" that correspond to specific terms in Gene Ontology, GO). 
+* **DAVID** with Functional Annotation Clustering (DAVID-FAC), which measures relationships among annotation terms based on their co-association with subsets of genes within the query gene list ([Huang et al](#references)). This type of clustering mostly results in groups of highly related terms, such as synonymous annotations from different annotation spaces (i.e. term "glycolysis" in KEGG and GO-BP), which also share most of their genes. This tool provides great coverage but does not avoid redundant terms and very general terms (like *signal transduction* or *regulation of transcription* that correspond to specific terms in Gene Ontology, GO). 
 
 * **GeneTerm Linker**, a post-enrichment tool, which focuses on clearing and sorting the results from a previous modular enrichment analysis. This is achieved by filtering general terms with low information content (i.e. *cellular process* or *protein binding*) and redundant annotations (i.e. *metabolic process* and *primary metabolic process*). The remaining gene-term sets are grouped into `metagroups` based on their shared genes and terms (using a reciprocal linkage approach) ([Fontanillo et al](#references)).
 
@@ -357,7 +357,7 @@ incidMat_terms$metagroupsMatrix[5:10, 1:5]
 
 These incidence matrices can be plotted and analyzed in different ways:
 
-```{r Default functional network}
+```{r}
 functionalNetwork(incidMat, geneExpr=genesYeastExpr,
     plotTitleSub="Default gene view")
 ```
@@ -373,7 +373,7 @@ functionalNetwork(incidMat_terms, plotOutput="dynamic")
 
 ![Dynamic plot](TermsYeast.png)
 
-```{r Bipartite functional network}
+```{r}
 functionalNetwork(incidMat_terms, plotType="bipartite",
     plotTitleSub="Terms in several metagroups")
 ```
