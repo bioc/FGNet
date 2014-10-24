@@ -106,30 +106,49 @@ plotKegg <- function(keggIDs, geneExpr, geneIDtype="ENSEMBL", colType=c("continu
        
         for(pwId in keggIDs)
         { 
+            filesDownloaded <- TRUE
             if(!file.exists(paste(keggPrefix,pwId, ".xml",sep=""))) 
             {
-                download_KEGGfile(pathway_id=pwId, species = keggPrefix)
+                tryCatch( 
+                {  
+                    # First option, seems to work best in windows.
+                    download_KEGGfile(pathway_id=pwId, species = keggPrefix) 
+                }, error = function(e) 
+                {
+                    tryCatch( 
+                    { 
+                        # Uses (webLinks?):
+                        #             http://www.genome.jp/kegg-bin/download?entry=05130&format=kgml
+                        #             http://www.genome.jp/kegg/pathway/hsa/hsa05130.png
+                        # REST API usage is recommended. Is the information the same?    (http://www.kegg.jp/kegg/rest/)
+                        #             http://rest.kegg.jp/get/hsa05130/image
+                        #             http://rest.kegg.jp/get/hsa05130/kgml       
+                        
+                        download.file(paste("http://rest.kegg.jp/get/", keggPrefix,pwId, "/kgml",sep=""),  paste(keggPrefix,pwId, ".xml",sep=""))
+                        download.file(paste("http://rest.kegg.jp/get/", keggPrefix,pwId, "/image",sep=""),  paste(keggPrefix,pwId, ".png",sep=""))            
+                        
+                      
+                    }, error = function(e) 
+                    {
+                        filesDownloaded <<- FALSE
+                        warning(paste("It has not been possible to download the kgml/png files for pathway ", keggPrefix, pwId, ".", sep=""))
+                    })
+                })
+           }
+           
+           if(filesDownloaded)
+           {
+                XML2database <- parse_XMLfile(pathway_id=pwId, species = keggPrefix)
+                try(temp <- plot_profile(cbind(allG), bg_col=cbind(colsAllG),text_col="black", border_col="black", type="bg", pathway_name=paste(keggPrefix,pwId, sep=""), KEGG_database=XML2database, magnify=1, pathway_min=1))    
+                file.remove(paste(keggPrefix,pwId, ".xml",sep=""))
+                file.remove(paste(keggPrefix,pwId, ".png",sep=""))
                 
-                # Uses (webLinks?):
-                #             http://www.genome.jp/kegg-bin/download?entry=05130&format=kgml
-                #             http://www.genome.jp/kegg/pathway/hsa/hsa05130.png
-                # REST API usage is recommended. Is the information the same?    (http://www.kegg.jp/kegg/rest/)
-                #             http://rest.kegg.jp/get/hsa05130/image
-                #             http://rest.kegg.jp/get/hsa05130/kgml       
-                
-                # download.file(paste("http://rest.kegg.jp/get/", keggPrefix,pwId, "/kgml",sep=""),  paste(keggPrefix,pwId, ".xml",sep=""))
-                # download.file(paste("http://rest.kegg.jp/get/", keggPrefix,pwId, "/image",sep=""),  paste(keggPrefix,pwId, ".png",sep=""))            
-            }
-            XML2database <- parse_XMLfile(pathway_id=pwId, species = keggPrefix)
-            try(temp <- plot_profile(cbind(allG), bg_col=cbind(colsAllG),text_col="black", border_col="black", type="bg", pathway_name=paste(keggPrefix,pwId, sep=""), KEGG_database=XML2database, magnify=1, pathway_min=1))    
-            file.remove(paste(keggPrefix,pwId, ".xml",sep=""))
-            file.remove(paste(keggPrefix,pwId, ".png",sep=""))
-            
-            pwName <- pathwayNames[pwId]
-            fileName <- gsub(" ", "_",gsub("_profile_bg",paste("_",pwName,sep=""),paste(keggPrefix,pwId, "_profile_bg.png",sep="")))
-            names(fileName) <- pwId
-            file.rename(from=paste(keggPrefix,pwId, "_profile_bg.png",sep=""),to=fileName)
-            fileNames <- c(fileNames, fileName)
+                pwName <- pathwayNames[pwId]
+                fileName <- gsub(" ", "_",gsub("_profile_bg",paste("_",pwName,sep=""),paste(keggPrefix,pwId, "_profile_bg.png",sep="")))
+                names(fileName) <- pwId
+                file.rename(from=paste(keggPrefix,pwId, "_profile_bg.png",sep=""),to=fileName)
+                fileNames <- c(fileNames, fileName)
+           }
         }
     }
     invisible(fileNames)
