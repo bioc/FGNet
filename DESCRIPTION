@@ -2,7 +2,7 @@ Package: FGNet
 Type: Package
 Title: Functional Gene Networks derived from biological enrichment analyses
 Description: Build and visualize functional gene and term networks from clustering of enrichment analyses in multiple annotation spaces. The package includes a graphical user interface (GUI) and functions to perform the functional enrichment analysis through DAVID, GeneTerm Linker, gage (GSEA) and topGO.
-Version: 3.1.4
+Version: 3.1.5
 Date: 2014-10-22
 Author: Sara Aibar, Celia Fontanillo, Conrad Droste and Javier De Las Rivas.
 Maintainer: Sara Aibar <saibar@usal.es>
