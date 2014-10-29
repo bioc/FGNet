@@ -60,7 +60,7 @@ FGNet_report <- function (feaResults, geneExpr=NULL, plotExpression="border", on
     setwd(folder)
     
     tryCatch({
-        htmlFileName <- paste("..", .Platform$file.sep, jobName, ".html", sep="") ## Windows??
+        htmlFileName <- paste(currWD, .Platform$file.sep, jobName, ".html", sep="") 
         createHtml(htmlFileName=htmlFileName, feaResults=feaResults, jobName=jobName, tablesGenes=tablesGenes, tablesTerms=tablesTerms,  # Data
                    tool=tool, queryArgs=queryArgs, # Query info
                    filterAttribute=filterAttribute, filterOperator=filterOperator, filterThreshold=filterThreshold, # Filter info
