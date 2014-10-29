@@ -69,6 +69,7 @@ For more info see the package tutorial: \code{vignette("FGNet-vignette")}
 \dontrun{
 # GUI:
 FGNet_GUI()
+}
 
 # 1. FEA:
 geneList <- c("YBL084C", "YDL008W", "YDR118W", "YDR301W", "YDR448W", "YFR036W", 
@@ -99,7 +100,7 @@ getTerms(results)
 nwStats <- analyzeNetwork(incidMat)
 clustersDistance(incidMat)
 
-}
+
 }
 \keyword{ package }
 \keyword{ interface }
