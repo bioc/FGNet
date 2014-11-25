@@ -5,7 +5,7 @@ NEW FEATURES
     o HTML vignette
     o Bipartite network: Nodes are now circles and squares (only available for "static" plot)
     o PlotGoAncestors: added argument nCharTerm
-    
+    o clustersDistance: added argument 'clustMethod' and set "average" as default clustering method.
 
 CHANGES IN VERSION 3.0
 ------------------------

@@ -8,7 +8,7 @@ Plots distances between metagroups.
 Plots the distances between metagroups taking into account the number of common genes.
 }
 \usage{
-clustersDistance(incidenceMatices, mgCols = NULL)
+clustersDistance(incidenceMatices, mgCols = NULL, clustMethod="average")
 }
 \arguments{
   \item{incidenceMatices}{
@@ -16,6 +16,9 @@ clustersDistance(incidenceMatices, mgCols = NULL)
 }
   \item{mgCols}{
   Colors for the metagroups.
+}
+  \item{clustMethod}{
+  Clustering method. Character string (i.e. "single", "complete", "average") for function \code{\link[stats:hclust]{hclust()}} (argument 'method').
 }
 }
 \value{

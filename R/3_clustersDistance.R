@@ -1,7 +1,7 @@
 
 # Distances: Binary
 # Clustering: Single
-clustersDistance <- function(incidenceMatices, mgCols=NULL)
+clustersDistance <- function(incidenceMatices, mgCols=NULL, clustMethod="average")
 {        
     if("metagroupsMatrix" %in% names(incidenceMatices)) metagroupGenesMatrix <- incidenceMatices$metagroupsMatrix
     if("clustersMatrix" %in% names(incidenceMatices)) metagroupGenesMatrix <- incidenceMatices$clustersMatrix
@@ -11,7 +11,7 @@ clustersDistance <- function(incidenceMatices, mgCols=NULL)
     {
         distancias <- dist(t(metagroupGenesMatrix), method="binary")
         mxDistancias <- as.matrix(distancias)    
-        clustering <- hclust(distancias, method="single")
+        clustering <- hclust(distancias, method=clustMethod)
         
         # Prepare layout
         nf <- layout(cbind(c(1,2),c(0,3)), widths=c(9,1), heights=c(3,8), TRUE)
