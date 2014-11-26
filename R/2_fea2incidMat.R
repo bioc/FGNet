@@ -94,7 +94,7 @@ fea2incidMat <- function(feaResults, key="Genes", sepChar=NULL, clusterColumn=NU
         # Filter
         if(is.character(filterThreshold)) filterThreshold <- paste("\"",filterThreshold,"\"",sep="")
 
-        filtrar <- rownames(filterAttribute)[eval(parse(text=paste("which(filterAttribute[,1]", filterOperator, filterThreshold,")",sep=""))) ]
+        filtrar <- rownames(filterAttribute)[eval(parse(text=paste("which(filterAttribute[,1] ", filterOperator," ", filterThreshold,")",sep=""))) ] # Space required for negative values (<-)
         if(length(filtrar)>0)
         {
             # Filter by Cluster or Gene-Term set?
@@ -150,10 +150,10 @@ fea2incidMat <- function(feaResults, key="Genes", sepChar=NULL, clusterColumn=NU
     {
         gtSetsList <- lapply(gtSetsList, function(gr) { 
                 unlist(strsplit(as.character(gr), sepChar, fixed=TRUE))
-        })
-       
+        })   
     }    
-                         
+    if(nrow(geneTermSets)==0) stop("There are no gene-term sets.")
+    
     # Columna 1: Metagrupo/Cluster al que pertenece
     names(gtSetsList) <- paste(as.character(geneTermSets[,clusterColumn]), ".", unlist(lapply(table(factor(geneTermSets[,clusterColumn]))[unique(geneTermSets[,clusterColumn])], function(x) 1:x)), sep="")
      

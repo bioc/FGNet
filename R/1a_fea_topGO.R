@@ -30,9 +30,16 @@
 # 
 # results <- fea_topGO(geneList, geneIdType=geneIdType, organism="Sc", annotations=annotations, refPackage=refPackage, nodeSize=5, pValThr=0.01, testStat=NULL)
 
+# GO evidence codes:
+# (http://www.bioconductor.org/packages/release/bioc/vignettes/annotate/inst/doc/GOusage.pdf)
+# "TAS" (traceable author statement, probably the most restrictive)
+# http://geneontology.org/page/guide-go-evidence-codes
+#
+# keys(org.Hs.eg.db, keytype="EVIDENCE")
+# "EXP" "IBA" "IC"  "IDA" "IEA" "IEP" "IGI" "IMP" "IPI" "ISS" "NAS" "ND"  "TAS"
 
 
-fea_topGO <- function(geneList, geneIdType="ENSEMBL", geneLabels=NULL, organism="Hs", annotations=c("GO_BP","GO_MF","GO_CC"), genesUniverse=NULL, refPackage=NULL, geneID2GO=NULL, nodeSize=5, pValThr=0.01, testStat=NULL, jobName=NULL)
+fea_topGO <- function(geneList, geneIdType="ENSEMBL", geneLabels=NULL, organism="Hs", annotations=c("GO_BP","GO_MF","GO_CC"), evidence=NULL, genesUniverse=NULL, refPackage=NULL, geneID2GO=NULL, nodeSize=5, pValThr=0.01, testStat=NULL, jobName=NULL)
 {
     if(!loadInstPkg("topGO")) stop("Package topGO is not available.")
     if(!loadInstPkg("GO.db")) stop("Package GO.db is for fea_topGO.")
@@ -79,7 +86,7 @@ fea_topGO <- function(geneList, geneIdType="ENSEMBL", geneLabels=NULL, organism=
     # Get GO gene sets
     if(!is.null(orgPackage) && !is.null(geneID2GO)) stop("Please provide either 'orgPackage' or 'geneID2GO'.")
     if(any(!annotations %in% c("GO_BP","GO_MF","GO_CC"))) stop('"annotations" should be "GO_BP", "GO_MF" and/or "GO_CC"')
-    if(is.null(geneID2GO)) geneID2GO <- buildGeneSets(orgPackage, geneIdType, annotations=annotations)$genes2terms    
+    if(is.null(geneID2GO)) geneID2GO <- buildGeneSets(orgPackage, geneIdType, annotations=annotations, evidence=evidence)$genes2terms    
 
     
     # Reshape input list

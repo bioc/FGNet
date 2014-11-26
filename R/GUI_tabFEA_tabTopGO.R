@@ -62,6 +62,37 @@ tabTopGo_fill <- function(mainWindow, allOrgs)
     }
     tabTopGo$packStart(frameAnnotsTopGo, expand=FALSE)
     
+    # Evidence
+    data("GOEvidenceCodes", envir = environment())
+    GOEvidenceCodes <- get("GOEvidenceCodes", envir  = environment())
+    
+    frameEvidenceTopGo <- gtkFrame("Evidence")
+    frameEvidenceTopGo$setShadowType("none")
+    evidenceScroll <- gtkScrolledWindow()
+    evidenceScroll$setPolicy("automatic", "automatic")
+    evidenceScroll$setShadowType("none")
+    
+    evidenceViewport <- gtkViewportNew()
+    
+    subFrameEvidence <- gtkFrame()
+    gtkFrameSetShadowType(subFrameEvidence, GtkShadowType["none"])
+                  
+    evidArea <- gtkVBoxNew(FALSE, 0)         
+    subFrameEvidence$add(evidArea)
+    # Fill...
+    checkEvidenceTopGo <-list()
+    for(evid in rownames(GOEvidenceCodes))
+    {
+        checkEvidenceTopGo[[evid]] <- gtkCheckButton(paste(evid, " (",GOEvidenceCodes[evid,2],")", sep=""))
+        evidArea$add(checkEvidenceTopGo[[evid]])
+    }
+    #checkEvidenceTopGo[["TAS"]]$active <- TRUE
+    
+    evidenceViewport$add(subFrameEvidence)
+    evidenceScroll$add(evidenceViewport)
+    frameEvidenceTopGo$add(evidenceScroll)
+    tabTopGo$packStart(frameEvidenceTopGo, expand=TRUE)
+    
     # refPackage <- NULL  
     ## 
     refPackageFrame <- gtkFrame("Chip package (gene universe)")
@@ -102,6 +133,6 @@ tabTopGo_fill <- function(mainWindow, allOrgs)
     ## tabTopGo ready    
     return(list(tabTopGo=tabTopGo, queryArgs=list(geneIDsTopGO=geneIDsTopGO, comboGeneIdTypeTopGo=comboGeneIdTypeTopGo,
                                                   comboOrgTopGo=comboOrgTopGo, allOrgs=allOrgs,
-                                                  checkAnnotsTopGo=checkAnnotsTopGo, topGO_annots=topGO_annots, refPackageTxt=refPackageTxt, nodeSizeTxt=nodeSizeTxt, pValThrTxt=pValThrTxt)))
+                                                  checkAnnotsTopGo=checkAnnotsTopGo, checkEvidenceTopGo=checkEvidenceTopGo, GOEvidenceCodes=GOEvidenceCodes, topGO_annots=topGO_annots, refPackageTxt=refPackageTxt, nodeSizeTxt=nodeSizeTxt, pValThrTxt=pValThrTxt)))
     #######################################################################
 }

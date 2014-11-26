@@ -1,4 +1,4 @@
-CHANGES IN VERSION 3.0.1
+CHANGES IN VERSION 3.2
 ------------------------
 NEW FEATURES
 
@@ -6,6 +6,10 @@ NEW FEATURES
     o Bipartite network: Nodes are now circles and squares (only available for "static" plot)
     o PlotGoAncestors: added argument nCharTerm
     o clustersDistance: added argument 'clustMethod' and set "average" as default clustering method.
+    o GO evidence: Added argument to fea_topGO (new data object available: GOEvidenceCodes)
+    
+BUGFIXES
+    o fea2incidMat: filter negative values
 
 CHANGES IN VERSION 3.0
 ------------------------

@@ -442,7 +442,7 @@ createHtml <- function(htmlFileName, feaResults, jobName, tablesGenes, tablesTer
     hwrite(c(imageTable), p, border=0, class="ImageTable")
     
     clustSectionHeader <- ""
-    if(sortMG) clustSectionHeader <- paste(" (sorted by ",filterAttribute,")", sep="")
+    #if(sortMG) clustSectionHeader <- paste(" (sorted by ",filterAttribute,")", sep="")
     clustSectionHeader <- paste(grType, "s", clustSectionHeader,": ", sep="")
     
     hwrite(clustSectionHeader, p, heading=3, br=FALSE)
@@ -554,17 +554,10 @@ createHtml <- function(htmlFileName, feaResults, jobName, tablesGenes, tablesTer
     
     hwriteImage(paste(folder,nwStatsPlot,sep=""), p, class='nwStats', link=paste(folder,nwStatsPlot,sep=""), br=TRUE)
     
-    # Clustering coeficient. 
-    hwrite("<b>Clustering coeficient / Transitivity:</b> ", p, br=TRUE)
-    hwrite('<div class="transitivity">', p, br=FALSE)
-    hwrite(as.matrix(round(nwStats$transitivity, digits=3)), p, table=TRUE, border=0, br=TRUE)
-    hwrite('</div>', p, br=FALSE)  
-    # hwrite("<i>(Transitivity measures the probability that the adjacent vertices of a vertex are connected)</i>", p, br=TRUE)
-
-    hwrite("<br><b>Potential inter-modular hubs (whole network):</b> ", p, br=TRUE)
+    hwrite("<br><b>Potential inter-modular hubs (top betweenness in whole network):</b> ", p, br=TRUE)
     hwrite(paste(nwStats$hubsList$Global, collapse=", "), p, br=TRUE)
     
-    hwrite(paste("<br><b>Potential intra-modular hubs (within each ", tolower(grType),"):</b>", sep=""), p, br=TRUE)
+    hwrite(paste("<br><b>Potential intra-modular hubs (top betweenness within each ", tolower(grType),"):</b>", sep=""), p, br=TRUE)
     intraModularHubs <- nwStats$hubsList[names(nwStats$hubsList)!="Global"]
     # Lista
     # hwrite("Hub list:", p, br=TRUE)
@@ -582,6 +575,14 @@ createHtml <- function(htmlFileName, feaResults, jobName, tablesGenes, tablesTer
         hwrite("(There are no hubs in more than one cluster)", p, br=TRUE)
     }
     #hwrite(nwStats$hubs, p, table=TRUE, border=0, class='matrix', br=TRUE)
+
+    # Clustering coeficient. 
+    hwrite("<br><b>Clustering coeficient / Transitivity:</b> ", p, br=TRUE)
+    hwrite('<div class="transitivity">', p, br=FALSE)
+    hwrite(as.matrix(round(nwStats$transitivity, digits=3)), p, table=TRUE, border=0, br=TRUE)
+    hwrite('</div>', p, br=FALSE)  
+    hwrite("(The functional network is based on two networks/incidence matrices: <i>common clusters</i> and <i>common-gene-term-sets</i>. These are their transitivity values -probability that adjacent vertices of a vertex are connected-.)", p, br=TRUE)
+    
     hwrite('</span>', p, br=TRUE)  # Section end (contentNwAnalysis)
     
     # Distances Plot    

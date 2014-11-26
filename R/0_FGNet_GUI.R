@@ -5,13 +5,16 @@ FGNet_GUI <- function(geneList=NULL)
     # feaResults <<- NULL # Global
 
     data("FEA_tools", envir = environment())
-    FEA_tools<- get("FEA_tools", envir  = environment())
+    FEA_tools <- get("FEA_tools", envir  = environment())
     
     data("groupTypes", envir = environment())
-    groupTypes<- get("groupTypes", envir  = environment())
+    groupTypes <- get("groupTypes", envir  = environment())
     
     data("organisms", envir = environment())
-    organisms<- get("organisms", envir  = environment())
+    organisms <- get("organisms", envir  = environment())
+    
+    data("GOEvidenceCodes", envir = environment())
+    GOEvidenceCodes <- get("GOEvidenceCodes", envir  = environment())
     
     # Crear ventana
     mainWindow <- gtkWindowNew("toplevel", show=FALSE)

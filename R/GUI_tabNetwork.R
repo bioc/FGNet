@@ -10,10 +10,11 @@ selectNetworkTool <- function(aux, argsList)
     groupTypes<- get("groupTypes", envir  = environment())
     
     reportTool <- rownames(argsList$FEA_tools[which(as.numeric(argsList$FEA_tools[,"ID"])==argsList$comboFeaTool$getActive()),, drop=FALSE])
-    grTypes <- FEA_tools[!is.na(argsList$FEA_tools[,"GroupType"]),"GroupType"] # for gsub
+    grTypes <- tolower(FEA_tools[!is.na(argsList$FEA_tools[,"GroupType"]),"GroupType"]) # for gsub
     subGrType <- unique(grTypes[sapply(grTypes, function(x) grepl(x, argsList$thresholdFrame$label))])
     
-    argsList$thresholdFrame$label <- gsub(subGrType, argsList$FEA_tools[reportTool,"GroupType"], argsList$thresholdFrame$label)
+    argsList$thresholdFrame$label <- gsub(subGrType, tolower(argsList$FEA_tools[reportTool,"GroupType"]), argsList$thresholdFrame$label)
+    argsList$thresholdFrame$"tooltip-text" <- gsub(capitalize(subGrType), argsList$FEA_tools[reportTool,"GroupType"], argsList$thresholdFrame$"tooltip-text")
     
     argsList$thresholdAttributeNetworkText$setText(argsList$FEA_tools[reportTool,"DefaultFilter"])
     if(argsList$thresholdAttributeNetworkText$getText()=="NA") argsList$thresholdAttributeNetworkText$setText("")
@@ -28,12 +29,17 @@ selectNetworkTool <- function(aux, argsList)
     if(reportTool == "GeneTerm Linker")
     {        
         argsList$gtLinkerDownloadExpander$Show()
+        
+        argsList$frameFEAresultsText$label <- "Job ID or file"        
+        
         gtkWidgetSetSensitive(argsList$gtLinkerDownloadExpander, TRUE)
         argsList$plotChecksValues[["plotKeggPw"]]$active <- FALSE
         gtkWidgetSetSensitive(argsList$plotChecksValues[["plotKeggPw"]], FALSE)
         gtkWidgetSetSensitive(argsList$plotChecksValues[["onlyGoLeaves"]], FALSE)
         
     }else{
+        argsList$frameFEAresultsText$label <- "FEA results"
+        
         argsList$gtLinkerDownloadExpander$Hide()
         gtkWidgetSetSensitive(argsList$gtLinkerDownloadExpander, FALSE)
         gtkWidgetSetSensitive(argsList$plotChecksValues[["plotKeggPw"]], TRUE)

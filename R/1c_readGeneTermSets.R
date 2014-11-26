@@ -6,7 +6,13 @@ readGeneTermSets <- function(fileName, tool=NULL, simplifyGage=TRUE)
         
     # Read file
     sepChar <- "\t"
-    geneTermSets <- read.table(fileName, sep=sepChar, header=TRUE, quote="")    
+    geneTermSets <- read.table(fileName, sep=sepChar, header=TRUE, quote="")
+    any(is.na(geneTermSets$Genes) || is.na(geneTermSets$GenesIDs))
+    {
+        warning("Some gene-term sets contain no genes.")
+        geneTermSets$Genes[is.na(geneTermSets$Genes)] <- ""
+        if("GenesIDs" %in% colnames(geneTermSets)) geneTermSets$GenesIDs[is.na(geneTermSets$GenesIDs)] <- ""
+    }
     
     # Create clusters table
     colsAvg <- NULL

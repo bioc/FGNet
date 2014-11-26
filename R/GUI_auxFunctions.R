@@ -327,6 +327,9 @@ submitQuery <- function(button, argsList) # button: Not used, but required for s
                     geneIdType <- queryArgs$geneIDsTopGO[queryArgs$comboGeneIdTypeTopGo$getActive()+1]
                     annotations <- names(queryArgs$topGO_annots)[sapply(queryArgs$topGO_annots, function(anot) queryArgs$checkAnnotsTopGo[[anot]]$active)]
                     organism <- names(queryArgs$allOrgs[["ID"]])[which(queryArgs$allOrgs[["ID"]]==queryArgs$comboOrgTopGo$getActive())]
+                    evidence  <- rownames(queryArgs$GOEvidenceCodes)[sapply(rownames(queryArgs$GOEvidenceCodes), function(evid) queryArgs$checkEvidenceTopGo[[evid]]$active)]
+                    if(length(evidence)==0) evidence <- NULL
+                    
                     geneID2GO <- NULL           # geneID2GO <- buildDatabases(orgPackage, geneIdType)$geneID2GO
                     refPackage <- queryArgs$refPackageTxt$getText()
                     if(refPackage=="") refPackage <- NULL
@@ -339,7 +342,7 @@ submitQuery <- function(button, argsList) # button: Not used, but required for s
                     # Submit query
                     queryReply <- tryCatch( 
                     {   
-                        tmpReply <- fea_topGO(geneList=geneList, geneIdType=geneIdType, organism=organism, annotations=annotations, genesUniverse=genesUniverse, refPackage=refPackage, geneID2GO=geneID2GO, nodeSize=nodeSize, pValThr=pValThr, testStat=NULL)
+                        tmpReply <- fea_topGO(geneList=geneList, geneIdType=geneIdType, organism=organism, annotations=annotations, evidence=evidence, genesUniverse=genesUniverse, refPackage=refPackage, geneID2GO=geneID2GO, nodeSize=nodeSize, pValThr=pValThr, testStat=NULL)
                         tmpReply # (invisible returns)
                     }, error = function(e) 
                     {

@@ -25,6 +25,7 @@ tabNetwork_common_fill <- function(mainWindow,geneList)
     # Text field
     expressionText <- gtkTextViewNewWithBuffer()
     expressionText$grabFocus()
+    expressionText$"tooltip-text" <- "One gene per line, followed by its expression separated by tab or space"
     expressionText$modifyFont(pangoFontDescriptionFromString(", monospace"))
     expressionArea$add(expressionText)
     
@@ -45,12 +46,14 @@ tabNetwork_common_fill <- function(mainWindow,geneList)
     for (i in capitalize(names(exprPlotOptionsShow))) gtkComboBoxAppendText(comboExpressionPlot, i)
     gtkComboBoxSetTitle(comboExpressionPlot, "comboExpressionPlot")
     comboExpressionPlot$setActive(exprPlotOptionsID["border"])
+    comboExpressionPlot$"tooltip-text" <- "Genes with positive values are plotted RED, negative values GREEN"
     frameExpressionPlot$add(comboExpressionPlot)
     table.Left$attach(frameExpressionPlot, left.attach = 0,1, top.attach = 19,20, xoptions = "", yoptions = "")
     
     frameButtonSelectExprFile <- gtkFrameNew("")
     gtkFrameSetShadowType(frameButtonSelectExprFile, GtkShadowType["none"])
     buttonSelectExprFile <- gtkButton("Load from file")   #.RData containing vector or .csv???
+    buttonSelectExprFile$"tooltip-text" <- "Text file with one gene per line, followed by its expression separated by TAB"
     buttonSelectExprFile$name <- "buttonSelectExprFile"
     gSignalConnect(buttonSelectExprFile, "clicked", loadFileDialog, data=list(parentWindow=mainWindow, expressionText=expressionText))
     
@@ -135,7 +138,8 @@ tabNetwork_common_fill <- function(mainWindow,geneList)
     
     
     ### Threshold frame
-    thresholdFrame <- gtkFrame("Cluster filter") # MG: silhouette, CL... # OTHER:  TODO (desactivar si no es david/gtlinker?)
+    thresholdFrame <- gtkFrame("Filter clusters") # MG: silhouette, CL... # OTHER:  TODO (desactivar si no es david/gtlinker?)
+    thresholdFrame$"tooltip-text" <- "Clusters that meet these criteria will be REMOVED from the network"
     thresholdBoxNetwork <- gtkHBox(FALSE,3)
     
     thresholdAttributeNetworkFrame <- gtkFrame("Attribute")
@@ -171,7 +175,7 @@ tabNetwork_common_fill <- function(mainWindow,geneList)
     # List fields:
     fields <- list(expressionText=expressionText, comboExpressionPlot=comboExpressionPlot, exprPlotOptionsID=exprPlotOptionsID, buttonSelectExprFile=buttonSelectExprFile, 
                    commonBox=commonBox,
-                   comboFeaTool=comboFeaTool, feaResultsText=feaResultsText,
+                   comboFeaTool=comboFeaTool, frameFEAresultsText=frameFEAresultsText, feaResultsText=feaResultsText,
                    serverWebReportText=serverWebReportText,alreadyDownloadedCheck=alreadyDownloadedCheck,
                    thresholdFrame=thresholdFrame, thresholdAttributeNetworkText=thresholdAttributeNetworkText, 
                    thresholdOperatorNetworkText=thresholdOperatorNetworkText, thresholdValueNetworkText=thresholdValueNetworkText, 

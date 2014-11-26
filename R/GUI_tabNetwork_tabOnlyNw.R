@@ -225,6 +225,7 @@ tabPlotNetwork_fill <- function(mainWindow, statusbar, commonFields)
     comboKey <- gtkComboBoxNewText()
     for (i in names(keysID)) gtkComboBoxAppendText(comboKey, i)
     comboKey$setActive(keysID["Genes"])
+    comboKey$"tooltip-text" <- "Network nodes"
     comboKeyFrame$add(comboKey)
     fgnPlotOptionsL1Box$packStart(comboKeyFrame, expand=FALSE)
     
@@ -244,8 +245,10 @@ tabPlotNetwork_fill <- function(mainWindow, statusbar, commonFields)
     plotOutputFrame <- gtkFrame("Output")
     gtkFrameSetShadowType(plotOutputFrame, GtkShadowType["none"])
     comboPlotOutput <- gtkComboBoxNewText()
-    for (i in capitalize(names(plotOutputID)))gtkComboBoxAppendText(comboPlotOutput, i)
+    for (i in capitalize(names(plotOutputID))) gtkComboBoxAppendText(comboPlotOutput, i)
     comboPlotOutput$setActive(plotOutputID["static"])
+    comboPlotOutput$"tooltip-text" <- "static: standard R plot (R console) \ndynamic:interactive tkplot (metagroups background cannot be drawn)"
+    
     plotOutputFrame$add(comboPlotOutput)
     fgnPlotOptionsL2Box$packStart(plotOutputFrame, expand=FALSE)
     
@@ -257,9 +260,11 @@ tabPlotNetwork_fill <- function(mainWindow, statusbar, commonFields)
     fgnPlotOptionsL2Box$packStart(saveCheck, expand=FALSE)
     # weighted=FALSE
     weightedCheck<- gtkCheckButton("Weighted")
+    weightedCheck$"tooltip-text" <- "Edge width based on the number of shared gene-term sets"    
     fgnPlotOptionsHBox$packStart(weightedCheck, expand=FALSE)
     # keepAllNodes=FALSE
     keepAllNodesCheck<- gtkCheckButton("keepAllNodes")
+    keepAllNodesCheck$"tooltip-text" <- "Show all nodes, including those in only one cluster"
     gtkWidgetSetSensitive(keepAllNodesCheck, FALSE)
     
     
@@ -301,6 +306,7 @@ tabPlotNetwork_fill <- function(mainWindow, statusbar, commonFields)
     vSizeText <- gtkEntryNew()
     vSizeText$setWidthChars(5)
     vSizeText$setText("12")
+    vSizeText$"tooltip-text" <- "Vertex (node) size"
     vSizeFrame$add(vSizeText)
     fgnPlotOptionsL4Box$packStart(vSizeFrame, expand=TRUE)
     
@@ -310,11 +316,12 @@ tabPlotNetwork_fill <- function(mainWindow, statusbar, commonFields)
     vLabelCexText <- gtkEntryNew()
     vLabelCexText$setWidthChars(5)
     vLabelCexText$setText("0.75")
+    vLabelCexText$"tooltip-text" <- "Node label size"
     vLabelCexFrame$add(vLabelCexText)
     fgnPlotOptionsL4Box$packStart(vLabelCexFrame, expand=TRUE)
     
     # bgTransparency=0.4
-    bgTransparencyFrame <- gtkFrame("bg")
+    bgTransparencyFrame <- gtkFrame("bgTransp.")
     gtkFrameSetShadowType(bgTransparencyFrame, GtkShadowType["none"])
     bgTransparencyText <- gtkEntryNew()
     bgTransparencyText$"tooltip-text" <- "Background transparency"
@@ -329,6 +336,7 @@ tabPlotNetwork_fill <- function(mainWindow, statusbar, commonFields)
     eColorText <- gtkEntryNew()
     bgTransparencyText$setWidthChars(5)
     eColorText$setText("#323232")
+    eColorText$"tooltip-text" <- "Edge color"
     eColorFrame$add(eColorText)
     fgnPlotOptionsL4Box$packStart(eColorFrame, expand=FALSE)
     

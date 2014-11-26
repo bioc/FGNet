@@ -46,7 +46,7 @@ geneSets. If NULL geneSets are calculated automatically based on the organism, g
 logical. Should all the genes in the geneSet be altered in the same direction (up/down)? 
 }
   \item{onlyEssentialTerms}{
-logical. Wether to simplify the results and keep only the essential terms in the clustes.
+logical. Wether to simplify the results and keep only the essential terms in the clusters.
 }
   \item{compareType}{
 character: 'as.group', 'unpaired', '1ongroup'... See \link[gage:gage]{GAGE} for details.

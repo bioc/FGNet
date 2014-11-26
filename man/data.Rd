@@ -3,6 +3,7 @@
 \alias{organisms}
 \alias{groupTypes}
 \alias{FEA_tools}
+\alias{GOEvidenceCodes}
 \title{FGNet data}
 \description{
 FGNet package includes the following data files: organisms, groupTypes and FEA_tools
@@ -14,9 +15,12 @@ FGNet package includes the following data files: organisms, groupTypes and FEA_t
 \item{groupTypes: Matrix with the group types supported by FGNet (cluster, metagroup and gene-term set).}
 
 \item{FEA_tools:  Matrix with info about the FEA tools supported by FGNet.}
-}
+
+\item{GOEvidenceCodes:  Matrix with info about GO evidence codes. (from \url{http://geneontology.org/page/guide-go-evidence-codes}, on nov. 26, 2014.)}
 
 }
+}
+
 \usage{
     data(organisms)
     organisms
@@ -26,5 +30,8 @@ FGNet package includes the following data files: organisms, groupTypes and FEA_t
     
     data(FEA_tools)
     FEA_tools
+    
+    data(GOEvidenceCodes)
+    GOEvidenceCodes
 }
 

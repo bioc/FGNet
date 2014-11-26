@@ -62,6 +62,7 @@ tabFEA_fill <- function(mainWindow, statusbar, geneList)
     genesText$grabFocus()
     genesText$modifyFont(pangoFontDescriptionFromString(", monospace"))
     genesScroll$add(genesText)
+    genesScroll$"tooltip-text" <- "One gene per line."
     geneListArea$packStart(genesScroll, expand=TRUE)
     
     # Add genes from argument to field
@@ -75,6 +76,7 @@ tabFEA_fill <- function(mainWindow, statusbar, geneList)
     
     buttonLoadGenes <- gtkButton("Load from file")
     buttonLoadGenes$name <- "buttonLoadGenes"
+    buttonLoadGenes$"tooltip-text" <- "Text file containing the gene list (one gene per line)."
     gSignalConnect(buttonLoadGenes, "clicked", loadFileDialog, data=list(parentWindow=mainWindow, genesText=genesText))
     
     geneListArea$packStart(buttonLoadGenes, expand=FALSE)
@@ -119,7 +121,8 @@ tabFEA_fill <- function(mainWindow, statusbar, geneList)
     esetBox$packStart(esetTxt)
     esetTxt$visible <- FALSE
     # Button load
-    esetButton <- gtkButton("Select eset")
+    esetButton <- gtkButton("Select eSet")
+    esetButton$"tooltip-text" <- ".RData file with ExpressionSet"
     esetButton$name <- "esetButton"
     #esetH1Box <- gtkHBoxNew(homogeneous=FALSE, spacing=0)
     #esetH1Box$packStart(esetButton, expand=FALSE)
@@ -176,6 +179,7 @@ tabFEA_fill <- function(mainWindow, statusbar, geneList)
     box.Right$packStart(frameJobName, expand=FALSE)
     
     buttonSubmit <- gtkButton("Submit")
+    buttonSubmit$"tooltip-text" <- "Submit Functional Enrichment Analysis query"
     box.Right$packStart(buttonSubmit, expand=FALSE, FALSE, 2) #tabDavid$packStart(buttonSubmit_david,  expand = FALSE, FALSE, 10)
         
 

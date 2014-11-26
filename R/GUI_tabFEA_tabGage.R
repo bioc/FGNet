@@ -146,25 +146,6 @@ gageV2Box$packStart(gsRadioBoxH, expand = FALSE)
     geneSetsFrame$add(gageV2Box)
     tabGage$packStart(geneSetsFrame, expand=FALSE)
     
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
     # sameDirection=FALSE, compareType="as.group", onlyEssentialTerms=TRUE
     optionsGageBox <- gtkHBoxNew(homogeneous=FALSE, spacing=0)
     frameCompareTypeGage <- gtkFrame("Compare type")
@@ -172,19 +153,21 @@ gageV2Box$packStart(gsRadioBoxH, expand = FALSE)
     compareTypeTxt <- gtkEntryNew()
     #compareTypeTxt$setWidthChars(25)
     compareTypeTxt$setText("as.group")
+    compareTypeTxt$"tooltip-text"<- "- paired: ref and samp are of equal length and one-on-one paired by the original experimental design\n- as.group: group-on-group comparison between ref and samp\n- unpaired: one-on-one comparison between all possible ref and samp combinations\n- 1ongroup: comparison between one samp column at a time VS the average of all ref columns\n(see gage help for details)"
     frameCompareTypeGage$add(compareTypeTxt)
     optionsGageBox$packStart(frameCompareTypeGage, expand=TRUE)
     
     optionsGageCheckBox <- gtkVBoxNew(homogeneous=FALSE, spacing=0)
-    sameDirectionCheck <- gtkCheckButton("Same direction")
+    sameDirectionCheck <- gtkCheckButton("Same direction (all UP or all DOWN")
     sameDirectionCheck$active <- TRUE
+    sameDirectionCheck$"tooltip-text" <- "Should the genes in the gene-set be all UP or all DOWN regulated? \n(if unchecked, it will search for genes altered in any direction)"
     optionsGageCheckBox$packStart(sameDirectionCheck, expand=FALSE)
     
     onlyEssentialTermsCheck <- gtkCheckButton("Only essential terms")
     onlyEssentialTermsCheck$active <- TRUE
+    onlyEssentialTermsCheck$"tooltip-text" <- "Keep only essential terms in the clusters?"
     optionsGageCheckBox$packStart(onlyEssentialTermsCheck, expand=FALSE)
-    optionsGageBox$packStart(optionsGageCheckBox, expand=TRUE)
-    
+    optionsGageBox$packStart(optionsGageCheckBox, expand=TRUE)    
     
     tabGage$packStart(optionsGageBox, expand=FALSE)
     

@@ -43,6 +43,7 @@ tabGTL_fill <- function(mainWindow)
     names(GtL_minSupport) <- as.character(2:9)
     for (ch in names(GtL_minSupport)) gtkComboBoxAppendText(comboMinSupport, ch) 
     comboMinSupport$setActive(GtL_minSupport["4"])
+    comboMinSupport$"tooltip-text" <- "Minimum size of the gene-term set\n(in number of genes)"
     gtkComboBoxSetTitle(comboMinSupport, "MinSuport")
     frameMinSupport <- gtkFrame("Minimum support")
     gtkFrameSetShadowType(frameMinSupport, GtkShadowType["none"])

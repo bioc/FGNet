@@ -8,7 +8,7 @@ Performs the functional enrichment analysis through topGO [1].
 }
 \usage{
 fea_topGO(geneList, geneIdType = "ENSEMBL", geneLabels=NULL, organism = "Hs", 
-    annotations = c("GO_BP", "GO_MF", "GO_CC"), 
+    annotations = c("GO_BP", "GO_MF", "GO_CC"), evidence=NULL,
     genesUniverse = NULL, refPackage = NULL, 
     geneID2GO = NULL, nodeSize = 5, pValThr = 0.01, testStat = NULL, 
     jobName = NULL)
@@ -28,6 +28,9 @@ two letter code for the organism. See: \code{data(organisms);organisms}
 }
   \item{annotations}{
 character vector. Annotation spaces for the functional analysis. Accepted values: "GO_BP", "GO_MF", "GO_CC".
+}
+  \item{evidence}{
+character vector. Required evidence code for GO annotations. If NULL no filtering is done (all annotations are used). For full list, see the organism "EVIDENCE" keys: i.e \code{keys(org.Hs.eg.db, keytype="EVIDENCE")}. For non-comprehensive code description: \code{data(GOEvidenceCodes)}.
 }
   \item{genesUniverse}{
 character vector. List of genes used for background (i.e. all genes available in the chip).

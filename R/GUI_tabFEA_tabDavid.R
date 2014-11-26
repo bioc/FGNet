@@ -87,6 +87,7 @@ selectWs_fillFields <- function(aux, argsList)
             argsList$annotsArea$add(checkAnnotsDavid[[annot]])
         }  
         gtkWidgetSetSensitive(argsList$optionBoxV, TRUE) 
+        gtkWidgetSetSensitive(argsList$argsText, TRUE)
     }
     
     if(!is.null(msgTxt))
@@ -145,6 +146,7 @@ tabDavid_fill <- function(mainWindow, davidVars)
     emailText <- gtkEntryNew()
     emailText$setWidthChars(25)
     emailText$setText("")
+    emailText$"tooltip-text" <- "Insert your registered email to connect to DAVID Web Service."
     emailBox$packStart(emailText, expand = FALSE)
     
     # Connect button
@@ -202,7 +204,7 @@ tabDavid_fill <- function(mainWindow, davidVars)
     # Signalconnects:
     gSignalConnect(apiRadio, "clicked", selectAPI, data=list(parentWindow=mainWindow, davidVars=davidVars, frameEmail=frameEmail, argsText=argsText, comboIdType=comboIdType, annotsArea=annotsArea, optionBoxV=optionBoxV))
     gSignalConnect(wsRadio, "clicked", selectWs, data=list(parentWindow=mainWindow, davidVars=davidVars, frameEmail=frameEmail, argsText=argsText, optionBoxV=optionBoxV,  emailText=emailText, comboIdType=comboIdType, annotsArea=annotsArea))
-    gSignalConnect(wsConnectButton, "clicked", selectWs_fillFields, data=list(parentWindow=mainWindow, davidVars=davidVars, reconnect=TRUE, emailText=emailText, comboIdType=comboIdType, annotsArea=annotsArea,optionBoxV=optionBoxV))
+    gSignalConnect(wsConnectButton, "clicked", selectWs_fillFields, data=list(parentWindow=mainWindow, davidVars=davidVars, reconnect=TRUE, emailText=emailText, comboIdType=comboIdType, annotsArea=annotsArea, argsText=argsText, optionBoxV=optionBoxV))
     
     tabDavid$add(optionBoxV)
     #######################################################################

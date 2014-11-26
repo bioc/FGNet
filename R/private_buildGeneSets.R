@@ -26,7 +26,7 @@ refList <- function(dbPackage, geneIdType)
 
 # Builds gene-term sets based on Bioconductor databases: Organisms and GO/KEGG/REACTOME
 # used by query_topGO and query_gage
-buildGeneSets <- function(organismDb, geneIDtype, annotations=c("GO_BP","GO_MF","GO_CC","KEGG","REACTOME"), termLabel=c("TERM","ID"))
+buildGeneSets <- function(organismDb, geneIDtype, annotations=c("GO_BP","GO_MF","GO_CC","KEGG","REACTOME"), evidence=NULL, termLabel=c("TERM","ID"))
 {
     if(termLabel[1] == "TERM") termAsLabel <- TRUE
     # Check and load required libraries
@@ -53,6 +53,8 @@ buildGeneSets <- function(organismDb, geneIDtype, annotations=c("GO_BP","GO_MF",
     {
         tableGoGenes <- suppressWarnings(select(org.db, keys=allGenes, columns="GO", keytype=geneIDtype))
         tableGoGenes <- tableGoGenes[!is.na(tableGoGenes[,"GO"]),] # Bueno o malo?
+        if(!is.null(evidence)) tableGoGenes <- tableGoGenes[tableGoGenes$EVIDENCE %in% evidence, ]
+        
         tableGoGenesSplit <- split(tableGoGenes, tableGoGenes$ONTOLOGY) # Split by ontology
         tableGoGenesSplit <- tableGoGenesSplit[which(paste("GO_", names(tableGoGenesSplit), sep="") %in% annotations)] # Select the requested ontologies
         
