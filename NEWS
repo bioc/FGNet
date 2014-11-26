@@ -5,7 +5,10 @@ NEW FEATURES
     o HTML vignette
     o Bipartite network: Nodes are now circles and squares (only available for "static" plot)
     o PlotGoAncestors: added argument nCharTerm
-    
+
+BUGFIXES
+    o fea2incidMat: filter negative values
+      
 CHANGES IN VERSION 3.0
 ------------------------
 

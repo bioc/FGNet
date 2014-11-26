@@ -442,7 +442,7 @@ createHtml <- function(htmlFileName, feaResults, jobName, tablesGenes, tablesTer
     hwrite(c(imageTable), p, border=0, class="ImageTable")
     
     clustSectionHeader <- ""
-    if(sortMG) clustSectionHeader <- paste(" (sorted by ",filterAttribute,")", sep="")
+    # if(sortMG) clustSectionHeader <- paste(" (sorted by ",filterAttribute,")", sep="")
     clustSectionHeader <- paste(grType, "s", clustSectionHeader,": ", sep="")
     
     hwrite(clustSectionHeader, p, heading=3, br=FALSE)
