@@ -165,8 +165,8 @@ functionalNetwork <- function(incidMatrices, plotType=c("default", "bipartite")[
         if(plotExpression == "fill")
         {
             vExpr[which(geneExpr == 0)] <- "white"
-            if(any(geneExpr < 0))   vExpr[which(geneExpr < 0)]  <- color.scale( geneExpr[which(geneExpr < 0)], cs1=c(0,1), cs2=c(0.5,1),cs3=c(0,1),alpha=1, xrange=range(min(geneExpr,na.rm=TRUE),0))
-            if(any(geneExpr > 0))   vExpr[which(geneExpr > 0)]  <- color.scale( geneExpr[which(geneExpr > 0)], cs1=c(1,1), cs2=c(1,0),cs3=c(1,0),alpha=1, xrange=range(0, max(geneExpr,na.rm=TRUE)))
+            if(any(geneExpr < 0,na.rm=TRUE))   vExpr[which(geneExpr < 0)]  <- color.scale( geneExpr[which(geneExpr < 0)], cs1=c(0,1), cs2=c(0.5,1),cs3=c(0,1),alpha=1, xrange=range(min(geneExpr,na.rm=TRUE),0))
+            if(any(geneExpr > 0,na.rm=TRUE))   vExpr[which(geneExpr > 0)]  <- color.scale( geneExpr[which(geneExpr > 0)], cs1=c(1,1), cs2=c(1,0),cs3=c(1,0),alpha=1, xrange=range(0, max(geneExpr,na.rm=TRUE)))
             
             vColor <- vExpr
         }
