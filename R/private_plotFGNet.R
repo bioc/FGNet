@@ -4,6 +4,27 @@
 
 plotFGNet <- function(graph2plot, plotType, plotOutput, plotExpression, vertexLayout, eWidth, eColor, vColor, vExpr, vSize, vLabelCex, vShape="circle", colores, markGroup=NULL, trCols=NULL, plotTitle, plotTitleSub, plotLegend, legendPrefix, legendText)
 {
+    save(graph2plot, file="graph2plot.RData")
+    
+    if(length(vSize)>1)
+    {
+        # Default value        
+        if("default" %in% names(vSize))
+        {
+            def <- vSize["default"]
+            vSize <- vSize[-which(names(vSize)=="default")]
+        }else{
+            def <- mean(vSize)        
+        }
+        
+        tmpVSize <- rep(def, length(V(graph2plot)))
+        names(tmpVSize) <- V(graph2plot)$name
+        
+        vSize <- vSize[names(vSize)%in% names(tmpVSize)]
+        tmpVSize[names(vSize)] <- vSize
+        vSize <-tmpVSize
+    }
+    
     #####################################################################################################
     #########################################  Draw PLOTS  ##############################################
     if(plotOutput=="dynamic")
@@ -11,7 +32,7 @@ plotFGNet <- function(graph2plot, plotType, plotOutput, plotExpression, vertexLa
         # if(is.null(plotIntersectionNetwork)) plotIntersectionNetwork <- TRUE
         if(ecount(graph2plot)>0)
         {
-            vBorder <- "darkgrey"
+            vBorder <- "#888888"
             if(plotExpression == "fill") vBorder <- sub("#FFFFFF", "#888888", vColor)
             if(plotExpression == "border")
             {
@@ -31,7 +52,9 @@ plotFGNet <- function(graph2plot, plotType, plotOutput, plotExpression, vertexLa
             add <- FALSE
             if(plotExpression == "border")
             {
-                plot(graph2plot, layout=vertexLayout, edge.width=eWidth, edge.color=eColor, vertex.color=vExpr, vertex.frame.color=vExpr, vertex.label="",  vertex.size=ifelse(vExpr=="#888888",0,vSize+3)) 
+                outerVsize <- vSize+3
+                outerVsize[which(vExpr=="#888888")] <- 0
+                plot(graph2plot, layout=vertexLayout, edge.width=eWidth, edge.color=eColor, vertex.color=vExpr, vertex.frame.color=vExpr, vertex.label="",  vertex.size=outerVsize) 
                 add <- TRUE
             }
             
@@ -44,7 +67,15 @@ plotFGNet <- function(graph2plot, plotType, plotOutput, plotExpression, vertexLa
                 plot(graph2plot, layout=vertexLayout, edge.width=eWidth, edge.color=eColor, vertex.label="", mark.groups=markGroup, mark.col=trCols, mark.border=colores, vertex.size=0)
             }else
             { # Border or default/false
-                plot(graph2plot, layout=vertexLayout, edge.width=eWidth, edge.color=eColor, vertex.label="", mark.groups=markGroup, mark.col=trCols, mark.border=colores, vertex.color=vExpr, vertex.frame.color=vExpr, vertex.size=ifelse(vExpr=="#888888",0,vSize+3))
+                if(all(vExpr=="#888888"))
+                {
+                    outerVsize <- 0
+                }else
+                {
+                    outerVsize <- vSize+3
+                    outerVsize[which(vExpr=="#888888")] <- 0
+                }               
+                plot(graph2plot, layout=vertexLayout, edge.width=eWidth, edge.color=eColor, vertex.label="", mark.groups=markGroup, mark.col=trCols, mark.border=colores, vertex.color=vExpr, vertex.frame.color=vExpr, vertex.size=outerVsize)
             }
             
             # Legend

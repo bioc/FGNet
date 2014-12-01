@@ -7,6 +7,8 @@ NEW FEATURES
     o PlotGoAncestors: added argument nCharTerm
     o clustersDistance: added argument 'clustMethod' and set "average" as default clustering method.
     o GO evidence: Added argument to fea_topGO (new data object available: GOEvidenceCodes)
+    o Added argument vExprColors to functionalNetwork.
+    o Vertex size now allows to set a value for each gene.
     
 BUGFIXES
     o fea2incidMat: filter negative values

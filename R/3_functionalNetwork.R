@@ -14,7 +14,7 @@
 # plotAllMg=FALSE
 
 
-functionalNetwork <- function(incidMatrices, plotType=c("default", "bipartite")[1], plotOutput="static", plotTitle="Functional Network", plotTitleSub=NULL, legendPrefix=NULL, legendText=NULL,  geneExpr=NULL, plotExpression=c("border","fill"),  vSize=12, vLabelCex=2/3, vLayout=NULL,keepColors=TRUE, bgTransparency=0.4, eColor="#323232", eWidth=NULL, weighted=FALSE, keepAllNodes=FALSE, plotAllMg=FALSE)
+functionalNetwork <- function(incidMatrices, plotType=c("default", "bipartite")[1], plotOutput="static", plotTitle="Functional Network", plotTitleSub=NULL, legendPrefix=NULL, legendText=NULL,  geneExpr=NULL, plotExpression=c("border","fill"), vExprColors=c(neg="#008000", zero="white", pos="#FF2020"), vSize=12, vLabelCex=2/3, vLayout=NULL,keepColors=TRUE, bgTransparency=0.4, eColor="#323232", eWidth=NULL, weighted=FALSE, keepAllNodes=FALSE, plotAllMg=FALSE)
 {    
     #####################################################################################################
     ########################### Check & initialize arguments ############################################
@@ -84,7 +84,8 @@ functionalNetwork <- function(incidMatrices, plotType=c("default", "bipartite")[
     if(!is.character(plotExpression)) stop("plotExpression should be either 'border' or 'fill'.")
     plotExpression <- tolower(plotExpression[1])
     if(!plotExpression %in% c("border","fill")) stop("plotExpression should be either 'border' or 'fill'.")
-    
+    if(length(vExprColors)!=3) stop("vExprColors should be a character vector of length 3: colors for negative, zero and positive values.")
+    if(is.null(names(vExprColors))) names(vExprColors) <- c("neg", "zero", "pos")
     # Other plot options
     if(!is.numeric(vSize))  stop("vSize should be numeric.")
     if(!is.numeric(vLabelCex))  stop("vLabelCex should be numeric.")
@@ -159,14 +160,17 @@ functionalNetwork <- function(incidMatrices, plotType=c("default", "bipartite")[
     {
         geneExpr <- geneExpr[rownames(gtSetsMatrix)] # Subset, in case the whole eset was provided
         
-        vExpr <- rep("#888888", length(geneExpr)) # Grey
+        vExpr <- rep("#AAAAAA", length(geneExpr)) # Grey
         names(vExpr) <- names(geneExpr)  
-        
+
         if(plotExpression == "fill")
         {
+            vExprColors <- col2rgb(vExprColors, alpha = FALSE)/255
             vExpr[which(geneExpr == 0)] <- "white"
-            if(any(geneExpr < 0,na.rm=TRUE))   vExpr[which(geneExpr < 0)]  <- color.scale( geneExpr[which(geneExpr < 0)], cs1=c(0,1), cs2=c(0.5,1),cs3=c(0,1),alpha=1, xrange=range(min(geneExpr,na.rm=TRUE),0))
-            if(any(geneExpr > 0,na.rm=TRUE))   vExpr[which(geneExpr > 0)]  <- color.scale( geneExpr[which(geneExpr > 0)], cs1=c(1,1), cs2=c(1,0),cs3=c(1,0),alpha=1, xrange=range(0, max(geneExpr,na.rm=TRUE)))
+#             if(any(geneExpr < 0,na.rm=TRUE))   vExpr[which(geneExpr < 0)]  <- color.scale( geneExpr[which(geneExpr < 0)], cs1=c(0,1), cs2=c(0.5,1),cs3=c(0,1),alpha=1, xrange=range(min(geneExpr,na.rm=TRUE),0))
+#             if(any(geneExpr > 0,na.rm=TRUE))   vExpr[which(geneExpr > 0)]  <- color.scale( geneExpr[which(geneExpr > 0)], cs1=c(1,1), cs2=c(1,0),cs3=c(1,0), alpha=1, xrange=range(0, max(geneExpr,na.rm=TRUE)))
+            if(any(geneExpr < 0,na.rm=TRUE))   vExpr[which(geneExpr < 0)]  <- color.scale( geneExpr[which(geneExpr < 0)], cs1=vExprColors["red",c("neg","zero")], cs2=vExprColors["green",c("neg","zero")], cs3=vExprColors["blue",c("neg","zero")],alpha=1, xrange=range(min(geneExpr,na.rm=TRUE),0))
+            if(any(geneExpr > 0,na.rm=TRUE))   vExpr[which(geneExpr > 0)]  <- color.scale( geneExpr[which(geneExpr > 0)], cs1=vExprColors["red",c("zero","pos")], cs2=vExprColors["green",c("zero","pos")], cs3=vExprColors["blue",c("zero","pos")], alpha=1, xrange=range(0, max(geneExpr,na.rm=TRUE)))
             
             vColor <- vExpr
         }
@@ -175,9 +179,9 @@ functionalNetwork <- function(incidMatrices, plotType=c("default", "bipartite")[
         {
             # Expresion en borde de nodo. 
             ##### Borde aparte (2 plots: back-expresion, front-mg)
-            vExpr[which(geneExpr == 0)]  <- "white"
-            vExpr[which(geneExpr > 0)]  <- "#FF4949"
-            vExpr[which(geneExpr < 0)]  <- "#008000"
+            vExpr[which(geneExpr == 0)]  <- vExprColors["zero"]
+            vExpr[which(geneExpr > 0)]  <-  vExprColors["pos"] # "#FF4949"
+            vExpr[which(geneExpr < 0)]  <-  vExprColors["neg"] #"#008000"
         }
     } else { 
         vExpr <- "#888888" 

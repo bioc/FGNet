@@ -14,6 +14,7 @@ functionalNetwork(incidMatrices, plotType = c("default", "bipartite")[1],
     plotOutput = "static", plotTitle = "Functional Network", 
     plotTitleSub = NULL, legendPrefix = NULL, legendText = NULL, 
     geneExpr = NULL, plotExpression = c("border", "fill"), 
+    vExprColors=c(neg="#008000", zero="white", pos="#FF2020"),
     vSize = 12, vLabelCex = 2/3, vLayout = NULL, keepColors = TRUE, 
     bgTransparency = 0.4, eColor = "#323232", eWidth=NULL, weighted = FALSE, 
     keepAllNodes = FALSE, plotAllMg = FALSE)
@@ -53,8 +54,11 @@ numeric. Named vector with the relative expression value of the gene (node). 0 i
   \item{plotExpression}{
 character. Determines the way to plot the expression: "border" adds a red or green border to the node, "fill" colors the whole with the expression color instead of the metagroup color.
 }
+  \item{vExprColors}{
+character. Vector with the colors for expression: first color for negative values, second for zero, and third for positive.
+}
   \item{vSize}{
-numeric. Vertex size.
+numeric. Vertex size. If named, it allows to set a value for each gene. Name as "default" to set a default value, otherwise the default value is the mean.
 }
   \item{vLabelCex}{
 numeric. A numerical value giving the amount by which plotting text and symbols should be magnified relative to the default label size. 
@@ -124,7 +128,7 @@ results <- fea_gtLinker_getResults(jobID)
 incidMat <- fea2incidMat(results, filterAttribute="Silhouette Width")
 
 functionalNetwork(incidMat, geneExpr=genesYeastExpr)
-functionalNetwork(incidMat, plotType="bipartite", plotOutput="dynamic")
+functionalNetwork(incidMat, plotType="bipartite", plotOutput="dynamic", vSize=c(default=10, GLC7=20, PTA1=20))
 
 getTerms(results)
 
