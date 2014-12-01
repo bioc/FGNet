@@ -1,7 +1,7 @@
 # functCall <- feaResults$call[[1]]
 
 queryArgsAsCharacter <- function(functCall)
-{    
+{       
     # As list:
     queryArgs <- formals(eval(as.name(functCall[[1]]))) # Default arguments
     queryArgs <- sapply(names(queryArgs),function(x) # Given arguments (raw value, can be a variable name or not)
@@ -14,7 +14,7 @@ queryArgsAsCharacter <- function(functCall)
             return(queryArgs[[x]]) # NULL
         }
     })
-    queryArgs <- c(fun=as.character(as.name(functCall[[1]])), queryArgs)    
+    queryArgs <- as.list(c(fun=as.character(as.name(functCall[[1]])), queryArgs))
     
     # Eval/format as string:    
     if(("organism" %in% names(queryArgs)) && is.name(queryArgs$organism))

@@ -160,7 +160,7 @@ functionalNetwork <- function(incidMatrices, plotType=c("default", "bipartite")[
     {
         geneExpr <- geneExpr[rownames(gtSetsMatrix)] # Subset, in case the whole eset was provided
         
-        vExpr <- rep("#AAAAAA", length(geneExpr)) # Grey
+        vExpr <- rep("#888888", length(geneExpr)) # Grey
         names(vExpr) <- names(geneExpr)  
 
         if(plotExpression == "fill")

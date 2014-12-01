@@ -7,7 +7,7 @@ readGeneTermSets <- function(fileName, tool=NULL, simplifyGage=TRUE)
     # Read file
     sepChar <- "\t"
     geneTermSets <- read.table(fileName, sep=sepChar, header=TRUE, quote="")
-    any(is.na(geneTermSets$Genes) || is.na(geneTermSets$GenesIDs))
+    if(any(is.na(geneTermSets$Genes)) || ("GenesIDs" %in% colnames(geneTermSets) && any(is.na(geneTermSets$GenesIDs))))
     {
         warning("Some gene-term sets contain no genes.")
         geneTermSets$Genes[is.na(geneTermSets$Genes)] <- ""

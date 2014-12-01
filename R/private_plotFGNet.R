@@ -3,9 +3,7 @@
 # mgJoinedGraph = intersectionNetwork (bipartite)
 
 plotFGNet <- function(graph2plot, plotType, plotOutput, plotExpression, vertexLayout, eWidth, eColor, vColor, vExpr, vSize, vLabelCex, vShape="circle", colores, markGroup=NULL, trCols=NULL, plotTitle, plotTitleSub, plotLegend, legendPrefix, legendText)
-{
-    save(graph2plot, file="graph2plot.RData")
-    
+{    
     if(length(vSize)>1)
     {
         # Default value        
@@ -53,8 +51,13 @@ plotFGNet <- function(graph2plot, plotType, plotOutput, plotExpression, vertexLa
             if(plotExpression == "border")
             {
                 outerVsize <- vSize+3
+                if(length(outerVsize)==1) 
+                {
+                    outerVsize <- setNames(rep(outerVsize, length(vExpr)), names(vExpr))
+                }
                 outerVsize[which(vExpr=="#888888")] <- 0
-                plot(graph2plot, layout=vertexLayout, edge.width=eWidth, edge.color=eColor, vertex.color=vExpr, vertex.frame.color=vExpr, vertex.label="",  vertex.size=outerVsize) 
+                
+                plot(graph2plot, layout=vertexLayout, edge.width=eWidth, edge.color=eColor, vertex.color=vExpr, vertex.frame.color=vExpr, vertex.label="",  vertex.size=outerVsize, vertex.shape=vShape) 
                 add <- TRUE
             }
             
@@ -73,7 +76,7 @@ plotFGNet <- function(graph2plot, plotType, plotOutput, plotExpression, vertexLa
                 }else
                 {
                     outerVsize <- vSize+3
-                    outerVsize[which(vExpr=="#888888")] <- 0
+                    if(length(vSize)>1) outerVsize[which(vExpr=="#888888")] <- 0
                 }               
                 plot(graph2plot, layout=vertexLayout, edge.width=eWidth, edge.color=eColor, vertex.label="", mark.groups=markGroup, mark.col=trCols, mark.border=colores, vertex.color=vExpr, vertex.frame.color=vExpr, vertex.size=outerVsize)
             }

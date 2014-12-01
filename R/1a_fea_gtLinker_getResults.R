@@ -191,6 +191,7 @@ fea_gtLinker_getResults <- function(jobID=NULL, organism=NULL, jobName=NULL, alr
     }# End download
     
     queryArgs <- list(queryArgsAsCharacter(match.call()))
+    save(queryArgs, file="queryArgs.RData")
     ret <- c(queryArgs=queryArgs, format_gtLinker(jobName, organism))
     setwd(currWD)
     
