@@ -128,7 +128,7 @@ fea2incidMat <- function(feaResults, key="Genes", sepChar=NULL, clusterColumn=NU
         }
     } else
     {
-      ord <- geneTermSets[,clusterColumn]
+      ord <- unlist(geneTermSets[,clusterColumn])
       if(all(!is.na(suppressWarnings(as.numeric(ord))))) ord <-as.numeric(ord)
       geneTermSets <- geneTermSets[order(ord),, drop=FALSE]        
     }
@@ -155,7 +155,7 @@ fea2incidMat <- function(feaResults, key="Genes", sepChar=NULL, clusterColumn=NU
     if(nrow(geneTermSets)==0) stop("There are no gene-term sets.")
     
     # Columna 1: Metagrupo/Cluster al que pertenece
-    names(gtSetsList) <- paste(as.character(geneTermSets[,clusterColumn]), ".", unlist(lapply(table(factor(geneTermSets[,clusterColumn]))[unique(geneTermSets[,clusterColumn])], function(x) 1:x)), sep="")
+    names(gtSetsList) <- paste(as.character(geneTermSets[,clusterColumn]), ".", unlist(lapply(table(factor(unlist(geneTermSets[,clusterColumn])))[unique(unlist(geneTermSets[,clusterColumn]))], function(x) 1:x)), sep="")
      
     # Remove filtered terms from metagroups (only GeneTermLinker)
     if(removeFilteredGtl && key=="Terms")
