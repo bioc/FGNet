@@ -1,0 +1,19 @@
+citEntry(entry="Article",
+  author = personList( as.person("Sara Aibar" ),
+           as.person("Celia Fontanillo" ),
+           as.person("Conrad Droste" ),
+           as.person("Javier De Las Rivas" )),
+  title ="Functional Gene Networks: R/Bioc package to generate and analyze gene networks derived from functional enrichment and clustering",
+  journal ="Bioinformatics",
+  volume ="",
+  number = "",
+  year ="2015", 
+  doi = "10.1093/bioinformatics/btu864",
+  url ="http://bioinformatics.oxfordjournals.org/content/early/2015/02/02/bioinformatics.btu864.full",
+  textVersion = "Aibar S, Fontanillo C, Droste C, De Las Rivas J (2015) Functional Gene Networks: R/Bioc package to generate and analyze gene networks derived from functional enrichment and clustering. Bioinformatics doi:10.1093/bioinformatics/btu864"
+)
+
+
+
+
+
