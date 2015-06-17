@@ -165,16 +165,33 @@ functionalNetwork <- function(incidMatrices, plotType=c("default", "bipartite")[
 
         if(plotExpression == "fill")
         {
-            vExprColors <- col2rgb(vExprColors, alpha = FALSE)/255
+            vExprColorsRGB <- col2rgb(vExprColors, alpha = FALSE)/255
             vExpr[which(geneExpr == 0)] <- "white"
 #             if(any(geneExpr < 0,na.rm=TRUE))   vExpr[which(geneExpr < 0)]  <- color.scale( geneExpr[which(geneExpr < 0)], cs1=c(0,1), cs2=c(0.5,1),cs3=c(0,1),alpha=1, xrange=range(min(geneExpr,na.rm=TRUE),0))
 #             if(any(geneExpr > 0,na.rm=TRUE))   vExpr[which(geneExpr > 0)]  <- color.scale( geneExpr[which(geneExpr > 0)], cs1=c(1,1), cs2=c(1,0),cs3=c(1,0), alpha=1, xrange=range(0, max(geneExpr,na.rm=TRUE)))
-            if(any(geneExpr < 0,na.rm=TRUE))   vExpr[which(geneExpr < 0)]  <- color.scale( geneExpr[which(geneExpr < 0)], cs1=vExprColors["red",c("neg","zero")], cs2=vExprColors["green",c("neg","zero")], cs3=vExprColors["blue",c("neg","zero")],alpha=1, xrange=range(min(geneExpr,na.rm=TRUE),0))
-            if(any(geneExpr > 0,na.rm=TRUE))   vExpr[which(geneExpr > 0)]  <- color.scale( geneExpr[which(geneExpr > 0)], cs1=vExprColors["red",c("zero","pos")], cs2=vExprColors["green",c("zero","pos")], cs3=vExprColors["blue",c("zero","pos")], alpha=1, xrange=range(0, max(geneExpr,na.rm=TRUE)))
-            
+            if(any(geneExpr < 0,na.rm=TRUE))   
+            {
+                if(length(table(geneExpr[which(geneExpr < 0)]))==1)
+                {
+                    vExpr[which(geneExpr < 0)] <- vExprColors["neg"]            
+                }else
+                {
+                    vExpr[which(geneExpr < 0)] <- color.scale(geneExpr[which(geneExpr < 0)], cs1=vExprColorsRGB["red",c("neg","zero")], cs2=vExprColorsRGB["green",c("neg","zero")], cs3=vExprColorsRGB["blue",c("neg","zero")], alpha=1, xrange=range(min(geneExpr,na.rm=TRUE),0))                   
+                }
+            }
+            if(any(geneExpr > 0,na.rm=TRUE))  
+            {
+                if(length(table(geneExpr[which(geneExpr > 0)]))==1)
+                {
+                    vExpr[which(geneExpr > 0)] <- vExprColors["pos"]            
+                }else
+                {
+                    vExpr[which(geneExpr > 0)]  <- color.scale( geneExpr[which(geneExpr > 0)], cs1=vExprColorsRGB["red",c("zero","pos")], cs2=vExprColorsRGB["green",c("zero","pos")], cs3=vExprColorsRGB["blue",c("zero","pos")], alpha=1, xrange=range(0, max(geneExpr,na.rm=TRUE)))
+                }
+            }
+                
             vColor <- vExpr
         }
-        
         if(plotExpression == "border")
         {
             # Expresion en borde de nodo. 
@@ -187,6 +204,8 @@ functionalNetwork <- function(incidMatrices, plotType=c("default", "bipartite")[
         vExpr <- "#888888" 
         plotExpression <- FALSE        
     }
+
+print(vExpr)
     
 ## RECOLOCAR:     geneExpr[]
 # PARA default: V(graphCommonGTsets)$name
