@@ -1,3 +1,9 @@
+CHANGES IN VERSION 3.3
+------------------------
+
+    o Updated for compatibility with igraph 1.0 and recent changes to DAVID API
+
+
 CHANGES IN VERSION 3.2
 ------------------------
 NEW FEATURES

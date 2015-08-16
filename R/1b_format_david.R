@@ -8,7 +8,7 @@ format_david <- function(fileName, jobName=NULL, geneLabels=NULL, moveFile=FALSE
     
     ###############################
     # Prepare jobName / folder
-    isURL <- grepl("http://", fileName)
+    isURL <- grepl("https://", fileName)
     
     if(is.null(jobName)) 
     {
@@ -31,7 +31,9 @@ format_david <- function(fileName, jobName=NULL, geneLabels=NULL, moveFile=FALSE
     {
         setwd(currWD)
         downloadedFileName <- paste(jobName, "_raw.txt", sep="")
-        download.file(fileName, destfile=downloadedFileName, quiet=TRUE)
+        # download.file(fileName, destfile=downloadedFileName, quiet=TRUE)
+        finalReply <- getURL(fileName, ssl.verifypeer = FALSE) # with https...
+        write(finalReply, file=downloadedFileName)
         fileName <- downloadedFileName
         message(paste("Raw results downloaded and saved as ", fileName,"'", sep=""))
     }else{
