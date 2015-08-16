@@ -134,15 +134,14 @@ getTerms(results)
 
 # To modify the layout and plot as static network (with metagroup background)...
 library(igraph)
-saveLayout <- tkplot.getcoords(1)   # tkp.id (ID of the tkplot window)
-functionalNetwork(incidMat, vLayout=saveLayout, plotType="bipartite")
+# saveLayout <- tkplot.getcoords(1)   # tkp.id (ID of the tkplot window)
+# functionalNetwork(incidMat, vLayout=saveLayout, plotType="bipartite")
 
 # Only return the network, without plotting
 fNw <- functionalNetwork(incidMat, plotOutput="none") 
 class(fNw)
 names(fNw)
 betweenness(fNw$iGraph$commonClusters)
-igraph.to.graphNEL(fNw$iGraph$commonClusters)
 
 ###################################################
 # Term-based network

@@ -204,8 +204,6 @@ functionalNetwork <- function(incidMatrices, plotType=c("default", "bipartite")[
         vExpr <- "#888888" 
         plotExpression <- FALSE        
     }
-
-print(vExpr)
     
 ## RECOLOCAR:     geneExpr[]
 # PARA default: V(graphCommonGTsets)$name

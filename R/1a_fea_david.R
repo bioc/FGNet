@@ -132,25 +132,25 @@ fea_david <- function(geneList, geneIdType="ENSEMBL_GENE_ID", geneLabels=NULL, a
         annotations <- paste(annotations, collapse=",")
         
         tool <- "term2term"
-        queryUrl <- paste("http://david.abcc.ncifcrf.gov/api.jsp?type=", geneIdType, "&ids=", geneList, "&tool=", tool, "&annot=", annotations, sep="") # Do not change order
+        queryUrl <- paste("https://david.ncifcrf.gov/api.jsp?type=", geneIdType, "&ids=", geneList, "&tool=", tool, "&annot=", annotations, sep="") # Do not change order
         # URL has a charactor size limitation (<= 2048 characters in total), i.e., the very large gene list may not be able to completely passed by URL.
         if(nchar(queryUrl)>2048) stop("Query url too long.")
                 
         curlHandle <- getCurlHandle(cookiefile = "CurlHandleCookie.txt")
-        reply <- getURL(queryUrl, curl = curlHandle)
+        reply <- getURL(queryUrl, curl = curlHandle, ssl.verifypeer = FALSE)
         #writeChar(reply, "reply.txt")
         
         replyRowids <- getContent(reply, attribute = 'document.apiForm.rowids.value="')
         replyAnnot <- getContent(reply, attribute = 'document.apiForm.annot.value="')
         
-        getURL <- paste("http://david.abcc.ncifcrf.gov/term2term.jsp?rowids=", replyRowids, "&annot=", replyAnnot, sep="")
+        getURL <- paste("https://david.ncifcrf.gov/term2term.jsp?rowids=", replyRowids, "&annot=", replyAnnot, sep="")
         if(nchar(getURL) < 2048)
         {
-            finalReply <- getURL(getURL, curl = curlHandle)
+            finalReply <- getURL(getURL, curl = curlHandle, ssl.verifypeer = FALSE)
         }else
         {    
             finalReply <- tryCatch({
-                postForm("http://david.abcc.ncifcrf.gov/term2term.jsp",
+                postForm("https://david.ncifcrf.gov/term2term.jsp",
                                  curl = curlHandle,
                                  rowids = replyRowids,
                                  annot = replyAnnot)
@@ -171,7 +171,7 @@ fea_david <- function(geneList, geneIdType="ENSEMBL_GENE_ID", geneLabels=NULL, a
         
         if(grepl(".txt", downloadFile))
         {
-            downloadFile <- paste("http://david.abcc.ncifcrf.gov/data/download/", downloadFile, sep="")
+            downloadFile <- paste("https://david.ncifcrf.gov/data/download/", downloadFile, sep="")
             moveFile <- FALSE
         }else 
         {
@@ -192,3 +192,4 @@ fea_david <- function(geneList, geneIdType="ENSEMBL_GENE_ID", geneLabels=NULL, a
     ret <- format_david(downloadFile, jobName=jobName, geneLabels=geneLabels, moveFile=moveFile)
     invisible(c(queryArgs=queryArgs,ret))
 }
+
