@@ -65,6 +65,7 @@ fea_david <- function(geneList, geneIdType="ENSEMBL_GENE_ID", geneLabels=NULL, a
             davidConnection <- DAVIDWebService$new(email=email)
         }, warning = function (w)
         {
+            if(grepl("SSL", w)) w <- paste("Due to recent changes in DAVID, web service query is temporally not available.\nTry the query through the Web API (i.e. remove 'email' parameter) or other of the FEA tools.", w, sep="\n")
             errorMsgDavid(w)
         })
                 
