@@ -1,6 +1,5 @@
 # results <- getResults_David (fileName)
-# copyFile (for internal use)
-format_david <- function(fileName, jobName=NULL, geneLabels=NULL, moveFile=FALSE)
+format_david <- function(fileName, jobName=NULL, geneLabels=NULL, moveFile=FALSE, downloadFile=TRUE)
 {
     # Check arguments
     if(!is.character(fileName)) stop("fileName not valid.")
@@ -14,11 +13,12 @@ format_david <- function(fileName, jobName=NULL, geneLabels=NULL, moveFile=FALSE
     {
         if(isURL) jobName <- paste(sample(100000:999999,size=1), "_DavidClustering",sep="")
         if(!isURL) jobName <- sub("_raw", "", getJobName(fileName), fixed=TRUE)
-    }
-    folder <- jobName
-
+    }    
+    if(downloadFile) folder <- jobName
+    if(!downloadFile) folder <- tempdir()
+ 
     # Create folder
-    if((!file.exists(file.path(folder))))
+    if((!file.exists(file.path(folder)))) 
     {
         dir.create(file.path(folder))        
     }
@@ -29,13 +29,12 @@ format_david <- function(fileName, jobName=NULL, geneLabels=NULL, moveFile=FALSE
     # Download file    
     if(isURL) 
     {
-        setwd(currWD)
         downloadedFileName <- paste(jobName, "_raw.txt", sep="")
-        # download.file(fileName, destfile=downloadedFileName, quiet=TRUE)
         finalReply <- getURL(fileName, ssl.verifypeer = FALSE) # with https...
         write(finalReply, file=downloadedFileName)
         fileName <- downloadedFileName
-        message(paste("Raw results downloaded and saved as ", fileName,"'", sep=""))
+        
+        if(downloadFile) message(paste("Raw results downloaded and saved as ", fileName,"'", sep=""))
     }else{
         if(!file.exists(fileName)) 
         {
@@ -50,7 +49,7 @@ format_david <- function(fileName, jobName=NULL, geneLabels=NULL, moveFile=FALSE
             file.copy(tmp, downloadedFileName, overwrite=TRUE) 
             file.remove(tmp)
             if(moveFile) file.remove(fileName) 
-            message(paste(fileName, " copied to '", folder,.Platform$file.sep, downloadedFileName,"'", sep=""))
+            if(downloadFile) message(paste("Results file copied to '", folder,.Platform$file.sep, downloadedFileName,"'", sep=""))
         }
         fileName <- downloadedFileName
     }

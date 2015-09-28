@@ -13,7 +13,7 @@ fea_david(geneList, geneIdType = "ENSEMBL_GENE_ID", geneLabels=NULL,
   "KEGG_PATHWAY", "INTERPRO"), 
   email = NULL, 
   argsWS = c(overlap = 4L, initialSeed = 4L, finalSeed = 4L, linkage = 0.5, 
-  kappa = 35L), jobName = NULL)
+  kappa = 35L), jobName = NULL, downloadFile=TRUE)
 }
 \arguments{
   \item{geneList}{
@@ -42,21 +42,23 @@ named integer vector. Additional arguments for the clustering. Only available us
   \item{jobName}{
 character. Folder name and prefix for the files.
 }
+  \item{downloadFile}{
+logical. If TRUE, the result files are saved in the current directory (required to generate report).
+}
 }
 \details{
+To perform the queries, please register at \url{http://david.abcc.ncifcrf.gov/webservice/register.htm}.\cr
 
-If an email is provided, the query will be performed through the web service, if not through the API:
+\bold{NOTE:} Since August 2015, DAVID requires https. This causes errors in some systems. 
+A (hopefully) temporary solution requries to install some certificates locally. See RDAVIDWebService help: \url{https://support.bioconductor.org/p/70090/#72226}\cr
 
-\bold{Web service:} Recommended option. Requiers registration at \url{http://david.abcc.ncifcrf.gov/webservice/register.htm}.
 
-\bold{API:} Allows to perform a small query without registering. \cr
-Maximum number of genes: 400. It can be less depending on the ID types and the length of the resulting URL.\cr
-The default arguments for the clustering performed through the API are:\cr
-\code{web_API_defaults <- c(overlap=3L, initialSeed=3L, finalSeed=3L, linkage=0.5, kappa=50L)}\cr
+As an alternative, the web API allows to perform a small query without registering. \cr
+Note this option is not available in some systems, and the maximum number of genes is limited to 400. (It can be less depending on the ID types and the length of the resulting URL).\cr
 More details and full list of gene ID types and annotations are available at: 
 \url{http://david.abcc.ncifcrf.gov/content.jsp?file=DAVID_API.html}.\cr
 
-If the functional annotation and clustering has been performed directly at DAVID's \bold{Website} (\url{http://david.abcc.ncifcrf.gov/summary.jsp}) fea_david() is not required. Instead, provide the file (or the URL of the file) containing the results of the analysis to \code{\link[FGNet:format_david]{format_david()}}.
+If the functional annotation and clustering has been performed directly at DAVID's \bold{Website} (\url{http://david.abcc.ncifcrf.gov/summary.jsp}) fea_david() is not required. Instead, provide the file (or the URL of the file) containing the results of the analysis to \code{\link[FGNet:format_david]{format_david()}}.\cr
 }
 
 
@@ -128,11 +130,9 @@ geneLabels <- unlist(as.list(org.Sc.sgdGENENAME)[geneList])
 
 geneExpr <- setNames(c(rep(1,10),rep(-1,5)), geneLabels) 
 
-# DAVID
-results_David <- fea_david(geneList, geneLabels=geneLabels) # email="example@email.com"
-
-
 \dontrun{
+# DAVID
+results_David <- fea_david(geneList, geneLabels=geneLabels, email="example@email.com")
 
 # Available IDs and annotations:
 getIdTypes(DAVIDWebService$new(email="example@email.com"))

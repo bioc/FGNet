@@ -195,6 +195,9 @@ genesYeastExpr <- setNames(c(rep(1,28), rep(-1,30)),genesYeast)
     
 **DAVID**
 
+> NOTE: Since August 2015, DAVID requires https. This causes errors in some systems. 
+> A (hopefully) temporary solution requries to install some certificates locally. See RDAVIDWebService help: https://support.bioconductor.org/p/70090/#72226
+
 Using DAVID requires internet connection. In addition, we recommend to register at http://david.abcc.ncifcrf.gov/webservice/register.htm to perform the queries through its Web Service.
 
 By default, `geneIdType="ENSEMBL_GENE_ID"`. To replace the gene IDs by readable names in the plots and HTML report, use the argument `geneLabels`. To see the gene IDs supported by DAVID's Web Service, use: `getIdTypes(DAVIDWebService$new(email=...))`.

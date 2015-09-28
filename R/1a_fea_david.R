@@ -20,8 +20,8 @@ errorMsgDavid <- function(errorMsg)
 # geneList <- c("A2M", "ABL1", "APBA1", "APBB1", "APLP1", "APLP2", "APOE", "APP", "ATOH1", "BRCA1", "BRCA2", "CDK5R1", "CDK5", "CDK5R2", "DAB1", "DLL1", "DNMT1", "EGFR", "ERBB2", "ETS1", "FOS", "FYN", "GLI1", "GLI2", "GLI3", "JAG1", "KIT", "LRP1", "LRP8", "MAPT", "MYC", "NOTCH1", "NRAS", "PAX2", "PAX3", "PSEN1", "PSEN2", "PTCH1", "RELN", "ROBO1", "SHC1", "SHH", "SMO", "SRC", "TGFB1", "TP53", "VLDLR", "WNT1", "WNT2", "WNT3")
 
 # API: david.abcc.ncifcrf.gov/content.jsp?file=DAVID_API.html
-# Maximum gene ids: 400
-fea_david <- function(geneList, geneIdType="ENSEMBL_GENE_ID", geneLabels=NULL, annotations=c("GOTERM_BP_ALL", "GOTERM_MF_ALL", "GOTERM_CC_ALL", "KEGG_PATHWAY", "INTERPRO"), email=NULL, argsWS=c(overlap=4L, initialSeed=4L, finalSeed=4L, linkage=0.5, kappa=35L), jobName=NULL)
+# Maximum gene ids: 4000
+fea_david <- function(geneList, geneIdType="ENSEMBL_GENE_ID", geneLabels=NULL, annotations=c("GOTERM_BP_ALL", "GOTERM_MF_ALL", "GOTERM_CC_ALL", "KEGG_PATHWAY", "INTERPRO"), email=NULL, argsWS=c(overlap=4L, initialSeed=4L, finalSeed=4L, linkage=0.5, kappa=35L), jobName=NULL, downloadFile=TRUE)
 {    
     # Check arguments
     if(!is.character(geneList)) stop("geneList should be a character vector.")
@@ -46,26 +46,20 @@ fea_david <- function(geneList, geneIdType="ENSEMBL_GENE_ID", geneLabels=NULL, a
     
     # Query:
     if(!is.null(email)) # WebService
-    {
-        # importFrom(RDAVIDWebService, DAVIDWebService)
-        # importFrom(RDAVIDWebService, addList)
-        # importFrom(RDAVIDWebService, setAnnotationCategories)
-        # importFrom(RDAVIDWebService, getAllAnnotationCategoryNames)
-        # importFrom(RDAVIDWebService, getClusterReportFile)
-        
+    {        
         if(!loadInstPkg("RDAVIDWebService")) stop("Package RDAVIDWebService is required to query DAVID through the webserver. Install the package or set email=NULL to query DAVID through the web API.")
         
         randomNumber <- sample(100000:999999, 1)
         if(is.null(jobName)) jobName <- paste(randomNumber, "_DAVID", sep="")
-        downloadFile <- paste(getwd(), .Platform$file.sep, jobName, ".txt", sep="")
+        downloadFileName <- paste(tempdir(), .Platform$file.sep, jobName, ".txt", sep="")
         
         # Connect to DAVID        
         tryCatch( 
         {
-            davidConnection <- DAVIDWebService$new(email=email)
+            davidConnection <- DAVIDWebService$new(email=email, url="https://david.ncifcrf.gov/webservice/services/DAVIDWebService.DAVIDWebServiceHttpSoap12Endpoint/")
         }, warning = function (w)
         {
-            if(grepl("SSL", w)) w <- paste("Due to recent changes in DAVID, web service query is temporally not available.\nTry the query through the Web API (i.e. remove 'email' parameter) or other of the FEA tools.", w, sep="\n")
+            if(grepl("SSL", w)) w <- paste("If you are seeing this error you might need to install a certificate to connect to DAVID web service.\n See the instructions in the forum: \nhttps://support.bioconductor.org/p/70090/#72226", w, sep="\n")
             errorMsgDavid(w)
         })
                 
@@ -109,24 +103,15 @@ fea_david <- function(geneList, geneIdType="ENSEMBL_GENE_ID", geneLabels=NULL, a
         }
         )
         
-        # Check species
-        # specie <- getSpecieNames(davidConnection)
-        # if(length(specie)>1)
-        # {
-        #     if(org=="Hs") specie <- which(specie == "Homo sapiens(49)")
-        #     if(org=="Sc") specie <- which(specie == "Saccharomyces cerevisiae(58)")
-        #     setCurrentSpecies(davidConnection, species=specie)
-        # }
-        
         # Request & save clustering report
-        getClusterReportFile(davidConnection, type="Term", fileName=downloadFile, 
+        getClusterReportFile(davidConnection, type="Term", fileName=downloadFileName, 
                                                  overlap=argsWS["overlap"], initialSeed=argsWS["initialSeed"], finalSeed=argsWS["finalSeed"], linkage=argsWS["linkage"], kappa=argsWS["kappa"])
         moveFile <- TRUE
         
     }else
     {
         ## Query through web API
-        if(!loadInstPkg("RCurl")) stop("Package 'RCurl' is required to query DAVID throught the web API. Install it or provide an email to query DAVID through the Web Service.")
+        if(!loadInstPkg("RCurl")) stop("We highly recommend to provide a registered email to query DAVID through the Web Service.\nOtherwise, please install package 'RCurl' to continue.")
         
         if(length(geneList)>400) stop("Maximum number of genes: 400. For more genes register at DAVID Web Service (see help for details).")
         geneList <- paste(geneList, collapse=",")
@@ -134,13 +119,13 @@ fea_david <- function(geneList, geneIdType="ENSEMBL_GENE_ID", geneLabels=NULL, a
         
         tool <- "term2term"
         queryUrl <- paste("https://david.ncifcrf.gov/api.jsp?type=", geneIdType, "&ids=", geneList, "&tool=", tool, "&annot=", annotations, sep="") # Do not change order
+        
         # URL has a charactor size limitation (<= 2048 characters in total), i.e., the very large gene list may not be able to completely passed by URL.
         if(nchar(queryUrl)>2048) stop("Query url too long.")
                 
-        curlHandle <- getCurlHandle(cookiefile = "CurlHandleCookie.txt")
+        curlHandle <- getCurlHandle(cookiefile = "CurlHandleCookie.txt")        
         reply <- getURL(queryUrl, curl = curlHandle, ssl.verifypeer = FALSE)
-        #writeChar(reply, "reply.txt")
-        
+
         replyRowids <- getContent(reply, attribute = 'document.apiForm.rowids.value="')
         replyAnnot <- getContent(reply, attribute = 'document.apiForm.annot.value="')
         
@@ -163,16 +148,15 @@ fea_david <- function(geneList, geneIdType="ENSEMBL_GENE_ID", geneLabels=NULL, a
             if(finalReply == FALSE) stop("Query URL too long, try with less genes or use the Web Server (provide email).")  
         }
     
-        downloadFile <- NULL
+        downloadFileName <- NULL
         if(finalReply != FALSE)
         {
-            downloadFile <- getContent(finalReply, attribute = '<a href="data/download/')[1]
+            downloadFileName <- getContent(finalReply, attribute = '<a href="data/download/')[1]
         }
         
-        
-        if(grepl(".txt", downloadFile))
+        if(grepl(".txt", downloadFileName))
         {
-            downloadFile <- paste("https://david.ncifcrf.gov/data/download/", downloadFile, sep="")
+            downloadFileName <- paste("https://david.ncifcrf.gov/data/download/", downloadFileName, sep="")
             moveFile <- FALSE
         }else 
         {
@@ -189,8 +173,11 @@ fea_david <- function(geneList, geneIdType="ENSEMBL_GENE_ID", geneLabels=NULL, a
             stop(paste("Message from David: ", errorMsg, sep=""))
         }
     } 
-        
-    ret <- format_david(downloadFile, jobName=jobName, geneLabels=geneLabels, moveFile=moveFile)
+print(downloadFileName)
+print(jobName)
+print(moveFile)
+
+    ret <- format_david(downloadFileName, jobName=jobName, geneLabels=geneLabels, moveFile=moveFile, downloadFile=downloadFile)
     invisible(c(queryArgs=queryArgs,ret))
 }
 

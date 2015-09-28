@@ -1,9 +1,10 @@
-CHANGES IN VERSION 3.3
+CHANGES IN VERSION 3.4
 ------------------------
 
-    o Updated for compatibility with igraph 1.0 and recent changes to DAVID API
-
-
+    o Added argument 'downloadFile' to fea_david() to choose whether to save the analysis results to the current directory
+    o DAVID now requires https. This causes errors in some systems. A (hopefully) temporary solution is to install some certificates locally. 
+      See RDAVIDWebService help: https://support.bioconductor.org/p/70090/#72226
+    
 CHANGES IN VERSION 3.2
 ------------------------
 NEW FEATURES

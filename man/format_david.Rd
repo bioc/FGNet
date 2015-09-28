@@ -8,7 +8,7 @@ Format DAVID output
 Format DAVID 'functional annotation and clustering' output to use with FGNet.
 }
 \usage{
-format_david(fileName, jobName = NULL, geneLabels = NULL, moveFile = FALSE)
+format_david(fileName, jobName = NULL, geneLabels = NULL, moveFile = FALSE, downloadFile=TRUE)
 }
 \arguments{
   \item{fileName}{
@@ -23,6 +23,9 @@ named character vector. Gene name or label to use in the report/plots instead of
 }
 \item{moveFile}{  
 logical. If TRUE the original file is moved to the new location. If FALSE, the file is copied.
+}
+  \item{downloadFile}{
+logical. If TRUE, the result files are saved in the current directory (required to generate report).
 }
 }
 \value{
