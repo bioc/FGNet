@@ -83,7 +83,9 @@ geneLabels <- unlist(as.list(org.Sc.sgdGENENAME)[geneList])
 # Optional: Gene expression 
 geneExpr <- setNames(c(rep(1,10),rep(-1,5)), geneLabels)
 
-results <- fea_david(geneList, geneLabels=geneLabels) # email="example@email.com"
+# Choose FEA tool...
+# results <- fea_david(geneList, geneLabels=geneLabels, email="example@email.com")
+results <- fea_gtLinker_getResults(jobID=3907019)
 
 # 2 A) Report:
 FGNet_report(results, geneExpr=geneExpr)
