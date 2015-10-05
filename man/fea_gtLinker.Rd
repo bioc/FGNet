@@ -146,11 +146,13 @@ jobID <- 3907019 # job ID of the query
 
 results <- fea_gtLinker_getResults(jobID=jobID)
 
-# To continue the workflow... (see help for further details)
-FGNet_report(results, geneExpr=genesYeastExpr)
-
+# To continue the workflow... (see help for further details))
 incidMat <- fea2incidMat(results)
 functionalNetwork(incidMat)
 
+# Or full report
+\dontrun{
+FGNet_report(results, geneExpr=genesYeastExpr)
+}
 
 }
