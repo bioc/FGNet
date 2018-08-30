@@ -81,8 +81,9 @@ Examples of functional network for different analyses:
 
 To install *FGNet* from *Bioconductor*, type in your R console:
 ```{r, eval=FALSE}
-source("http://bioconductor.org/biocLite.R")
-biocLite("FGNet")
+if (!requireNamespace("BiocManager", quietly=TRUE))
+    install.packages("BiocManager")
+BiocManager::install("FGNet")
 ```
 ```{r, echo=FALSE, message=FALSE}
 library(FGNet)
@@ -93,7 +94,7 @@ However, there are several functionalities that require further packages. i.e. t
 
 To make sure all FGNet functionalities are available, install the following packages:
 ```{r, eval=FALSE}
-biocLite(c("RGtk2", "RCurl",
+BiocManager::install(c("RGtk2", "RCurl",
     "RDAVIDWebService", "gage", "topGO", "KEGGprofile", 
     "GO.db", "KEGG.db", "reactome.db", "org.Sc.sgd.db"))
 ```

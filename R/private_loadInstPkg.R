@@ -32,8 +32,9 @@ loadInstPkg <- function(pkgName, parentWindow=NULL)
         if(grepl("y", tolower(response)))
         {
             tryCatch({
-                source("http://bioconductor.org/biocLite.R")
-                biocLite(pkgName)
+                if (!requireNamespace("BiocManager", quietly=TRUE))
+                    install.packages("BiocManager")
+                BiocManager::install(pkgName)
             }, error = function(e) {
                 stop(paste("It is not possible to install the package. Check your internet connection.", e, sep="\n"))
             })
