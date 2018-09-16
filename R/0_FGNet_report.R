@@ -1,6 +1,6 @@
 
 #ADD? jobName=NULL,  geneLabels=NULL,
-FGNet_report <- function (feaResults, geneExpr=NULL, plotExpression="border", onlyGoLeaves=TRUE, plotGoTree=TRUE, plotKeggPw=TRUE, filterAttribute=NULL, filterOperator=NULL, filterThreshold=NULL)
+FGNet_report <- function (feaResults, geneExpr=NULL, plotExpression="border", onlyGoLeaves=TRUE, plotGoTree=TRUE, plotKeggPw=FALSE, filterAttribute=NULL, filterOperator=NULL, filterThreshold=NULL)
 {
     #####################################################################################################
     ####################################   Check arguments   ############################################

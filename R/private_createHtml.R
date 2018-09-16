@@ -161,7 +161,7 @@ goTreeLinks <- function(gtSets, grPrefix, geneExpr, folder, plotGoTree, clusterC
 }
 
 # Main function
-createHtml <- function(htmlFileName, feaResults, jobName, tablesGenes, tablesTerms, tool, queryArgs, filterAttribute, filterOperator, filterThreshold, geneExpr=NULL, plotExpression=NULL, onlyGoLeaves=TRUE, plotGoTree=TRUE, plotKeggPw=TRUE)
+createHtml <- function(htmlFileName, feaResults, jobName, tablesGenes, tablesTerms, tool, queryArgs, filterAttribute, filterOperator, filterThreshold, geneExpr=NULL, plotExpression=NULL, onlyGoLeaves=TRUE, plotGoTree=TRUE, plotKeggPw=FALSE)
 {
     #####################################################################################################
     ####################################   Initializations   ############################################

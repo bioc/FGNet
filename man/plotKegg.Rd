@@ -4,6 +4,9 @@
 Plot KEGG pathway
 }
 \description{
+DEPRECATED. KEGGprofile seems to be no longer mantained. 
+You may use this function by manually downloading the pathway XML.
+
 Plots KEGG pathway with the given genes.
 }
 \usage{
@@ -64,7 +67,7 @@ genesYeastExpr <- setNames(c(rep(1,29), rep(-1,30)), genesYeast)
 # Plot pathway
 
 # Specific pathway
-plotKegg("sce04111", genesYeastExpr, geneIDtype="GENENAME")
+# plotKegg("sce04111", genesYeastExpr, geneIDtype="GENENAME")
 
 
 

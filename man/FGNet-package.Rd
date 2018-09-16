@@ -47,8 +47,7 @@ These networks can be further explored by \code{\link[FGNet:analyzeNetwork]{anal
 Other auxiliary functions:
 \code{\link[FGNet:getTerms]{getTerms()}}, 
 \code{\link[FGNet:keywordsTerm]{keywordsTerm()}}, 
-\code{\link[FGNet:plotGoAncestors]{plotGoAncestors()}}, 
-\code{\link[FGNet:plotKegg]{plotKegg()}}.}
+\code{\link[FGNet:plotGoAncestors]{plotGoAncestors()}}
 }
 
 For more info see the package tutorial: \code{vignette("FGNet-vignette")}

@@ -95,7 +95,7 @@ However, there are several functionalities that require further packages. i.e. t
 To make sure all FGNet functionalities are available, install the following packages:
 ```{r, eval=FALSE}
 BiocManager::install(c("RGtk2", "RCurl",
-    "RDAVIDWebService", "gage", "topGO", "KEGGprofile", 
+    "RDAVIDWebService", "gage", "topGO", 
     "GO.db", "KEGG.db", "reactome.db", "org.Sc.sgd.db"))
 ```
 
@@ -296,7 +296,7 @@ The HTML report function allows to create a comprehensive report including diffe
 
 Here is the code to use `FGNet_report()` with each of the previous examples:
 ```{r, eval=FALSE}
-FGNet_report(feaResults_David, geneExpr=genesYeastExpr, plotKeggPw=FALSE)
+FGNet_report(feaResults_David, geneExpr=genesYeastExpr)
 FGNet_report(feaResults_topGO, geneExpr=genesYeastExpr)  
 FGNet_report(feaResults_gtLinker, geneExpr=genesYeastExpr)
 FGNet_report(feaResults_gage)
@@ -758,21 +758,11 @@ Note the structure of the network varies not only depending on the dataset, but 
 
 ## plotGoAncestors()
 
-`plotGoAncestors()` and `plotKegg()` also allow to explore the significant gene term sets:
+`plotGoAncestors()` also allow to explore the significant gene term sets:
 ```{r}
 goIds <- getTerms(feaResults_David, returnValue="GO")[[7]]
  plotGoAncestors(goIds, ontology="MF", nCharTerm=40, labelCex=0.8)
 ```
-
-## plotKegg()
-```{r, eval=FALSE}
-keggIds <- getTerms(feaAlzheimer, returnValue="KEGG")[[3]]
-plotKegg("hsa05010", geneExpr=genesAlzExpr, geneIDtype="GENENAME")
-# Saved as .png in current directory
-```
-
-![Alzheimer pathway](hsa05010_Alzheimer_disease.png)
-
 
 
 # 7. Acknowledgments
