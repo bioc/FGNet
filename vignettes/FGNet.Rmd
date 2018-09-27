@@ -232,7 +232,7 @@ jobID <- fea_gtLinker(geneList=genesYeast, organism="Sc")
 
 once the analysis is ready...
 
-```{r}
+```{r, eval=FALSE}
 jobID <- 3907019
 feaResults_gtLinker <- fea_gtLinker_getResults(jobID=jobID, organism="Sc")
 ```
@@ -320,7 +320,7 @@ FGNet_report(feaResults_gtLinker, filterThreshold=0.3)
 ### Individual networks
 After the FEA is ready, it is also possible to generate specific networks rather than the full report. Here is a simple example on how to use  `fea2incidMat()` to generate the incidence matrices that represent the networks and plot them.  There are more detailed examples on how to edit and explore the networks in sections [Editing and creating new networks](#editing-and-creating-new-networks) and [Filtering and selecting clusters](#filtering-and-selecting-clusters).
 
-```{r}
+```{r, eval=FALSE}
 feaResults <- feaResults_gtLinker
 incidMat <- fea2incidMat(feaResults)
 incidMat$metagroupsMatrix[1:5, 1:5]
@@ -330,12 +330,12 @@ incidMat_terms$metagroupsMatrix[5:10, 1:5]
 
 These incidence matrices can be plotted and analyzed in different ways:
 
-```{r}
+```{r, eval=FALSE}
 functionalNetwork(incidMat, geneExpr=genesYeastExpr,
     plotTitleSub="Default gene view")
 ```
 
-```{r}
+```{r, eval=FALSE}
 getTerms(feaResults)[1]
 ```
 
@@ -346,7 +346,7 @@ functionalNetwork(incidMat_terms, plotOutput="dynamic")
 
 ![Dynamic plot](TermsYeast.png)
 
-```{r}
+```{r, eval=FALSE}
 functionalNetwork(incidMat_terms, plotType="bipartite",
     plotTitleSub="Terms in several metagroups")
 ```
@@ -356,22 +356,22 @@ functionalNetwork(incidMat_terms, plotType="bipartite",
 # 4. Editing and creating new networks
 
 In this section we will use the functional analysis of an Alzheimer dataset ([GSE4757](http://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE4757)):
-```{r}
+```{r, eval=FALSE}
 jobID <- 1639610
 feaAlzheimer <- fea_gtLinker_getResults(jobID=jobID, organism="Hs")
 ```
 
 The variable `feaAlzheimer` contains the raw results from the functional analysis. The slot `metagroups` could also be `clusters` or missing depending on the FEA tool:
-```{r}
+```{r, eval=FALSE}
 names(feaAlzheimer)
 ```
 
-```{r, results='hide'}
+```{r, results='hide', eval=FALSE}
 head(feaAlzheimer$metagroups)
 ```
 
 To see the terms in each cluster/metagroup use `getTerms()`:
-```{r}
+```{r, eval=FALSE}
 getTerms(feaAlzheimer)[3:4]
 ```
 
@@ -383,11 +383,11 @@ The function to create the incidence matrices is `fea2incidMat()`. It allows to 
 
 We will start the example creating a simple gene-based network:
 
-```{r}
+```{r, eval=FALSE}
 incidMat <- fea2incidMat(feaAlzheimer)
 ```
 
-```{r}
+```{r, eval=FALSE}
 head(incidMat$metagroupsMatrix)
 incidMat$gtSetsMatrix[1:5, 14:18]
 ```
@@ -399,7 +399,7 @@ data(FEA_tools)
 FEA_tools[,4:6]
 ```
 
-```{r}
+```{r, eval=FALSE}
 incidMatFiltered <- fea2incidMat(feaAlzheimer, 
     filterAttribute="Silhouette Width", filterOperator="<", filterThreshold=0.2)
 ```
@@ -418,14 +418,14 @@ To build the [networks based on terms](#terms-networks), use the argument `key="
 The function `functionalNetwork()` generates and plots the networks.
 In case there is available expression data, it can be used for representation in this step:
 
-```{r}
+```{r, eval=FALSE}
 # (Fake expression data)
 genesAlz <- rownames(incidMat$metagroupsMatrix)
 genesAlzExpr <- setNames(c(rep(1,50), rep(-1,27)), genesAlz) 
 ```
 
 The `default` plot will plot all the genes/terms in the network, and will return the networks as igraph objects and matrices in an invisible list. The argument `keepColors` determine whether the colors should be consistent, taking into account the filtered groups, or restarted:
-```{r}
+```{r, eval=FALSE}
 fNw <- functionalNetwork(incidMatFiltered, geneExpr=genesAlzExpr, keepColors=FALSE, vLabelCex=0.5)
 ```
 
@@ -436,7 +436,7 @@ fNw <- functionalNetwork(incidMatFiltered, plotOutput="none")
 ```
 
 Since the returned networks are `iGraph` objects, they can be used or analyzed as such:
-```{r}
+```{r, eval=FALSE}
 names(fNw)
 names(fNw$iGraph)
 library(igraph)
@@ -463,14 +463,14 @@ functionalNetwork(incidMatFiltered, vLayout=saveLayout)
 ## Bipartite and intersection network
 The default `bipartite` version of the functional network plots the *intersection network*: a simplified functional network, containing only the nodes in several metagroups and the metagroups they belong to. In this network, metagroup nodes (the coloured nodes) can be seen as a cluster of all the genes/proteins that belong only to that metagroup:
 
-```{r}
+```{r, eval=FALSE}
 mgKeyTerm <- keywordsTerm(getTerms(feaAlzheimer), 
     nChar=100)[-c(as.numeric(incidMatFiltered$filteredOut))]
 functionalNetwork(incidMatFiltered, plotType="bipartite", legendText=mgKeyTerm)
 ```
 
 To plot a full bipartite network including all the nodes, just set `keepAllNodes=TRUE`:
-```{r}
+```{r, eval=FALSE}
 functionalNetwork(incidMatFiltered, geneExpr=genesAlzExpr, plotType="bipartite", keepAllNodes=TRUE, 
     plotTitleSub="Bipartite network will all nodes", legendText=mgKeyTerm, vLabelCex=0.5)
 ```
@@ -480,11 +480,11 @@ functionalNetwork(incidMatFiltered, geneExpr=genesAlzExpr, plotType="bipartite",
 In the same way we have built networks to explore the relationship between genes, the same approach can be used to explore the relationship between the biological terms in the enrichment analysis. i.e. to see which biological terms are usually associated, or locate which terms are in several groups. 
 To do so, build the incidence matrices based on terms instead of genes using the argument `key="Terms"`.
 
-```{r}
+```{r, eval=FALSE}
 incidMatTerms <- fea2incidMat(feaAlzheimer, key="Terms")
 ```
 
-```{r}
+```{r, eval=FALSE}
 functionalNetwork(incidMatTerms, plotType="bipartite", 
     plotTitle="Terms in several metagroups")
 ```
@@ -497,20 +497,20 @@ functionalNetwork(incidMatTerms,  weighted=TRUE, plotOutput="dynamic")
 
 To plot a network with links between all the terms in the same cluster or metagroups, use `fea2incidMat()` with the `$cluster` or `$metagroup` slots from the FEA, in order to consider the whole cluster/metagroup as a gene-term set:
 
-```{r}
+```{r, eval=FALSE}
 incidMatTerms <- fea2incidMat(feaAlzheimer$metagroups, clusterColumn="Metagroup", 
     key="Terms",
     filterAttribute="Silhouette.Width", filterThreshold=0.2)
 functionalNetwork(incidMatTerms, legendText=FALSE, plotOutput="dynamic")
 ```
 
-```{r}
+```{r, eval=FALSE}
 functionalNetwork(incidMatTerms, legendText=FALSE)
 ```
 
 Since GeneTerm Linker filters out generic and redundant terms from the final metagroups, by default these terms are not plotted. To include them in the graph, set the argument `removeFiltered=FALSE` (only available for GeneTerm Linker).
 
-```{r, fig.height=5, fig.width=10}
+```{r, fig.height=5, fig.width=10, eval=FALSE}
 incidMatTerms <- fea2incidMat(feaAlzheimer, key="Terms", removeFilteredGtl=FALSE)
 par(mfrow=c(1,2))
 functionalNetwork(incidMatTerms, vLabelCex=0.2,
@@ -530,7 +530,7 @@ i.e. gene-term sets in a specific cluster, filter generic terms (terms annotated
 
 Note that this approach might not be appropriate for GeneTerm Linker, since it groups several terms into each gene-term set.
 
-```{r}
+```{r, eval=FALSE}
 txtFile <- paste(file.path(system.file('examples', package='FGNet')), "DAVID_Yeast_raw.txt", sep=.Platform$file.sep)
 feaResults_David <- format_david(txtFile, jobName="David_example", geneLabels=genesYeast)
 ```
@@ -539,7 +539,7 @@ feaResults_David <- format_david(txtFile, jobName="David_example", geneLabels=ge
 feaResults_David <- fea_david(names(genesYeast), email="...", geneLabels=genesYeast)
 ```
 
-```{r}
+```{r, eval=FALSE}
 gtSets <- feaResults_David$geneTermSets
 gtSets <- gtSets[gtSets$Cluster %in% c(9),] 
 gtSets <- gtSets[gtSets$Pop.Hits<500,]
@@ -547,7 +547,7 @@ gtSets <- gtSets[gtSets$Pop.Hits<500,]
 
 Then, create a terms-genes incidence matrix with `fea2incidMat()`, and plot the network...
 
-```{r, message=FALSE}
+```{r, message=FALSE, eval=FALSE}
 termsGenes <- t(fea2incidMat(gtSets, clusterColumn="Terms")$clustersMatrix)
 library(R.utils)
 rownames(termsGenes) <- sapply(strsplit(rownames(termsGenes), ":"), 
@@ -556,14 +556,14 @@ termsGenes[1:5,1:5]
 ```
 
 Network with genes colored based on their expression and terms on alphabetical order:
-```{r}
+```{r, eval=FALSE}
 functionalNetwork(t(termsGenes), plotType="bipartite", keepAllNodes=TRUE,
     legendPrefix="", plotTitle="Genes - Terms network", plotTitleSub="",
     geneExpr=genesYeastExpr, plotExpression="Fill")
 ```  
 
 Network with genes colored by alphabetical order (from red to pink), terms white:
-```{r}
+```{r, eval=FALSE}
 functionalNetwork(termsGenes, plotType="bipartite", keepAllNodes=TRUE,
     legendPrefix="", plotTitle="Genes - Terms network", plotTitleSub="")
 ```
@@ -573,12 +573,12 @@ functionalNetwork(termsGenes, plotType="bipartite", keepAllNodes=TRUE,
 
 As an example of analysis of a network with very overlapping clusters, we will use the yeast gene list analyzed with DAVID:
 
-```{r}
+```{r, eval=FALSE}
 incidMat <- fea2incidMat(feaResults_David)
 functionalNetwork(incidMat) 
 ```
 
-```{r}
+```{r, eval=FALSE}
 incidMatTerms <- fea2incidMat(feaResults_David, key="Terms")
 ```
 
@@ -587,7 +587,7 @@ functionalNetwork(incidMatTerms$clustersMatrix, plotOutput="dynamic",
   weighted=TRUE, eColor="grey")
 ```
 
-```{r}
+```{r, eval=FALSE}
 functionalNetwork(incidMatTerms$clustersMatrix, plotType="bipartite", 
  plotTitle="Terms in several clusters")
 ```
@@ -596,13 +596,13 @@ functionalNetwork(incidMatTerms$clustersMatrix, plotType="bipartite",
 
 The clusters to plot can be selected/filtered based on any property that is available in the clusters matrix:
 
-```{r}
+```{r, eval=FALSE}
 colnames(feaResults_David$clusters)
 ```
 
 i.e. Selecting the clusters with highest Enrichment Score or least genes (setting `eColor=NA`, plots the networks without edges):
 
-```{r, fig.height=5, fig.width=10}
+```{r, fig.height=5, fig.width=10, eval=FALSE}
 par(mfrow=c(1,2))
 
 # Highest enrichment score
@@ -626,7 +626,7 @@ To use any property that is not available in the `$clusters` data frame, just ad
  
 ## Selecting clusters with specific keywords
 
-```{r}
+```{r, eval=FALSE}
 keywordsTerm(getTerms(feaResults_David), nChar=100)
 
 keywords <- c("hydrolase") 
@@ -637,7 +637,7 @@ selectedClusters <- sapply(getTerms(feaResults_David),
 ```{r, eval=FALSE}
 getTerms(feaResults_David)[selectedClusters]
 ```
-```{r}
+```{r, eval=FALSE}
 tmpFea <- feaResults_David
 tmpFea$clusters <- cbind(tmpFea$clusters, keywords=selectedClusters)
 incidMatSelection <- fea2incidMat(tmpFea, 
@@ -648,16 +648,16 @@ functionalNetwork(incidMatSelection, plotType="bipartite")
 ## Selecting specific clusters
 
 `clustersDistance()` allows to explore the overlap between clusters:
-```{r}
+```{r, eval=FALSE}
 distMat <- clustersDistance(incidMat)
 ```
 
-```{r, echo=FALSE, results='hide'}
+```{r, echo=FALSE, results='hide', eval=FALSE}
 dev.off()
 ```
 
 Clusters 4, 1 and 2 seem to be completely overlapping (distance 0). While cluster 11 does not have any intersection with clusters 8 and 9. Let's see:
-```{r}
+```{r, eval=FALSE}
 selectedClusters <- rep(FALSE, nrow(feaResults_David$clusters))
 selectedClusters[c(8,9,11)] <- TRUE
 
@@ -685,7 +685,7 @@ txtFile <- paste(file.path(system.file('examples', package='FGNet')), "DAVID_Yea
 feaResults_David_ov6 <- format_david(txtFile, jobName="David_example", geneLabels=genesYeast)
 ```
 
-```{r}
+```{r, eval=FALSE}
 # Filter/select
 sum(feaResults_David_ov6$geneTermSets$Pop.Hits < 100)
 gtSets <- feaResults_David_ov6$geneTermSets[feaResults_David_ov6$geneTermSets$Pop.Hits < 100,]
@@ -719,12 +719,12 @@ barplot(goGenesCountHs, main="Number of genes annotated to GO term (Human)",
 `analyzeNetwork()` can be used to explore the structure of the network. It also returns statistics about the nodes betweenness within each cluster, etc...
 
 The example with GeneTerm Linker (Alzheimer):
-```{r}
+```{r, eval=FALSE}
 incidMatFiltered <- fea2incidMat(feaAlzheimer, 
     filterAttribute="Silhouette Width", filterOperator="<", filterThreshold=0.2)
 stats <- analyzeNetwork(incidMatFiltered)
 ```
-```{r}
+```{r, eval=FALSE}
 names(stats)
 stats$transitivity
 ```
@@ -732,22 +732,22 @@ stats$transitivity
 `$degree` and `$betweenness` are the values used for the plots. They contain the values for each of the nodes in the global network (commonClusters) and within each cluster/metagroup (subsets of commonGtSets network). The degree is given as percentage, normalized based on the total number of nodes of the network. i.e. a value of 90 in a network of 10 nodes, would mean the actual degree of the node is 9: it is connected to 9 nodes (90% of 10)).
 
 The betweenness of each node in each cluster as matrix:
-```{r}
+```{r, eval=FALSE}
 head(stats$betweennessMatrix)
 ```
 
 **Inter-modular hubs:** Nodes with betweenness within the top 75% in the global network
-```{r}
+```{r, eval=FALSE}
 stats$hubsList$Global
 ```
 
 **Intra-modular hubs:** Nodes with betweenness within the top 75% in each cluster sub-network
-```{r}
+```{r, eval=FALSE}
 stats$hubsList$"9"
 ``` 
 
 DAVID's example: 
-```{r}
+```{r, eval=FALSE}
 incidMat_metab <- fea2incidMat(feaResults_David)
 analyzeNetwork(incidMat_metab)
 ```
@@ -759,7 +759,7 @@ Note the structure of the network varies not only depending on the dataset, but 
 ## plotGoAncestors()
 
 `plotGoAncestors()` also allow to explore the significant gene term sets:
-```{r}
+```{r, eval=FALSE}
 goIds <- getTerms(feaResults_David, returnValue="GO")[[7]]
  plotGoAncestors(goIds, ontology="MF", nCharTerm=40, labelCex=0.8)
 ```

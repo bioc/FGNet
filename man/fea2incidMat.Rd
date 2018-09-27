@@ -59,6 +59,7 @@ Overview of the package: \code{\link[FGNet:FGNet-package]{FGNet}}
 Package tutorial: \code{vignette("FGNet-vignette")}
 }
 \examples{
+\dontrun{
 jobID <- 3907019
 results <- fea_gtLinker_getResults(jobID)
 incidMat <- fea2incidMat(results)
@@ -96,4 +97,5 @@ matSelectedGroups <- fea2incidMat(resultsCbind,
 
 functionalNetwork(matSelectedGroups)
 getTerms(results)[selectedGroups]
+}
 }

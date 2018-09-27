@@ -42,6 +42,7 @@ Package tutorial: \code{vignette("FGNet-vignette")}
 
 }
 \examples{
+\dontrun{
 # Previous Steps
 jobID <- 3907019
 results <- fea_gtLinker_getResults(jobID)
@@ -55,5 +56,5 @@ analyzeNetwork(incidMat)
 nwStats <- analyzeNetwork(incidMat, plotOutput=FALSE)
 names(nwStats)
 nwStats$hubsTable
-
+}
 }

@@ -118,6 +118,7 @@ genesYeast <- c("ADA2", "APC1", "APC11", "APC2", "APC4", "APC5", "APC9",
 # Optional gene expression
 genesYeastExpr <- setNames(c(rep(1,29), rep(-1,30)), genesYeast) # 1=UP, -1=DW
 
+\dontrun{
 # FEA:
 # jobID <- query_gtLinker(genesYeast, organism = "Sc")
 jobID <- 3907019
@@ -155,4 +156,5 @@ functionalNetwork(incidMat_terms, plotType="bipartite", plotOutput="dynamic",
 # Including generic terms filterd by GtLinker from final metagroups:
 incidMat_terms2 <- fea2incidMat(results, key="Terms", removeFiltered=FALSE)
 functionalNetwork(incidMat_terms2, weighted=TRUE)
+}
 }

@@ -29,7 +29,9 @@ clustersDistance(incidenceMatices, mgCols = NULL, clustMethod="average")
 		\code{\link[FGNet:FGNet-package]{FGNet}}
 }
 \examples{
+\dontrun{
 results <- fea_gtLinker_getResults(jobID=1963186, jobName="gtLinker_example")
 incidMatrices <- fea2incidMat(results)
 clustersDistance(incidMatrices)
+}
 }

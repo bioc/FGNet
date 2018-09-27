@@ -29,11 +29,11 @@ Overview of the package: \code{\link[FGNet:FGNet-package]{FGNet}}
 Package tutorial: \code{vignette("FGNet-vignette")}
 }
 \examples{
-
+\dontrun{
 # Previous Steps: FEA
 results <- fea_gtLinker_getResults(3907019)
 
 # Select keywords
 keywordsTerm(getTerms(results), nChar=100)
-
+}
 }

@@ -25,8 +25,8 @@ Full description of the package:
 \code{\link[FGNet:FGNet-package]{FGNet}}
 }
 \examples{
-
+\dontrun{
 results <- fea_gtLinker_getResults(jobID=1963186)
 getTerms(results)
-
+}
 }
