@@ -52,6 +52,8 @@ Other auxiliary functions:
 
 For more info see the package tutorial: \code{vignette("FGNet-vignette")}
 }
+}
+
 \references{
 	[1] Fontanillo C, Nogales-Cadenas R, Pascual-Montano A, De Las Rivas J (2011) Functional Analysis beyond Enrichment: Non-Redundant Reciprocal Linkage of Genes and Biological Terms. PLoS ONE 6(9): e24289. URL: \url{http://gtlinker.cnb.csic.es}
 	
