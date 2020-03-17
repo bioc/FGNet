@@ -96,7 +96,7 @@ To make sure all FGNet functionalities are available, install the following pack
 ```{r, eval=FALSE}
 BiocManager::install(c("RGtk2", "RCurl",
     "RDAVIDWebService", "gage", "topGO", 
-    "GO.db", "KEGG.db", "reactome.db", "org.Sc.sgd.db"))
+    "GO.db", "reactome.db", "org.Sc.sgd.db"))
 ```
 
 

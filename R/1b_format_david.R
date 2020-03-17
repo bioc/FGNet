@@ -123,7 +123,7 @@ format_david <- function(fileName, jobName=NULL, geneLabels=NULL, moveFile=FALSE
         
         # Save formatted file
         fileName <- paste(jobName, "_formatted.txt", sep="")
-        write.table(tablaGeneTermSets, file=fileName, quote=FALSE, row.names=FALSE, sep="\t")  
+        write.table(as.matrix(tablaGeneTermSets), file=fileName, quote=FALSE, row.names=FALSE, sep="\t")  
     }
     ret <- readGeneTermSets(fileName, tool="DAVID")
     setwd(currWD)
