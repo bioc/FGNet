@@ -8,7 +8,7 @@
 # serverWS ="http://localhost:8182"
 
 # jobID <- query_gtLinker(organism, geneList, annotations, serverWS=serverWS)
-fea_gtLinker <- function(geneList, organism="Hs", annotations=c("GO_Biological_Process","GO_Molecular_Function", "GO_Cellular_Component", "KEGG_Pathways", "InterPro_Motifs"), minSupport=4, serverWS ="http://gtlinker.cnb.csic.es:8182")
+fea_gtLinker <- function(geneList, organism="Hs", annotations=c("GO_Biological_Process","GO_Molecular_Function", "GO_Cellular_Component", "InterPro_Motifs"), minSupport=4, serverWS ="http://gtlinker.cnb.csic.es:8182")
 {    
     # Check arguments
     if(!is.character(organism)) stop("Organism should be either 'Hs' (Homo sapiens) or 'Sc' (Saccharomyces cerevisiae). ")
@@ -19,7 +19,7 @@ fea_gtLinker <- function(geneList, organism="Hs", annotations=c("GO_Biological_P
     
     if(!is.character(annotations)) stop()
     annotations <- tolower(annotations)
-    allowedAnnotations <- c("GO_Biological_Process","GO_Molecular_Function", "GO_Cellular_Component", "KEGG_Pathways", "InterPro_Motifs")
+    allowedAnnotations <- c("GO_Biological_Process","GO_Molecular_Function", "GO_Cellular_Component", "InterPro_Motifs")
     if(!all(annotations %in% tolower(allowedAnnotations))) stop(paste("Available annotations: ", allowedAnnotations, sep=""))        
     # if(!all(annotations %in% allowedAnnotations)) stop(paste("Available annotations: ", allowedAnnotations, sep=""))    
     

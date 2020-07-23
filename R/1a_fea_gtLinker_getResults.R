@@ -36,10 +36,10 @@ format_gtLinker <- function(jobName, organism)
     {
         organism <- "map"    
     }else{
-        organism <- organisms[capitalize(tolower(organism)), "keggPrefix"]
+        # organism <- organisms[capitalize(tolower(organism)), "keggPrefix"]
     }
-    globalMetagroups$Terms <- gsub("Kegg:", paste("KEGG:", organism, sep=""), globalMetagroups$Terms)
-    tablaGeneTermSets$Terms <- gsub("Kegg:", paste("KEGG:", organism, sep=""), tablaGeneTermSets$Terms)
+    # globalMetagroups$Terms <- gsub("Kegg:", paste("KEGG:", organism, sep=""), globalMetagroups$Terms)
+    # tablaGeneTermSets$Terms <- gsub("Kegg:", paste("KEGG:", organism, sep=""), tablaGeneTermSets$Terms)
     # Interpro
     globalMetagroups$Terms <- gsub("IPR", paste("IPR:", sep=""), globalMetagroups$Terms)
     tablaGeneTermSets$Terms <- gsub("IPR", paste("IPR:", sep=""), tablaGeneTermSets$Terms)

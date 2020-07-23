@@ -24,7 +24,7 @@ tabGTL_fill <- function(mainWindow)
     tabGTL$packStart(frameOrg, expand=FALSE)
     
     # Annotations
-    GtL_annots <- c("GO_Biological_Process","GO_Molecular_Function", "GO_Cellular_Component", "KEGG_Pathways", "InterPro_Motifs")
+    GtL_annots <- c("GO_Biological_Process","GO_Molecular_Function", "GO_Cellular_Component", "InterPro_Motifs")
     frameAnnots <- RGtk2::gtkFrame("Annotations")
     annotsArea <- RGtk2::gtkVBoxNew(homogeneous=FALSE, spacing=0)
     frameAnnots$add(annotsArea)

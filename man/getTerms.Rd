@@ -14,7 +14,7 @@ getTerms(feaResults, returnValue = "description")
 Output returned by any of the \link[FGNet:fea_david]{fea functions}.
 }
   \item{returnValue}{
-"description" Returns term description, "GO" or "KEGG" returns GO or KEGG term IDs.
+"description" Returns term description, e.g. "GO" returns GO term IDs.
 }
 }
 \value{

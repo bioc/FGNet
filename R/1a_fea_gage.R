@@ -26,7 +26,7 @@
 
 
 ##############################################
-fea_gage <- function(eset, refSamples, compSamples, geneIdType, geneLabels=NULL, organism="Hs", annotations=c("GO_BP","GO_MF","GO_CC","KEGG","REACTOME"), geneSets=NULL, sameDirection=FALSE, onlyEssentialTerms=TRUE, compareType="as.group", jobName=NULL, ...)
+fea_gage <- function(eset, refSamples, compSamples, geneIdType, geneLabels=NULL, organism="Hs", annotations=c("GO_BP","GO_MF","GO_CC","REACTOME"), geneSets=NULL, sameDirection=FALSE, onlyEssentialTerms=TRUE, compareType="as.group", jobName=NULL, ...)
 {        
     if(!loadInstPkg("gage")) stop("Package gage is not available.")
     

@@ -2,7 +2,7 @@
 # clDescriptions # used by getMGTerms
 
 # Returns a list with the metagroup term names and links
-getMGTerms <- function(globalMetagroups, grType, keggPlots=NULL)
+getMGTerms <- function(globalMetagroups, grType)
 {    
     mgTerms<- sapply(globalMetagroups$Terms, function(x) strsplit(as.character(x), split=";"))
     names(mgTerms)<-paste(grType,rownames(globalMetagroups), sep=" ")
@@ -10,7 +10,7 @@ getMGTerms <- function(globalMetagroups, grType, keggPlots=NULL)
     termsDescriptions <- list()
     for(mgName in names(mgTerms))
     {
-        descripciones <- clDescriptions(mgTerms[[mgName]], keggPlots=keggPlots)
+        descripciones <- clDescriptions(mgTerms[[mgName]])
         
         descripciones <- descripciones[order(descripciones[,"TermDescription"]),, drop=FALSE]
         termsDescriptions[[mgName]] <- descripciones
@@ -19,7 +19,7 @@ getMGTerms <- function(globalMetagroups, grType, keggPlots=NULL)
 }
 
 
-clDescriptions <- function(terms, keggPlots=NULL)  #org=NULL,
+clDescriptions <- function(terms)  #org=NULL,
 {
     termsIDs <- regexpr("\\(([[:alnum:]]+:[[:alnum:]]+[0-9]+)\\)$", terms)
     termsIDs <- substr(terms, termsIDs + 1, termsIDs + attr(termsIDs, "match.length") - 2)
@@ -49,20 +49,20 @@ clDescriptions <- function(terms, keggPlots=NULL)  #org=NULL,
                     link <- paste("http://www.ebi.ac.uk/interpro/entry/IPR", x[2], sep="")
                 }
                             
-                # Kegg        
-                if(toupper(x[1])=="KEGG")
-                {
-                    # KEGG:hsa03320:PPAR signaling pathway
-                    org <- substring(x[2], 1, 3)
-                    keggID <- substring(x[2], 4, nchar(x[2]))
-                    if(keggID %in% names(keggPlots))
-                    {
-                        link <- keggPlots[keggID]
-                    }else
-                    {
-                        link <- paste("http://www.genome.jp/kegg-bin/show_pathway?org_name=", org, "&mapno=", keggID, sep="")
-                    }
-                }
+                # # Kegg        
+                # if(toupper(x[1])=="KEGG")
+                # {
+                #     # KEGG:hsa03320:PPAR signaling pathway
+                #     org <- substring(x[2], 1, 3)
+                #     keggID <- substring(x[2], 4, nchar(x[2]))
+                #     if(keggID %in% names(keggPlots))
+                #     {
+                #         link <- keggPlots[keggID]
+                #     }else
+                #     {
+                #         link <- paste("http://www.genome.jp/kegg-bin/show_pathway?org_name=", org, "&mapno=", keggID, sep="")
+                #     }
+                # }
                 
                 # SMART (Appears in david even if it was not explicitly requested)
                 # David:            SM00181:EGF

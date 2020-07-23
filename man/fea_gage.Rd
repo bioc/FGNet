@@ -9,7 +9,7 @@ Performs the functional enrichment analysis and clustering through GAGE [1] (GSE
 \usage{
 fea_gage(eset, refSamples, compSamples, geneIdType, geneLabels=NULL, 
     organism = "Hs", 
-    annotations = c("GO_BP", "GO_MF", "GO_CC", "KEGG", "REACTOME"), 
+    annotations = c("GO_BP", "GO_MF", "GO_CC", "REACTOME"), 
     geneSets = NULL, 
     sameDirection = FALSE, 
     onlyEssentialTerms = TRUE, 

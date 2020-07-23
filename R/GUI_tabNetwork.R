@@ -33,8 +33,8 @@ selectNetworkTool <- function(aux, argsList)
         argsList$frameFEAresultsText$label <- "Job ID or file"        
         
         RGtk2::gtkWidgetSetSensitive(argsList$gtLinkerDownloadExpander, TRUE)
-        argsList$plotChecksValues[["plotKeggPw"]]$active <- FALSE
-        RGtk2::gtkWidgetSetSensitive(argsList$plotChecksValues[["plotKeggPw"]], FALSE)
+        # argsList$plotChecksValues[["plotKeggPw"]]$active <- FALSE
+        # RGtk2::gtkWidgetSetSensitive(argsList$plotChecksValues[["plotKeggPw"]], FALSE)
         RGtk2::gtkWidgetSetSensitive(argsList$plotChecksValues[["onlyGoLeaves"]], FALSE)
         
     }else{
@@ -42,7 +42,7 @@ selectNetworkTool <- function(aux, argsList)
         
         argsList$gtLinkerDownloadExpander$Hide()
         RGtk2::gtkWidgetSetSensitive(argsList$gtLinkerDownloadExpander, FALSE)
-        RGtk2::gtkWidgetSetSensitive(argsList$plotChecksValues[["plotKeggPw"]], TRUE)
+        # RGtk2::gtkWidgetSetSensitive(argsList$plotChecksValues[["plotKeggPw"]], TRUE)
         RGtk2::gtkWidgetSetSensitive(argsList$plotChecksValues[["onlyGoLeaves"]], TRUE)
     }    
 }

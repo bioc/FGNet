@@ -19,7 +19,6 @@ export(analyzeNetwork)
 export(getTerms)
 export(plotGoAncestors)
 export(keywordsTerm)
-export(plotKegg)
  
 import(igraph)
 import(png)

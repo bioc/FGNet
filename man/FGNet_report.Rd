@@ -10,7 +10,7 @@ Generates an HTML report with several views of the Functional Network and comple
 }
 \usage{
 FGNet_report(feaResults, geneExpr = NULL, plotExpression = "border", 
-onlyGoLeaves = TRUE, plotGoTree = TRUE, plotKeggPw = FALSE, 
+onlyGoLeaves = TRUE, plotGoTree = TRUE, 
 filterAttribute = NULL, filterOperator = NULL, filterThreshold = NULL)
 }
 \arguments{
@@ -28,10 +28,6 @@ logical. If TRUE only terminal GO terms (leaves in the ontology tree) will be in
 }
   \item{plotGoTree}{
 logical. If TRUE plots containing the terms in their position within the GO ontology (tree) will be generated.
-}
-  \item{plotKeggPw}{ Deprecated. 
-Old description: logical. If TRUE local plot for KEGG pathway terms will be generated. If FALSE KEGG pathway terms will link to KEGG website.
-In the current version local plots are only available for ENTREZ gene IDs. 
 }
   \item{filterAttribute}{
 character or data.frame. Attribute to filter the clusters/metagroups. Filtered clusters/metagroups will not be included in the matrices (and subsequent networks).

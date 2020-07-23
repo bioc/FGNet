@@ -26,7 +26,7 @@ refList <- function(dbPackage, geneIdType)
 
 # Builds gene-term sets based on Bioconductor databases: Organisms and GO/KEGG/REACTOME
 # used by query_topGO and query_gage
-buildGeneSets <- function(organismDb, geneIDtype, annotations=c("GO_BP","GO_MF","GO_CC","KEGG","REACTOME"), evidence=NULL, termLabel=c("TERM","ID"))
+buildGeneSets <- function(organismDb, geneIDtype, annotations=c("GO_BP","GO_MF","GO_CC","REACTOME"), evidence=NULL, termLabel=c("TERM","ID"))
 {
     if(termLabel[1] == "TERM") termAsLabel <- TRUE
     # Check and load required libraries
@@ -89,44 +89,44 @@ buildGeneSets <- function(organismDb, geneIDtype, annotations=c("GO_BP","GO_MF",
         }
     }
     
-    #### Build KEGG tables:
-    if("KEGG" %in% annotations)
-    {
-        if("PATH" %in% AnnotationDbi::columns(org.db))
-        {
-            tableKeggGenes <- suppressWarnings(AnnotationDbi::select(org.db, keys=allGenes, columns="PATH", keytype=geneIDtype))
-            tableKeggGenes <- tableKeggGenes[!is.na(tableKeggGenes[,"PATH"]),] # Bueno o malo?
-            
-            genes2kegg <- split(as.character(tableKeggGenes$PATH),tableKeggGenes[,geneIDtype])
-            kegg2genes <- split(tableKeggGenes[,geneIDtype], as.character(tableKeggGenes$PATH))
-    
-            ret$genes2terms <- c(ret$genes2terms, list(KEGG=genes2kegg))
-            ret$terms2genes <- c(ret$terms2genes, list(KEGG=kegg2genes))
-            ret$asTable <- c(ret$asTable, list(KEGG=tableKeggGenes))
-            
-            if(loadInstPkg("KEGG.db")) 
-            {
-                # Labels...
-                termsLabels <- AnnotationDbi::as.list(KEGG.db::KEGGPATHID2NAME)
-                termsLabels <- termsLabels[which(names(termsLabels) %in% names(kegg2genes))]
-                # termsLabels <- sapply(termsLabels, function(x) x[1]) # Take only first
-                
-                if(termAsLabel)
-                {
-                    # Concatenate the term ID with the term label
-                    names(ret$terms2genes$KEGG) <- paste(names(ret$terms2genes$KEGG), ":", termsLabels[names(ret$terms2genes$KEGG)], sep="")        
-                }else{ 
-                    # Add a field with the term name
-                    if(!"termID2name" %in% names(ret)) ret <- c(ret, list(termID2name=NULL))
-                    ret$termID2name <- c(ret$termID2name, list(KEGG=termsLabels))
-                } 
-            }else{
-                if(termAsLabel) warning("To add terms as gene set label KEGG.db package is required.")
-            }
-        }else{
-            warning(paste("Kegg (pathway) info is not available in ", organismDb, sep=""))
-        }
-    }
+    # #### Build KEGG tables:
+    # if("KEGG" %in% annotations)
+    # {
+    #     if("PATH" %in% AnnotationDbi::columns(org.db))
+    #     {
+    #         tableKeggGenes <- suppressWarnings(AnnotationDbi::select(org.db, keys=allGenes, columns="PATH", keytype=geneIDtype))
+    #         tableKeggGenes <- tableKeggGenes[!is.na(tableKeggGenes[,"PATH"]),] # Bueno o malo?
+    #         
+    #         # genes2kegg <- split(as.character(tableKeggGenes$PATH),tableKeggGenes[,geneIDtype])
+    #         # kegg2genes <- split(tableKeggGenes[,geneIDtype], as.character(tableKeggGenes$PATH))
+    # 
+    #         # ret$genes2terms <- c(ret$genes2terms, list(KEGG=genes2kegg))
+    #         # ret$terms2genes <- c(ret$terms2genes, list(KEGG=kegg2genes))
+    #         # ret$asTable <- c(ret$asTable, list(KEGG=tableKeggGenes))
+    #         
+    #         # if(loadInstPkg("KEGG.db")) 
+    #         # {
+    #         #     # Labels...
+    #         #     termsLabels <- AnnotationDbi::as.list(KEGG.db::KEGGPATHID2NAME)
+    #         #     termsLabels <- termsLabels[which(names(termsLabels) %in% names(kegg2genes))]
+    #         #     # termsLabels <- sapply(termsLabels, function(x) x[1]) # Take only first
+    #         #     
+    #         #     if(termAsLabel)
+    #         #     {
+    #         #         # Concatenate the term ID with the term label
+    #         #         names(ret$terms2genes$KEGG) <- paste(names(ret$terms2genes$KEGG), ":", termsLabels[names(ret$terms2genes$KEGG)], sep="")        
+    #         #     }else{ 
+    #         #         # Add a field with the term name
+    #         #         if(!"termID2name" %in% names(ret)) ret <- c(ret, list(termID2name=NULL))
+    #         #         ret$termID2name <- c(ret$termID2name, list(KEGG=termsLabels))
+    #         #     } 
+    #         # }else{
+    #         #     if(termAsLabel) warning("To add terms as gene set label KEGG.db package is required.")
+    #         # }
+    #     }else{
+    #         warning(paste("Kegg (pathway) info is not available in ", organismDb, sep=""))
+    #     }
+    # }
     
     
     if("REACTOME" %in% annotations)

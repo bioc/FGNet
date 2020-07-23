@@ -5,7 +5,7 @@ newDavidVars <- function()
     object <- new.env(parent=globalenv()) 
     
     # Constants:
-    object[["dav_DefaultAnnots"]] <- c("GOTERM_BP_ALL", "GOTERM_MF_ALL", "GOTERM_CC_ALL", "KEGG_PATHWAY", "INTERPRO") 
+    object[["dav_DefaultAnnots"]] <- c("GOTERM_BP_ALL", "GOTERM_MF_ALL", "GOTERM_CC_ALL","INTERPRO") 
     object[["dav_DefaultId"]] <- "ENSEMBL_GENE_ID"
     
     # Modified when selecting API or WS (global variables to avoid reconnect):

@@ -18,7 +18,7 @@ Since Gene-Term Linker takes a while to analyze the gene list, the process has b
 \usage{
 fea_gtLinker(geneList, organism = "Hs", 
     annotations = c("GO_Biological_Process", "GO_Molecular_Function", 
-    "GO_Cellular_Component", "KEGG_Pathways", "InterPro_Motifs"),
+    "GO_Cellular_Component", "InterPro_Motifs"),
     minSupport = 4, serverWS = "http://gtlinker.cnb.csic.es:8182")
 
 fea_gtLinker_getResults(jobID = NULL, organism = NULL, jobName = NULL, 
@@ -36,7 +36,7 @@ character vector. List of genes to analyze.
   \item{annotations}{
 character vector. Annotation spaces for the functional analysis. \cr
 Available values: "GO_Biological_Process", "GO_Molecular_Function", \cr
-"GO_Cellular_Component", "KEGG_Pathways", "InterPro_Motifs".
+"GO_Cellular_Component", "InterPro_Motifs".
 }
   \item{minSupport}{
 numeric. Minimum number of genes per group.

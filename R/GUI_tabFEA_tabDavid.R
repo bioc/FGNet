@@ -18,7 +18,7 @@ selectAPI <- function(aux, argsList)
 
     # Annotations
     for(ch in argsList$annotsArea$getChildren()) argsList$annotsArea$remove(ch) # Vaciar
-    DAV_Annots <- c("BBID", "BIND", "BIOCARTA", "CHROMOSOME", "COG_ONTOLOGY", "GOTERM_BP_ALL", "GOTERM_CC_ALL", "GOTERM_MF_ALL", "INTERPRO", "KEGG_PATHWAY", "OMIM_DISEASE", "PIR_SUPERFAMILY", "SMART", "SP_PIR_KEYWORDS", "UP_SEQ_FEATURE")
+    DAV_Annots <- c("BBID", "BIND", "BIOCARTA", "CHROMOSOME", "COG_ONTOLOGY", "GOTERM_BP_ALL", "GOTERM_CC_ALL", "GOTERM_MF_ALL", "INTERPRO", "OMIM_DISEASE", "PIR_SUPERFAMILY", "SMART", "SP_PIR_KEYWORDS", "UP_SEQ_FEATURE")
     checkAnnotsDavid <- list()
     for(annot in DAV_Annots)
     {
@@ -108,7 +108,7 @@ selectWs_fillFields <- function(aux, argsList)
 # Parameters required for david query:
 # genes=NULL
 # geneIdType="ENSEMBL_GENE_ID"
-# annotations=c("GOTERM_BP_ALL", "GOTERM_MF_ALL", "GOTERM_CC_ALL", "KEGG_PATHWAY", "INTERPRO")
+# annotations=c("GOTERM_BP_ALL", "GOTERM_MF_ALL", "GOTERM_CC_ALL","INTERPRO")
 # email=NULL
 # argsWS = c(overlap=4L, initialSeed=4L, finalSeed=4L, linkage=0.5, kappa=35L), 
   

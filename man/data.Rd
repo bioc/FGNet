@@ -10,7 +10,7 @@ FGNet package includes the following data files: organisms, groupTypes and FEA_t
 }
 \value{
 \itemize{
-\item{organisms: Matrix with the supported organisms' name, package and KEGG prefix.}
+\item{organisms: Matrix with the supported organisms' name and package.}
 
 \item{groupTypes: Matrix with the group types supported by FGNet (cluster, metagroup and gene-term set).}
 

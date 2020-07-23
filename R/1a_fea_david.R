@@ -21,7 +21,7 @@ errorMsgDavid <- function(errorMsg)
 
 # API: david.abcc.ncifcrf.gov/content.jsp?file=DAVID_API.html
 # Maximum gene ids: 4000
-fea_david <- function(geneList, geneIdType="ENSEMBL_GENE_ID", geneLabels=NULL, annotations=c("GOTERM_BP_ALL", "GOTERM_MF_ALL", "GOTERM_CC_ALL", "KEGG_PATHWAY", "INTERPRO"), email=NULL, argsWS=c(overlap=4L, initialSeed=4L, finalSeed=4L, linkage=0.5, kappa=35L), jobName=NULL, downloadFile=TRUE)
+fea_david <- function(geneList, geneIdType="ENSEMBL_GENE_ID", geneLabels=NULL, annotations=c("GOTERM_BP_ALL", "GOTERM_MF_ALL", "GOTERM_CC_ALL", "INTERPRO"), email=NULL, argsWS=c(overlap=4L, initialSeed=4L, finalSeed=4L, linkage=0.5, kappa=35L), jobName=NULL, downloadFile=TRUE)
 {    
     # Check arguments
     if(!is.character(geneList)) stop("geneList should be a character vector.")

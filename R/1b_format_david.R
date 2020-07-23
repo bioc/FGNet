@@ -97,8 +97,8 @@ format_david <- function(fileName, jobName=NULL, geneLabels=NULL, moveFile=FALSE
         tablaGeneTermSets$Genes <- sapply(tablaGeneTermSets$Genes, function(x) gsub(" ","",x))
         
         # Kegg
-        keggs <- which(tablaGeneTermSets[,"Category"] == "KEGG_PATHWAY")
-        if(length(keggs)>0) tablaGeneTermSets[keggs, "Terms"] <- paste("KEGG:", tablaGeneTermSets[keggs, "Terms"], sep="")        
+        # keggs <- which(tablaGeneTermSets[,"Category"] == "KEGG_PATHWAY")
+        # if(length(keggs)>0) tablaGeneTermSets[keggs, "Terms"] <- paste("KEGG:", tablaGeneTermSets[keggs, "Terms"], sep="")        
         
         # Reactome
         reactomes <- grep("REACTOME_PATHWAY", tablaGeneTermSets[,"Category"]) 
@@ -110,7 +110,7 @@ format_david <- function(fileName, jobName=NULL, geneLabels=NULL, moveFile=FALSE
         
         # Not any of these annotations...
         gos <- grep("GOTERM", tablaGeneTermSets[,"Category"])        
-        otherAnnot <- which(!(1:dim(tablaGeneTermSets)[1] %in% c(keggs, gos, iprs, reactomes)))
+        otherAnnot <- which(!(1:dim(tablaGeneTermSets)[1] %in% c(gos, iprs, reactomes)))
         if (length(otherAnnot) > 0)
         {
             tablaGeneTermSets[otherAnnot, "Terms"] <- sapply(strsplit(tablaGeneTermSets[otherAnnot, "Terms"], split=":"), function(x) paste(x[-1], " (ID ", x[1], ")", sep=""))

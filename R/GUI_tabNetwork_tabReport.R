@@ -42,7 +42,7 @@ generateReport <- function(button, argsList) # button: Not used, but required fo
         
         ###################################################################
         # Get arguments
-        plotKeggPw <- argsList$plotChecksValues[["plotKeggPw"]]$active 
+        # plotKeggPw <- argsList$plotChecksValues[["plotKeggPw"]]$active 
         plotGoTree <- argsList$plotChecksValues[["plotGoTree"]]$active 
         onlyGoLeaves <- argsList$plotChecksValues[["onlyGoLeaves"]]$active # Not for GtLinker. Only david (&other?)
                                                 
@@ -62,7 +62,7 @@ generateReport <- function(button, argsList) # button: Not used, but required fo
 
         tryCatch( 
         {
-            FGNet_report(feaResults, geneExpr=geneExpr, plotExpression=plotExpression, onlyGoLeaves=onlyGoLeaves, plotGoTree=plotGoTree, plotKeggPw=plotKeggPw, 
+            FGNet_report(feaResults, geneExpr=geneExpr, plotExpression=plotExpression, onlyGoLeaves=onlyGoLeaves, plotGoTree=plotGoTree,
                          filterAttribute=filterAttribute, filterOperator=filterOperator, filterThreshold=filterThreshold)
             argsList$statusbar$push(argsList$statusbar$getContextId("info"), "Report ready.")
         }, error = function (e)
@@ -87,7 +87,7 @@ tabReport_fill <- function(mainWindow, statusbar, commonFields)
     tabReport <- RGtk2::gtkVBox(FALSE,3)
     
     # plotChecks
-    plotChecks <- c("plotKeggPw","plotGoTree", "onlyGoLeaves")  # onlyGoLeaves (only David/other?) TODO
+    plotChecks <- c("plotGoTree", "onlyGoLeaves")  # onlyGoLeaves (only David/other?) TODO
     plotChecksFrame <- RGtk2::gtkFrame("Plot options")
     plotChecksArea <- RGtk2::gtkVBoxNew(homogeneous=FALSE, spacing=0)
     plotChecksFrame$add(plotChecksArea)

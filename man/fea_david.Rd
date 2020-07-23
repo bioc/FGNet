@@ -10,7 +10,7 @@ Performs the functional enrichment analysis and clustering through DAVID [1] (re
 \usage{
 fea_david(geneList, geneIdType = "ENSEMBL_GENE_ID", geneLabels=NULL, 
   annotations = c("GOTERM_BP_ALL", "GOTERM_MF_ALL", "GOTERM_CC_ALL", 
-  "KEGG_PATHWAY", "INTERPRO"), 
+ "INTERPRO"), 
   email = NULL, 
   argsWS = c(overlap = 4L, initialSeed = 4L, finalSeed = 4L, linkage = 0.5, 
   kappa = 35L), jobName = NULL, downloadFile=TRUE)
@@ -89,7 +89,7 @@ The web service and the API have different default arguments. To obtain the same
 \itemize{ 
     \item Cluster: Number (id) of the cluster the gene-term set belongs to.
     \item ClusterEnrichmentScore: Score for the cluster. Same value for all terms in each cluster.
-    \item Category: Type of annotation of the term (i.e. GO, Kegg...)
+    \item Category: Type of annotation of the term (i.e. GO, ...)
     \item Terms: Term in the gene-term set.
     \item Genes: Genes in the gene-term set.
     \item GenesIDs: In case GeneLabels was provided, original gene ID.

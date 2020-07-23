@@ -55,7 +55,7 @@ FGNet builds the functional networks, based on data from a previous functional e
 
 * **TopGO** ([Alexa et al](#references)), an enrichment analysis tool based on Gene Ontology (GO) that tests GO terms while accounting for the topology of the GO graph to eliminate local similarities and dependencies between GO terms. TopGO does not provide clusters, and therefore the functional network is built using only the gene-term sets. TopGO can be applied off-line.
 
-* **GAGE** ([Luo et al](#references)), a gene set enrichment analysis (GSEA) tool. It searches for functional enrichment in gene sets (i.e. KEGG pathways, Reactome, GO) and allows including a signal value -like expression changes- to rank the genes and then to identify the enrichment in functional terms that are altered (i.e. changed in genes UP and DOWN) or altered consistently in one direction (UP or DOWN). GAGE also clusters the resulting enriched gene-term sets and can be applied off-line.
+* **GAGE** ([Luo et al](#references)), a gene set enrichment analysis (GSEA) tool. It searches for functional enrichment in gene sets (i.e. Reactome, GO) and allows including a signal value -like expression changes- to rank the genes and then to identify the enrichment in functional terms that are altered (i.e. changed in genes UP and DOWN) or altered consistently in one direction (UP or DOWN). GAGE also clusters the resulting enriched gene-term sets and can be applied off-line.
 
 To build the network based on other *other tools*, the raw output should be saved into a text file which contains the enriched terms and their genes. (For more details see function `format_results()`).
 
@@ -110,7 +110,7 @@ To generate a functional network with FGNet:
     |FEA tool         |Online?  |Input          |Annotations        |
     |:----------------|:---------|:--------------|:------------------|
     |DAVID            |Yes       |Gene list      |Many               |
-    |Gene-Term Linker |Yes       |Gene list      |GO, KEGG, Interpro |
+    |Gene-Term Linker |Yes       |Gene list      |GO, Interpro       |
     |TopGO            |No        |Gene list      |GO                 |
     |GAGE (GSEA)      |No        |Expression set |Any gene set       |
 

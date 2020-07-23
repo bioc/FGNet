@@ -125,8 +125,8 @@ gageV2Box$packStart(gsRadioBoxH, expand = FALSE)
     
     # annotations
     #gageV2Box$packStart(RGtk2::gtkLabelNew("*OR*"), expand=FALSE)
-    gage_annots <- c("GO Biological Process (BP)","GO Molecular Function (MF)", "GO Cellular Component (CC)", "Kegg pathways", "Reactome pathways")
-    names(gage_annots) <- c("GO_BP","GO_MF","GO_CC","KEGG","REACTOME")
+    gage_annots <- c("GO Biological Process (BP)","GO Molecular Function (MF)", "GO Cellular Component (CC)", "Reactome pathways")
+    names(gage_annots) <- c("GO_BP","GO_MF","GO_CC","REACTOME")
     frameAnnotsGage <- RGtk2::gtkFrame("Select annotations (if available)")
     RGtk2::gtkFrameSetShadowType(frameAnnotsGage, GtkShadowType["none"])
     annotsAreaGage <- RGtk2::gtkVBoxNew(homogeneous=FALSE, spacing=0)

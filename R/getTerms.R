@@ -7,7 +7,7 @@
 # [4,] "Positive regulation of molecular function"
 # ...
 
-getTerms <- function(feaResults, returnValue="description") #GO, KEGG
+getTerms <- function(feaResults, returnValue="description") #GO
 {    
     if(!is.list(feaResults)) stop("Please provide the whole output from one of the fea functions.")  # Only Clusters/Metagroups are used. (no need of $GeneTermSets)
     
@@ -43,18 +43,8 @@ getTerms <- function(feaResults, returnValue="description") #GO, KEGG
         #terms <- sapply(terms, function(x) sapply(x, function(y) strsplit(y,split=":[[:alpha:]]",perl=TRUE)[[1]][1]))
         names(terms) <- paste(grType, grNames)
 
-    }else if(returnValue=="KEGG") # Return KEGG IDs
-    {    
-        terms <- sapply(mgTerms, function(x) 
-            {
-            x <- x[grepl(pattern="KEGG:",x[,"TermID"]),,drop=FALSE]
-            x <- setNames(x[,"TermID"], x[,"TermDescription"])
-            })
-        terms <- sapply(terms, function(x) sapply(x, function(y) strsplit(y,split=":",perl=TRUE)[[1]][2]))
-        names(terms) <- paste(grType, grNames)
-        # Quitar vacios?
-        
-    }else if(returnValue=="description") # Return term description
+    }
+    else if(returnValue=="description") # Return term description
     {    
         terms <- lapply(mgTerms, function(x) 
             {

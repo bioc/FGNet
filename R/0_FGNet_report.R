@@ -1,6 +1,6 @@
 
 #ADD? jobName=NULL,  geneLabels=NULL,
-FGNet_report <- function (feaResults, geneExpr=NULL, plotExpression="border", onlyGoLeaves=TRUE, plotGoTree=TRUE, plotKeggPw=FALSE, filterAttribute=NULL, filterOperator=NULL, filterThreshold=NULL)
+FGNet_report <- function (feaResults, geneExpr=NULL, plotExpression="border", onlyGoLeaves=TRUE, plotGoTree=TRUE, filterAttribute=NULL, filterOperator=NULL, filterThreshold=NULL)
 {
     #####################################################################################################
     ####################################   Check arguments   ############################################
@@ -19,14 +19,14 @@ FGNet_report <- function (feaResults, geneExpr=NULL, plotExpression="border", on
         jobName <- queryArgs$jobName
     }
     
-    if(plotKeggPw)
-    {
-        if(tool=="GeneTerm Linker")
-        {
-            plotKeggPw <- FALSE
-            warning("Local plots of KEGG pathways are not available for Gene-Term Linker. Links to the website will be used instead.")
-        }
-    }
+    # if(plotKeggPw)
+    # {
+    #     if(tool=="GeneTerm Linker")
+    #     {
+    #         plotKeggPw <- FALSE
+    #         warning("Local plots of KEGG pathways are not available for Gene-Term Linker. Links to the website will be used instead.")
+    #     }
+    # }
     
     # Get info:
     if(is.null(filterAttribute)) 
@@ -64,7 +64,7 @@ FGNet_report <- function (feaResults, geneExpr=NULL, plotExpression="border", on
         createHtml(htmlFileName=htmlFileName, feaResults=feaResults, jobName=jobName, tablesGenes=tablesGenes, tablesTerms=tablesTerms,  # Data
                    tool=tool, queryArgs=queryArgs, # Query info
                    filterAttribute=filterAttribute, filterOperator=filterOperator, filterThreshold=filterThreshold, # Filter info
-                   geneExpr=geneExpr, plotExpression=plotExpression, onlyGoLeaves=onlyGoLeaves, plotGoTree=plotGoTree, plotKeggPw=plotKeggPw)  # HTML options
+                   geneExpr=geneExpr, plotExpression=plotExpression, onlyGoLeaves=onlyGoLeaves, plotGoTree=plotGoTree)  # HTML options
         setwd(currWD)
     }, error = function(e) {
         setwd(currWD)
