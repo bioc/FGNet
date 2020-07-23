@@ -5,25 +5,25 @@
 
 tabNetwork_common_fill <- function(mainWindow,geneList)
 {
-    tabNetwork <- gtkHBox(FALSE,3)
+    tabNetwork <- RGtk2::gtkHBox(FALSE,3)
     
     ############################################################################
     ##### 1. Genes EXPRESSION text field
     # Expression
-    table.Left <- gtkTable(rows=20,columns=2)
-    frameExpressionFields <- gtkFrame("Expression (only for ploting)")
-    gtkFrameSetShadowType(frameExpressionFields, GtkShadowType["none"])
+    table.Left <- RGtk2::gtkTable(rows=20,columns=2)
+    frameExpressionFields <- RGtk2::gtkFrame("Expression (only for ploting)")
+    RGtk2::gtkFrameSetShadowType(frameExpressionFields, GtkShadowType["none"])
     table.Left$attach(frameExpressionFields, left.attach = 0,2, top.attach = 0,19, xoptions =  c("expand", "fill"), yoptions = c("expand", "fill"))
     tabNetwork$packStart(table.Left, TRUE, TRUE, 10)
     
     # Scrolled area:
-    expressionArea <- gtkScrolledWindow()
+    expressionArea <- RGtk2::gtkScrolledWindow()
     expressionArea$setPolicy("automatic", "automatic")
     expressionArea$setShadowType("in")
     frameExpressionFields$add(expressionArea)
     
     # Text field
-    expressionText <- gtkTextViewNewWithBuffer()
+    expressionText <- RGtk2::gtkTextViewNewWithBuffer()
     expressionText$grabFocus()
     expressionText$"tooltip-text" <- "One gene per line, followed by its expression separated by tab or space"
     expressionText$modifyFont(pangoFontDescriptionFromString(", monospace"))
@@ -32,27 +32,27 @@ tabNetwork_common_fill <- function(mainWindow,geneList)
     # Add genes from argument to field
     if(!is.null(geneList) && !is.null(names(geneList)))
     {
-        genesBuffer <- gtkTextBufferNew()
-        gtkTextBufferSetText(genesBuffer,paste(paste(names(geneList), geneList,sep="\t"),collapse="\n"))
-        gtkTextViewSetBuffer(expressionText, genesBuffer)
+        genesBuffer <- RGtk2::gtkTextBufferNew()
+        RGtk2::gtkTextBufferSetText(genesBuffer,paste(paste(names(geneList), geneList,sep="\t"),collapse="\n"))
+        RGtk2::gtkTextViewSetBuffer(expressionText, genesBuffer)
     }
     
     # Combo
     exprPlotOptionsID <- setNames(0:1, c("border","fill"))
     exprPlotOptionsShow <- setNames(0:1, c("Border","Fill node"))
-    frameExpressionPlot <- gtkFrame("Plot as")
-    gtkFrameSetShadowType(frameExpressionPlot, GtkShadowType["none"])
-    comboExpressionPlot <- gtkComboBoxNewText()
-    for (i in capitalize(names(exprPlotOptionsShow))) gtkComboBoxAppendText(comboExpressionPlot, i)
-    gtkComboBoxSetTitle(comboExpressionPlot, "comboExpressionPlot")
+    frameExpressionPlot <- RGtk2::gtkFrame("Plot as")
+    RGtk2::gtkFrameSetShadowType(frameExpressionPlot, GtkShadowType["none"])
+    comboExpressionPlot <- RGtk2::gtkComboBoxNewText()
+    for (i in capitalize(names(exprPlotOptionsShow))) RGtk2::gtkComboBoxAppendText(comboExpressionPlot, i)
+    RGtk2::gtkComboBoxSetTitle(comboExpressionPlot, "comboExpressionPlot")
     comboExpressionPlot$setActive(exprPlotOptionsID["border"])
     comboExpressionPlot$"tooltip-text" <- "Genes with positive values are plotted RED, negative values GREEN"
     frameExpressionPlot$add(comboExpressionPlot)
     table.Left$attach(frameExpressionPlot, left.attach = 0,1, top.attach = 19,20, xoptions = "", yoptions = "")
     
-    frameButtonSelectExprFile <- gtkFrameNew("")
-    gtkFrameSetShadowType(frameButtonSelectExprFile, GtkShadowType["none"])
-    buttonSelectExprFile <- gtkButton("Load from file")   #.RData containing vector or .csv???
+    frameButtonSelectExprFile <- RGtk2::gtkFrameNew("")
+    RGtk2::gtkFrameSetShadowType(frameButtonSelectExprFile, GtkShadowType["none"])
+    buttonSelectExprFile <- RGtk2::gtkButton("Load from file")   #.RData containing vector or .csv???
     buttonSelectExprFile$"tooltip-text" <- "Text file with one gene per line, followed by its expression separated by TAB"
     buttonSelectExprFile$name <- "buttonSelectExprFile"
     gSignalConnect(buttonSelectExprFile, "clicked", loadFileDialog, data=list(parentWindow=mainWindow, expressionText=expressionText))
@@ -63,35 +63,35 @@ tabNetwork_common_fill <- function(mainWindow,geneList)
     ############################################################################
     ##### 2. FGNet options
     
-    box.Right <- gtkVBoxNew(FALSE, 10)
-    frame.FGNetOptions <- gtkFrameNew("Functional Network")
-    #gtkFrameSetShadowType(frame.FGNetOptions, GtkShadowType["none"])
+    box.Right <- RGtk2::gtkVBoxNew(FALSE, 10)
+    frame.FGNetOptions <- RGtk2::gtkFrameNew("Functional Network")
+    #RGtk2::gtkFrameSetShadowType(frame.FGNetOptions, GtkShadowType["none"])
     box.Right$add(frame.FGNetOptions)
     tabNetwork$add(box.Right)
     
     ##### TOP (common box)
-    commonBox <- gtkVBoxNew(FALSE, 10)
+    commonBox <- RGtk2::gtkVBoxNew(FALSE, 10)
     commonBox$setBorderWidth(10)
     
-    fgnCommon1Box <- gtkHBox(FALSE,3)
+    fgnCommon1Box <- RGtk2::gtkHBox(FALSE,3)
     ### Tool
-    frameFeaTool <- gtkFrame("FEA tool")
-    gtkFrameSetShadowType(frameFeaTool, GtkShadowType["none"])
-    frameFeaTool2 <- gtkFrame("")
-    gtkFrameSetShadowType(frameFeaTool2, GtkShadowType["none"])
-    comboFeaTool <- gtkComboBoxNewText()
+    frameFeaTool <- RGtk2::gtkFrame("FEA tool")
+    RGtk2::gtkFrameSetShadowType(frameFeaTool, GtkShadowType["none"])
+    frameFeaTool2 <- RGtk2::gtkFrame("")
+    RGtk2::gtkFrameSetShadowType(frameFeaTool2, GtkShadowType["none"])
+    comboFeaTool <- RGtk2::gtkComboBoxNewText()
     data("FEA_tools", envir = environment())
     FEA_tools<- get("FEA_tools", envir  = environment())
-    for (i in rownames(FEA_tools)) gtkComboBoxAppendText(comboFeaTool, i)
-    gtkComboBoxSetTitle(comboFeaTool, "comboFeaTool")
+    for (i in rownames(FEA_tools)) RGtk2::gtkComboBoxAppendText(comboFeaTool, i)
+    RGtk2::gtkComboBoxSetTitle(comboFeaTool, "comboFeaTool")
     comboFeaTool$setActive(FEA_tools["Imported text file","ID"])
     frameFeaTool$add(comboFeaTool)
     fgnCommon1Box$packStart(frameFeaTool, expand=FALSE)
 
     # Result
-    frameFEAresultsText <- gtkFrame("FEA results")
-    gtkFrameSetShadowType(frameFEAresultsText, GtkShadowType["none"])
-    feaResultsText <- gtkEntryNew()
+    frameFEAresultsText <- RGtk2::gtkFrame("FEA results")
+    RGtk2::gtkFrameSetShadowType(frameFEAresultsText, GtkShadowType["none"])
+    feaResultsText <- RGtk2::gtkEntryNew()
     #feaResultsText$setWidthChars(25)
     frameFEAresultsText$add(feaResultsText)
     fgnCommon1Box$packStart(frameFEAresultsText, expand=TRUE)
@@ -100,9 +100,9 @@ tabNetwork_common_fill <- function(mainWindow,geneList)
 #gSignalConnect(feaResultsText, "changed", loadFEAresults?)
     
     # Button
-    frameFEAfile <- gtkFrame("")
-    gtkFrameSetShadowType(frameFEAfile, GtkShadowType["none"])
-    buttonSelectFeaResults <- gtkButton("Select file")
+    frameFEAfile <- RGtk2::gtkFrame("")
+    RGtk2::gtkFrameSetShadowType(frameFEAfile, GtkShadowType["none"])
+    buttonSelectFeaResults <- RGtk2::gtkButton("Select file")
     buttonSelectFeaResults$name <- "buttonSelectFeaResults"
     frameFEAfile$add(buttonSelectFeaResults)
     fgnCommon1Box$packStart(frameFEAfile, expand=FALSE)
@@ -110,57 +110,57 @@ tabNetwork_common_fill <- function(mainWindow,geneList)
     commonBox$packStart(fgnCommon1Box, expand=FALSE)
                     
     ### GeneTerm Linker:
-    gtLinkerDownloadExpander <- gtkExpander("GeneTerm Linker download options", show=FALSE)
+    gtLinkerDownloadExpander <- RGtk2::gtkExpander("GeneTerm Linker download options", show=FALSE)
     gtLinkerDownloadExpander$Hide()
-    gtLinkerDownloadBox <- gtkHBox(FALSE,3)
+    gtLinkerDownloadBox <- RGtk2::gtkHBox(FALSE,3)
     
     # Server
-    serverWebReportFrame <- gtkFrame("Server")
-    gtkFrameSetShadowType(serverWebReportFrame, GtkShadowType["none"])
-    serverWebReportText <- gtkEntryNew()
+    serverWebReportFrame <- RGtk2::gtkFrame("Server")
+    RGtk2::gtkFrameSetShadowType(serverWebReportFrame, GtkShadowType["none"])
+    serverWebReportText <- RGtk2::gtkEntryNew()
     serverWebReportText$setWidthChars(25)
     serverWebReportText$setText("http://gtlinker.cnb.csic.es")
     serverWebReportFrame$add(serverWebReportText)
     gtLinkerDownloadBox$packStart(serverWebReportFrame, expand=FALSE)
     # Checkbox
-    alreadyDownloadedCheckFrame <- gtkFrame("")
-    gtkFrameSetShadowType(alreadyDownloadedCheckFrame, GtkShadowType["none"])
-    alreadyDownloadedCheck<- gtkCheckButton("AlreadyDownloaded")
+    alreadyDownloadedCheckFrame <- RGtk2::gtkFrame("")
+    RGtk2::gtkFrameSetShadowType(alreadyDownloadedCheckFrame, GtkShadowType["none"])
+    alreadyDownloadedCheck<- RGtk2::gtkCheckButton("AlreadyDownloaded")
     alreadyDownloadedCheckFrame$add(alreadyDownloadedCheck)
     gtLinkerDownloadBox$packStart(alreadyDownloadedCheckFrame, expand=FALSE)
     # Add
     gtLinkerDownloadExpander$add(gtLinkerDownloadBox)
-    gtkWidgetSetSensitive(gtLinkerDownloadExpander, FALSE)
+    RGtk2::gtkWidgetSetSensitive(gtLinkerDownloadExpander, FALSE)
     gtLinkerDownloadExpander$Hide()
     commonBox$packStart(gtLinkerDownloadExpander, expand=FALSE)
     
-    fgnCommon2Box <- gtkHBox(FALSE,3)
+    fgnCommon2Box <- RGtk2::gtkHBox(FALSE,3)
     
     
     ### Threshold frame
-    thresholdFrame <- gtkFrame("Filter clusters") # MG: silhouette, CL... # OTHER:  TODO (desactivar si no es david/gtlinker?)
+    thresholdFrame <- RGtk2::gtkFrame("Filter clusters") # MG: silhouette, CL... # OTHER:  TODO (desactivar si no es david/gtlinker?)
     thresholdFrame$"tooltip-text" <- "Clusters that meet these criteria will be REMOVED from the network"
-    thresholdBoxNetwork <- gtkHBox(FALSE,3)
+    thresholdBoxNetwork <- RGtk2::gtkHBox(FALSE,3)
     
-    thresholdAttributeNetworkFrame <- gtkFrame("Attribute")
-    gtkFrameSetShadowType(thresholdAttributeNetworkFrame, GtkShadowType["none"])
-    thresholdAttributeNetworkText <- gtkEntryNew()
+    thresholdAttributeNetworkFrame <- RGtk2::gtkFrame("Attribute")
+    RGtk2::gtkFrameSetShadowType(thresholdAttributeNetworkFrame, GtkShadowType["none"])
+    thresholdAttributeNetworkText <- RGtk2::gtkEntryNew()
     thresholdAttributeNetworkText$setWidthChars(15)
     thresholdAttributeNetworkText$setText("")
     thresholdAttributeNetworkFrame$add(thresholdAttributeNetworkText)
     thresholdBoxNetwork$packStart(thresholdAttributeNetworkFrame, expand=TRUE,10)
     
-    thresholdOperatorNetworkFrame <- gtkFrame("Operator") 
-    gtkFrameSetShadowType(thresholdOperatorNetworkFrame, GtkShadowType["none"])
-    thresholdOperatorNetworkText <- gtkEntryNew()
+    thresholdOperatorNetworkFrame <- RGtk2::gtkFrame("Operator") 
+    RGtk2::gtkFrameSetShadowType(thresholdOperatorNetworkFrame, GtkShadowType["none"])
+    thresholdOperatorNetworkText <- RGtk2::gtkEntryNew()
     thresholdOperatorNetworkText$setWidthChars(5)
     thresholdOperatorNetworkText$setText("<")
     thresholdOperatorNetworkFrame$add(thresholdOperatorNetworkText)
     thresholdBoxNetwork$packStart(thresholdOperatorNetworkFrame, expand=FALSE,10)
     
-    thresholdValueNetworkFrame <- gtkFrame("Value") 
-    gtkFrameSetShadowType(thresholdValueNetworkFrame, GtkShadowType["none"])
-    thresholdValueNetworkText <- gtkEntryNew()
+    thresholdValueNetworkFrame <- RGtk2::gtkFrame("Value") 
+    RGtk2::gtkFrameSetShadowType(thresholdValueNetworkFrame, GtkShadowType["none"])
+    thresholdValueNetworkText <- RGtk2::gtkEntryNew()
     thresholdValueNetworkText$setWidthChars(5)
     thresholdValueNetworkText$setText("0")
     thresholdValueNetworkFrame$add(thresholdValueNetworkText)

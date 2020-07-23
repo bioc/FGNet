@@ -129,7 +129,8 @@ results <- fea_gtLinker_getResults(jobID)
 incidMat <- fea2incidMat(results, filterAttribute="Silhouette Width")
 
 functionalNetwork(incidMat, geneExpr=genesYeastExpr)
-functionalNetwork(incidMat, plotType="bipartite", plotOutput="dynamic", vSize=c(default=10, GLC7=20, PTA1=20))
+functionalNetwork(incidMat, plotType="bipartite", 
+plotOutput="dynamic", vSize=c(default=10, GLC7=20, PTA1=20))
 
 getTerms(results)
 

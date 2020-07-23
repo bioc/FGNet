@@ -13,16 +13,16 @@ loadInstPkg <- function(pkgName, parentWindow=NULL)
         if(!is.null(parentWindow))
         {
             # GUI dialog
-            dialog <- gtkDialogNewWithButtons("Package installation required", parentWindow,
+            dialog <- RGtk2::gtkDialogNewWithButtons("Package installation required", parentWindow,
                                               c("modal", "destroy-with-parent"), 
-                                              "gtk-yes", GtkResponseType["yes"], 
-                                              "gtk-no", GtkResponseType["no"],
+                                              "gtk-yes", RGtk2::GtkResponseType["yes"], 
+                                              "gtk-no", RGtk2::GtkResponseType["no"],
                                               show=TRUE)
-            dialog[["vbox"]]$add(gtkLabel(paste("Install package '", pkgName,"'?", sep="")))
+            dialog[["vbox"]]$add(RGtk2::gtkLabel(paste("Install package '", pkgName,"'?", sep="")))
             response <- dialog$run() 
             dialog$destroy()
             
-            if(response == GtkResponseType["yes"]) response <- "y"
+            if(response == RGtk2::GtkResponseType["yes"]) response <- "y"
         }else
         { 
             # Console

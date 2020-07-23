@@ -25,11 +25,11 @@ generateReport <- function(button, argsList) # button: Not used, but required fo
     if(is.null(feaResults) || (reportTool==-1 || inputFile==""))
     {
         # Dialog
-        dialog <- gtkDialogNewWithButtons("FEA results required", argsList$parentWindow,
+        dialog <- RGtk2::gtkDialogNewWithButtons("FEA results required", argsList$parentWindow,
                                           c("modal", "destroy-with-parent"), 
-                                          "gtk-ok", GtkResponseType["accept"],
+                                          "gtk-ok", RGtk2::GtkResponseType["accept"],
                                           show=TRUE)
-        dialog[["vbox"]]$add(gtkLabel("Please provide a file with FEA results to continue."))
+        dialog[["vbox"]]$add(RGtk2::gtkLabel("Please provide a file with FEA results to continue."))
         response <- dialog$run() 
         dialog$destroy()
         
@@ -84,26 +84,26 @@ tabReport_fill <- function(mainWindow, statusbar, commonFields)
     # report_david:
     #   geneLabels=NULL
     
-    tabReport <- gtkVBox(FALSE,3)
+    tabReport <- RGtk2::gtkVBox(FALSE,3)
     
     # plotChecks
     plotChecks <- c("plotKeggPw","plotGoTree", "onlyGoLeaves")  # onlyGoLeaves (only David/other?) TODO
-    plotChecksFrame <- gtkFrame("Plot options")
-    plotChecksArea <- gtkVBoxNew(homogeneous=FALSE, spacing=0)
+    plotChecksFrame <- RGtk2::gtkFrame("Plot options")
+    plotChecksArea <- RGtk2::gtkVBoxNew(homogeneous=FALSE, spacing=0)
     plotChecksFrame$add(plotChecksArea)
     plotChecksValues <-list()
     for(ck in plotChecks)
     {
-        plotChecksValues[[ck]] <- gtkCheckButton(ck)
+        plotChecksValues[[ck]] <- RGtk2::gtkCheckButton(ck)
         plotChecksValues[[ck]]$active <- TRUE
         plotChecksArea$add(plotChecksValues[[ck]])
     }
     tabReport$packStart(plotChecksFrame, expand=FALSE)
     
     # Report tab end
-    buttonReport <- gtkButton("Create")
+    buttonReport <- RGtk2::gtkButton("Create")
     tabReport$packStart(buttonReport, expand = FALSE, FALSE, 10) 
-    gSignalConnect(buttonReport, "clicked", generateReport, data=list(parentWindow=mainWindow, statusbar=statusbar, 
+    RGtk2::gSignalConnect(buttonReport, "clicked", generateReport, data=list(parentWindow=mainWindow, statusbar=statusbar, 
                                                                       commonFields=commonFields, plotChecksValues=plotChecksValues))               
     return(list(tabReport=tabReport, fields=list(plotChecksValues=plotChecksValues)))
 }

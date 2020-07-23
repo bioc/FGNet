@@ -207,7 +207,7 @@ fea_gage <- function(eset, refSamples, compSamples, geneIdType, geneLabels=NULL,
 # exprsGenes_Subset <- exprsGenes[rownames(matr$clustersMatrix)]
 # 
 # # Translate geneID 
-# gsym <- select(org.Hs.eg.db, keys=rownames(matr[[2]]), columns="SYMBOL",keytype=geneIdType)
+# gsym <- AnnotationDbi::select(org.Hs.eg.db, keys=rownames(matr[[2]]), columns="SYMBOL",keytype=geneIdType)
 # gsymTable <-table(gsym[,"SYMBOL"])
 # for(y in names(gsymTable[gsymTable>1]))
 # {

@@ -4,8 +4,8 @@ SOAPQuery <- function(envelope_body, serverWS)
     if(!loadInstPkg("RCurl")) stop("Package 'RCurl' is required to query GeneTerm Linker server. Install it or perform the query manually at the web and use its job ID to continue the analysis.")
     
     # Initialize variables
-    rHeader  <- basicTextGatherer()
-    rContent <- basicTextGatherer()
+    rHeader  <- RCurl::basicTextGatherer()
+    rContent <- RCurl::basicTextGatherer()
     
     # Build SOAP envelope
     envelope_start <-  paste('<?xml version="1.0"?>',  
@@ -20,10 +20,10 @@ SOAPQuery <- function(envelope_body, serverWS)
     # Execute query
     rContent$reset()
     rHeader$reset()
-    curlPerform(url=serverWS, writefunction = rContent$update, headerFunction=rHeader$update, verbose = FALSE,
+    RCurl::curlPerform(url=serverWS, writefunction = rContent$update, headerFunction=rHeader$update, verbose = FALSE,
                             httpheader=c(Accept="text/xml", Accept="multipart/*", SOAPAction='"urn:gtLinkerWS#analyze"', 'Content-Type' ="text/xml; charset=utf-8"),                
                             postfields=paste(envelope_start, envelope_body , envelope_end, sep=""))
-    reply <- structure(list(header = parseHTTPHeader(rHeader$value(NULL)), content = rContent$value()), class = "SOAPHTTPReply") # RCurl:::parseHTTPHeader
+    reply <- structure(list(header = RCurl::parseHTTPHeader(rHeader$value(NULL)), content = rContent$value()), class = "SOAPHTTPReply") # RCurl:::parseHTTPHeader
 
     
     #    Reply...

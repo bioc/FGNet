@@ -18,9 +18,9 @@ plotGoAncestors <- function(goIds, tColor=NULL, ontology=NULL, plotOutput="stati
         }
         
         ontology <- list()
-        ontology[["BP"]] <- AnnotationDbi::as.list(GOBPPARENTS)
-        ontology[["MF"]] <- AnnotationDbi::as.list(GOMFPARENTS)
-        ontology[["CC"]] <- AnnotationDbi::as.list(GOCCPARENTS)
+        ontology[["BP"]] <- AnnotationDbi::as.list(GO.db::GOBPPARENTS)
+        ontology[["MF"]] <- AnnotationDbi::as.list(GO.db::GOMFPARENTS)
+        ontology[["CC"]] <- AnnotationDbi::as.list(GO.db::GOCCPARENTS)
         
         if(!is.null(selectedDB)) goIds <- goIds[goIds %in% names(ontology[[selectedDB]])]    
         if(is.null(selectedDB)) selectedDB <- names(which(sapply(ontology, function(x) any(goIds %in% names(x)))))
@@ -59,7 +59,7 @@ plotGoAncestors <- function(goIds, tColor=NULL, ontology=NULL, plotOutput="stati
         BP <- "GO:0008150" %in% V(goGraph)$name
         goTerms <- sapply(V(goGraph)$name, function(x)
         {
-            term <- capitalize(GOTERM[[x]]@Term)
+            term <- capitalize(GO.db::GOTERM[[x]]@Term)
             
             if (BP) # Shorten terms...
             {

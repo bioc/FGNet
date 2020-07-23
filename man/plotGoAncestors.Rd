@@ -57,8 +57,7 @@ Package tutorial: \code{vignette("FGNet-vignette")}
 
 plotGoAncestors(c("GO:0000152","GO:0043234", "GO:0044446", "GO:0043227"))
 
-plotGoAncestors(c("GO:0051603", "GO:0019941", "GO:0051128","GO:0044265"), 
-    plotOutput="dynamic")
+# plotGoAncestors(c("GO:0051603", "GO:0019941", "GO:0051128","GO:0044265"), plotOutput="dynamic")
 
 
 # From analysis:

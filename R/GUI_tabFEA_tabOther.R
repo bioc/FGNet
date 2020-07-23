@@ -23,7 +23,7 @@ fillCombosColumns <- function(colsCombos, rawResults) # used by processFile()
 {
     lapply(colsCombos, function(thisCombo){
         thisCombo$getModel()$clear()
-        for (colN in c("-", colnames(rawResults))) gtkComboBoxAppendText(thisCombo, colN)
+        for (colN in c("-", colnames(rawResults))) RGtk2::gtkComboBoxAppendText(thisCombo, colN)
         thisCombo$setActive(-1)
         return(thisCombo)
     })  
@@ -67,7 +67,7 @@ processFile <- function(fileName, fieldsList) # called by loadFileDialog(buttonI
         }
         
         fillCombosColumns(fieldsList$colsCombos, rawResults)
-        gtkWidgetSetSensitive(fieldsList$buttonViewResults,TRUE)
+        RGtk2::gtkWidgetSetSensitive(fieldsList$buttonViewResults,TRUE)
     }
 }
 
@@ -118,23 +118,23 @@ formatResultsFile <- function(fieldsList) # called by submitQuery()
     
 tabOther_fill <- function(mainWindow, jobNameText)
 {
-    tabOther <- gtkVBox(FALSE,2)
-    tabOther$packStart(gtkLabelNew("Format external FEA results to use with FGNet"), expand=FALSE)
+    tabOther <- RGtk2::gtkVBox(FALSE,2)
+    tabOther$packStart(RGtk2::gtkLabelNew("Format external FEA results to use with FGNet"), expand=FALSE)
     
     ############# Text file options
-    txtOptionsExpander <- gtkExpander("Text file options")
-    txtOptionsExpanderBox <- gtkHBox(FALSE,3)
-    txtOptionsHeaderChk <- gtkCheckButton("Header")
+    txtOptionsExpander <- RGtk2::gtkExpander("Text file options")
+    txtOptionsExpanderBox <- RGtk2::gtkHBox(FALSE,3)
+    txtOptionsHeaderChk <- RGtk2::gtkCheckButton("Header")
     txtOptionsHeaderChk$active <- TRUE
     txtOptionsExpanderBox$packStart(txtOptionsHeaderChk, expand=FALSE)
-    txtOptionsQuoteChk <- gtkCheckButton("Quote")
+    txtOptionsQuoteChk <- RGtk2::gtkCheckButton("Quote")
     txtOptionsQuoteChk$active <- TRUE
     txtOptionsExpanderBox$packStart(txtOptionsQuoteChk, expand=FALSE)
-    txtOptionsExpanderBox$packStart(gtkLabelNew(" Sep: "), expand=FALSE)
+    txtOptionsExpanderBox$packStart(RGtk2::gtkLabelNew(" Sep: "), expand=FALSE)
     fieldSepsText <- setNames(1:4-1,c("Space", "Tab",",",";"))
     fieldSepsValueID <- setNames(1:4-1,c(" ", "\t",",",";"))
-    txtOptionsSepCombo <- gtkComboBoxNewText()
-    for (id in names(fieldSepsText)) gtkComboBoxAppendText(txtOptionsSepCombo, id) 
+    txtOptionsSepCombo <- RGtk2::gtkComboBoxNewText()
+    for (id in names(fieldSepsText)) RGtk2::gtkComboBoxAppendText(txtOptionsSepCombo, id) 
     txtOptionsSepCombo$setActive(1)
     txtOptionsSepCombo$SetTooltipText('Field separator character.')
     txtOptionsExpanderBox$packStart(txtOptionsSepCombo, expand=FALSE)
@@ -142,30 +142,30 @@ tabOther_fill <- function(mainWindow, jobNameText)
     tabOther$packStart(txtOptionsExpander, expand=FALSE)
     
     ############# Select results file
-    tabOtherH1Box <- gtkHBox(FALSE,3)
+    tabOtherH1Box <- RGtk2::gtkHBox(FALSE,3)
     # File
-    framefeaResultsImport <- gtkFrame("Raw FEA results")
-    gtkFrameSetShadowType(framefeaResultsImport, GtkShadowType["none"])
-    feaResultsImportText <- gtkEntryNew()
+    framefeaResultsImport <- RGtk2::gtkFrame("Raw FEA results")
+    RGtk2::gtkFrameSetShadowType(framefeaResultsImport, GtkShadowType["none"])
+    feaResultsImportText <- RGtk2::gtkEntryNew()
     feaResultsImportText$setWidthChars(25)
     feaResultsImportText$"tooltip-text" <- "text file or .RData with data.frame"
     framefeaResultsImport$add(feaResultsImportText)
     tabOtherH1Box$packStart(framefeaResultsImport, expand=TRUE)
     
     # Button View
-    frameFEAfileView_other <- gtkFrame("")
-    gtkFrameSetShadowType(frameFEAfileView_other, GtkShadowType["none"])
-    buttonViewResults <- gtkButton("View")
+    frameFEAfileView_other <- RGtk2::gtkFrame("")
+    RGtk2::gtkFrameSetShadowType(frameFEAfileView_other, GtkShadowType["none"])
+    buttonViewResults <- RGtk2::gtkButton("View")
     buttonViewResults$name <- "buttonViewResults"
-    gSignalConnect(buttonViewResults, "clicked", viewFile) 
+    RGtk2::gSignalConnect(buttonViewResults, "clicked", viewFile) 
     frameFEAfileView_other$add(buttonViewResults)
-    gtkWidgetSetSensitive(buttonViewResults,FALSE)
+    RGtk2::gtkWidgetSetSensitive(buttonViewResults,FALSE)
     tabOtherH1Box$packStart(frameFEAfileView_other, expand=FALSE)
     
     # Button load
-    frameImportFeaResults <- gtkFrame("")
-    gtkFrameSetShadowType(frameImportFeaResults, GtkShadowType["none"])
-    buttonImportFeaResults <- gtkButton("Select file")
+    frameImportFeaResults <- RGtk2::gtkFrame("")
+    RGtk2::gtkFrameSetShadowType(frameImportFeaResults, GtkShadowType["none"])
+    buttonImportFeaResults <- RGtk2::gtkButton("Select file")
     buttonImportFeaResults$name <- "buttonImportFeaResults"
     frameImportFeaResults$add(buttonImportFeaResults)
     tabOtherH1Box$packStart(frameImportFeaResults, expand=FALSE)
@@ -175,29 +175,29 @@ tabOther_fill <- function(mainWindow, jobNameText)
     ############# Format options
     #####  Create fields    
     # geneSep=NULL
-    geneSepTextFrame <- gtkFrame() 
-    gtkFrameSetShadowType(geneSepTextFrame, GtkShadowType["none"])
-    geneSepText <- gtkEntryNew()
+    geneSepTextFrame <- RGtk2::gtkFrame() 
+    RGtk2::gtkFrameSetShadowType(geneSepTextFrame, GtkShadowType["none"])
+    geneSepText <- RGtk2::gtkEntryNew()
     geneSepText$setWidthChars(5)
     geneSepText$SetTooltipText("  ,    ; ")
     geneSepTextFrame$add(geneSepText)
     
     # termSep=NULL
-    termSepTextFrame <- gtkFrame()
-    gtkFrameSetShadowType(termSepTextFrame, GtkShadowType["none"])
-    termSepText <- gtkEntryNew()
+    termSepTextFrame <- RGtk2::gtkFrame()
+    RGtk2::gtkFrameSetShadowType(termSepTextFrame, GtkShadowType["none"])
+    termSepText <- RGtk2::gtkEntryNew()
     termSepText$setWidthChars(5)
     termSepText$SetTooltipText("  ,    ; ")
     termSepTextFrame$add(termSepText)
     
     # termCat=NULL
-    termCatText <- gtkEntryNew()
+    termCatText <- RGtk2::gtkEntryNew()
     termCatText$setWidthChars(10)
     #termCatTextFrame$add(termCatText)
     
     # Select columns for...
     colsID <- c("clusterCol", "geneCol", "termDescCol","termDescCol_B", "termIDCol", "termCatCol")
-    colsCombos <- lapply(colsID, function(x) gtkComboBoxNewText())
+    colsCombos <- lapply(colsID, function(x) RGtk2::gtkComboBoxNewText())
     names(colsCombos) <- colsID
     
     colsCombos$termDescCol$setName("termDescCol1")
@@ -205,9 +205,9 @@ tabOther_fill <- function(mainWindow, jobNameText)
 
     colsFrames <- lapply(colsID, function(x) 
     {
-        tmp <- gtkFrame() #(x)
-        gtkFrameSetShadowType(tmp, GtkShadowType["none"])
-        tmpBox <- gtkHBox(FALSE,3)
+        tmp <- RGtk2::gtkFrame() #(x)
+        RGtk2::gtkFrameSetShadowType(tmp, GtkShadowType["none"])
+        tmpBox <- RGtk2::gtkHBox(FALSE,3)
         #tmpBox$packStart(colsText[[x]], expand=TRUE)
         tmpBox$packStart(colsCombos[[x]], expand=TRUE)
         tmp$add(tmpBox)
@@ -216,20 +216,20 @@ tabOther_fill <- function(mainWindow, jobNameText)
     names(colsFrames) <- colsID
     
     #####  Place fields    
-    frameFormatOptions <- gtkFrame("Select columns")
-    formatOptionsBox <- gtkVBox(FALSE,3)
+    frameFormatOptions <- RGtk2::gtkFrame("Select columns")
+    formatOptionsBox <- RGtk2::gtkVBox(FALSE,3)
     
-    formatOptionsTable <- gtkTable(rows = 3, columns = 4, homogeneous = FALSE)
-    formatOptionsTable$attach(gtkLabel("Cluster"), left.attach=1,2, top.attach=0,1)
-    formatOptionsTable$attach(gtkLabel("Genes"), left.attach=2,3, top.attach=0,1)
-    formatOptionsTable$attach(gtkLabel("Terms"), left.attach=3,4, top.attach=0,1)
+    formatOptionsTable <- RGtk2::gtkTable(rows = 3, columns = 4, homogeneous = FALSE)
+    formatOptionsTable$attach(RGtk2::gtkLabel("Cluster"), left.attach=1,2, top.attach=0,1)
+    formatOptionsTable$attach(RGtk2::gtkLabel("Genes"), left.attach=2,3, top.attach=0,1)
+    formatOptionsTable$attach(RGtk2::gtkLabel("Terms"), left.attach=3,4, top.attach=0,1)
     
     
     formatOptionsTable$attach(colsFrames$clusterCol, left.attach=1,2, top.attach=1,2)
     formatOptionsTable$attach(colsFrames$geneCol, left.attach=2,3, top.attach=1,2)
     formatOptionsTable$attach(colsFrames$termDescCol, left.attach=3,4, top.attach=1,2)
     
-    formatOptionsTable$attach(gtkLabel("Sep. char:"), left.attach=1,2, top.attach=2,3)
+    formatOptionsTable$attach(RGtk2::gtkLabel("Sep. char:"), left.attach=1,2, top.attach=2,3)
     formatOptionsTable$attach(geneSepTextFrame, left.attach=2,3, top.attach=2,3)
     formatOptionsTable$attach(termSepTextFrame, left.attach=3,4, top.attach=2,3) 
     
@@ -240,11 +240,11 @@ tabOther_fill <- function(mainWindow, jobNameText)
     tabOther$packStart(frameFormatOptions, expand=FALSE)
     
     ### Terms alternative:
-    formatTermsFrameB <- gtkFrame("Terms - Alternative formatting")
-    formatOptionsAltTable <- gtkTable(rows = 3, columns = 3, homogeneous = FALSE)
-    formatOptionsAltTable$attach(gtkLabel("Category"), left.attach=0,1, top.attach=0,1)
-    formatOptionsAltTable$attach(gtkLabel("ID"), left.attach=1,2, top.attach=0,1) 
-    formatOptionsAltTable$attach(gtkLabel("Description"), left.attach=2,3, top.attach=0,1) 
+    formatTermsFrameB <- RGtk2::gtkFrame("Terms - Alternative formatting")
+    formatOptionsAltTable <- RGtk2::gtkTable(rows = 3, columns = 3, homogeneous = FALSE)
+    formatOptionsAltTable$attach(RGtk2::gtkLabel("Category"), left.attach=0,1, top.attach=0,1)
+    formatOptionsAltTable$attach(RGtk2::gtkLabel("ID"), left.attach=1,2, top.attach=0,1) 
+    formatOptionsAltTable$attach(RGtk2::gtkLabel("Description"), left.attach=2,3, top.attach=0,1) 
     
     formatOptionsAltTable$attach(colsFrames$termCatCol, left.attach=0,1, top.attach=1,2)
     formatOptionsAltTable$attach(termCatText, left.attach=0,1, top.attach=2,3)
@@ -261,9 +261,9 @@ tabOther_fill <- function(mainWindow, jobNameText)
                termCatText=termCatText)
 
     # SignalConnects
-    gSignalConnect(buttonImportFeaResults, "clicked", loadFileDialog, data=list(parentWindow=mainWindow, fields=c(fields,list(jobNameText=jobNameText)))) 
-    gSignalConnect(colsCombos$termDescCol_B, "changed", syncTermDescCombos, data=colsCombos)
-    gSignalConnect(colsCombos$termDescCol, "changed", syncTermDescCombos, data=colsCombos) 
+    RGtk2::gSignalConnect(buttonImportFeaResults, "clicked", loadFileDialog, data=list(parentWindow=mainWindow, fields=c(fields,list(jobNameText=jobNameText)))) 
+    RGtk2::gSignalConnect(colsCombos$termDescCol_B, "changed", syncTermDescCombos, data=colsCombos)
+    RGtk2::gSignalConnect(colsCombos$termDescCol, "changed", syncTermDescCombos, data=colsCombos) 
     
     #######################################################################
     ## tabOther ready 

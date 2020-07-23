@@ -12,30 +12,30 @@ selectNetworkType <- function(aux, argsList)
   if(names(selNwTypeID) %in% c("default","bipartite"))
   {
     argsList$plotTitleText$setText(selNwTypeTxt)
-    gtkWidgetSetSensitive(argsList$plotTitleText, TRUE)
-    gtkWidgetSetSensitive(argsList$comboPlotOutput, TRUE)
+    RGtk2::gtkWidgetSetSensitive(argsList$plotTitleText, TRUE)
+    RGtk2::gtkWidgetSetSensitive(argsList$comboPlotOutput, TRUE)
     
     if(names(selNwTypeID) == "default")
     {
-      gtkWidgetSetSensitive(argsList$weightedCheck, TRUE)
-      gtkWidgetSetSensitive(argsList$keepAllNodesCheck, FALSE)
+      RGtk2::gtkWidgetSetSensitive(argsList$weightedCheck, TRUE)
+      RGtk2::gtkWidgetSetSensitive(argsList$keepAllNodesCheck, FALSE)
     }
     if(names(selNwTypeID) == "bipartite")
     {
-      gtkWidgetSetSensitive(argsList$weightedCheck, FALSE)
-      gtkWidgetSetSensitive(argsList$keepAllNodesCheck, TRUE)
+      RGtk2::gtkWidgetSetSensitive(argsList$weightedCheck, FALSE)
+      RGtk2::gtkWidgetSetSensitive(argsList$keepAllNodesCheck, TRUE)
     }
     
   }
   if(names(selNwTypeID) == "both")
   {
     argsList$comboPlotOutput$setActive(argsList$plotOutputID["dynamic"])
-    gtkWidgetSetSensitive(argsList$comboPlotOutput, FALSE)
+    RGtk2::gtkWidgetSetSensitive(argsList$comboPlotOutput, FALSE)
     argsList$plotTitleText$setText("")
-    gtkWidgetSetSensitive(argsList$plotTitleText, FALSE)
+    RGtk2::gtkWidgetSetSensitive(argsList$plotTitleText, FALSE)
     
-    gtkWidgetSetSensitive(argsList$weightedCheck, TRUE)
-    gtkWidgetSetSensitive(argsList$keepAllNodesCheck, TRUE)
+    RGtk2::gtkWidgetSetSensitive(argsList$weightedCheck, TRUE)
+    RGtk2::gtkWidgetSetSensitive(argsList$keepAllNodesCheck, TRUE)
   }
 }
 
@@ -66,11 +66,11 @@ generateNetwork <- function(button, argsList) # button: Not used, but required f
     if(is.null(feaResults) || (reportTool==-1 || inputFile==""))
     {
         # Dialog
-        dialog <- gtkDialogNewWithButtons("FEA results required", argsList$parentWindow,
+        dialog <- RGtk2::gtkDialogNewWithButtons("FEA results required", argsList$parentWindow,
                                           c("modal", "destroy-with-parent"), 
-                                          "gtk-ok", GtkResponseType["accept"],
+                                          "gtk-ok", RGtk2::GtkResponseType["accept"],
                                           show=TRUE)
-        dialog[["vbox"]]$add(gtkLabel("Please provide a file with the FEA results to continue."))
+        dialog[["vbox"]]$add(RGtk2::gtkLabel("Please provide a file with the FEA results to continue."))
         response <- dialog$run() 
         dialog$destroy()
         
@@ -115,11 +115,11 @@ generateNetwork <- function(button, argsList) # button: Not used, but required f
 #               
 #               # Fill combo          
 #               comboSelectCluster$getModel()$clear()
-#               for (i in names(clustersId)) gtkComboBoxAppendText(comboSelectCluster, i)
+#               for (i in names(clustersId)) RGtk2::gtkComboBoxAppendText(comboSelectCluster, i)
 #               comboSelectCluster$setActive(clustersId[selCluster])
-#               gtkWidgetSetSensitive(comboSelectCluster, TRUE)
+#               RGtk2::gtkWidgetSetSensitive(comboSelectCluster, TRUE)
 #               comboSelectCluster$Show()
-#               gtkWidgetSetSensitive(txtSelectCluster, FALSE)
+#               RGtk2::gtkWidgetSetSensitive(txtSelectCluster, FALSE)
 #               txtSelectCluster$Hide()  
 #               
 #             subNwType <- button$label
@@ -205,25 +205,25 @@ generateNetwork <- function(button, argsList) # button: Not used, but required f
 
 tabPlotNetwork_fill <- function(mainWindow, statusbar, commonFields)
 {
-    tabPlotNetwork <- gtkVBox(FALSE,3)
+    tabPlotNetwork <- RGtk2::gtkVBox(FALSE,3)
     ### plotOptionsFrame
     # Not added: sepChar, vLayout=NULL, keepColors=TRUE
-    plotOptionsExpander <- gtkExpanderNew("More options")
-    fgnPlotOptionsBox <- gtkVBox(FALSE,3)
+    plotOptionsExpander <- RGtk2::gtkExpanderNew("More options")
+    fgnPlotOptionsBox <- RGtk2::gtkVBox(FALSE,3)
     
-    fgnPlotOptionsL1Box <- gtkHBox(FALSE,3)
-    fgnPlotOptionsL2Box <- gtkHBox(FALSE,3)
-    fgnPlotOptionsL1bBox <- gtkHBox(FALSE,3)
-    fgnPlotOptionsL3Box <- gtkHBox(FALSE,3)
-    fgnPlotOptionsL4Box <- gtkHBox(FALSE,3)
-    fgnPlotOptionsL5Box <- gtkHBox(FALSE,3)
+    fgnPlotOptionsL1Box <- RGtk2::gtkHBox(FALSE,3)
+    fgnPlotOptionsL2Box <- RGtk2::gtkHBox(FALSE,3)
+    fgnPlotOptionsL1bBox <- RGtk2::gtkHBox(FALSE,3)
+    fgnPlotOptionsL3Box <- RGtk2::gtkHBox(FALSE,3)
+    fgnPlotOptionsL4Box <- RGtk2::gtkHBox(FALSE,3)
+    fgnPlotOptionsL5Box <- RGtk2::gtkHBox(FALSE,3)
     
     # key="Genes"
     keysID <- setNames(0:1, c("Genes","Terms"))
-    comboKeyFrame <- gtkFrame("Network type")
-    gtkFrameSetShadowType(comboKeyFrame, GtkShadowType["none"])
-    comboKey <- gtkComboBoxNewText()
-    for (i in names(keysID)) gtkComboBoxAppendText(comboKey, i)
+    comboKeyFrame <- RGtk2::gtkFrame("Network type")
+    RGtk2::gtkFrameSetShadowType(comboKeyFrame, GtkShadowType["none"])
+    comboKey <- RGtk2::gtkComboBoxNewText()
+    for (i in names(keysID)) RGtk2::gtkComboBoxAppendText(comboKey, i)
     comboKey$setActive(keysID["Genes"])
     comboKey$"tooltip-text" <- "Network nodes"
     comboKeyFrame$add(comboKey)
@@ -232,20 +232,20 @@ tabPlotNetwork_fill <- function(mainWindow, statusbar, commonFields)
     # plotFunctionalNetwork
     funNwIntNwID <- setNames(0:2, c("default","bipartite","both"))
     funNwIntNwText <- setNames(0:2, c("Functional Network (default)","Intersection Network (bipartite)","Both"))
-    funNwIntNwFrame <- gtkFrame("")
-    gtkFrameSetShadowType(funNwIntNwFrame, GtkShadowType["none"])
-    comboFunNwIntNw <- gtkComboBoxNewText()
-    for (i in names(funNwIntNwText)) gtkComboBoxAppendText(comboFunNwIntNw, i)
+    funNwIntNwFrame <- RGtk2::gtkFrame("")
+    RGtk2::gtkFrameSetShadowType(funNwIntNwFrame, GtkShadowType["none"])
+    comboFunNwIntNw <- RGtk2::gtkComboBoxNewText()
+    for (i in names(funNwIntNwText)) RGtk2::gtkComboBoxAppendText(comboFunNwIntNw, i)
     comboFunNwIntNw$setActive(funNwIntNwID["default"])
     funNwIntNwFrame$add(comboFunNwIntNw)    
     fgnPlotOptionsL1Box$packStart(funNwIntNwFrame, expand=FALSE)
     
     # plotOutput="static"
     plotOutputID <- setNames(0:1, c("dynamic","static"))
-    plotOutputFrame <- gtkFrame("Output")
-    gtkFrameSetShadowType(plotOutputFrame, GtkShadowType["none"])
-    comboPlotOutput <- gtkComboBoxNewText()
-    for (i in capitalize(names(plotOutputID))) gtkComboBoxAppendText(comboPlotOutput, i)
+    plotOutputFrame <- RGtk2::gtkFrame("Output")
+    RGtk2::gtkFrameSetShadowType(plotOutputFrame, GtkShadowType["none"])
+    comboPlotOutput <- RGtk2::gtkComboBoxNewText()
+    for (i in capitalize(names(plotOutputID))) RGtk2::gtkComboBoxAppendText(comboPlotOutput, i)
     comboPlotOutput$setActive(plotOutputID["static"])
     comboPlotOutput$"tooltip-text" <- "static: standard R plot (R console) \ndynamic:interactive tkplot (metagroups background cannot be drawn)"
     
@@ -253,19 +253,19 @@ tabPlotNetwork_fill <- function(mainWindow, statusbar, commonFields)
     fgnPlotOptionsL2Box$packStart(plotOutputFrame, expand=FALSE)
     
     # Checkbox
-    fgnPlotOptionsHBox <- gtkHBox(FALSE,3)
+    fgnPlotOptionsHBox <- RGtk2::gtkHBox(FALSE,3)
     # save
-    saveCheck<- gtkCheckButton("Save (.RData)")
+    saveCheck<- RGtk2::gtkCheckButton("Save (.RData)")
     saveCheck$"tooltip-text" <- "Save igraph & matrices"
     fgnPlotOptionsL2Box$packStart(saveCheck, expand=FALSE)
     # weighted=FALSE
-    weightedCheck<- gtkCheckButton("Weighted")
+    weightedCheck<- RGtk2::gtkCheckButton("Weighted")
     weightedCheck$"tooltip-text" <- "Edge width based on the number of shared gene-term sets"    
     fgnPlotOptionsHBox$packStart(weightedCheck, expand=FALSE)
     # keepAllNodes=FALSE
-    keepAllNodesCheck<- gtkCheckButton("keepAllNodes")
+    keepAllNodesCheck<- RGtk2::gtkCheckButton("keepAllNodes")
     keepAllNodesCheck$"tooltip-text" <- "Show all nodes, including those in only one cluster"
-    gtkWidgetSetSensitive(keepAllNodesCheck, FALSE)
+    RGtk2::gtkWidgetSetSensitive(keepAllNodesCheck, FALSE)
     
     
     fgnPlotOptionsHBox$packStart(keepAllNodesCheck, expand=FALSE)
@@ -274,24 +274,24 @@ tabPlotNetwork_fill <- function(mainWindow, statusbar, commonFields)
     
     
     # plotTitle="Functional Network"
-    plotTitleFrame <- gtkFrame("Title")
-    gtkFrameSetShadowType(plotTitleFrame, GtkShadowType["none"])
-    plotTitleText <- gtkEntryNew()
+    plotTitleFrame <- RGtk2::gtkFrame("Title")
+    RGtk2::gtkFrameSetShadowType(plotTitleFrame, GtkShadowType["none"])
+    plotTitleText <- RGtk2::gtkEntryNew()
     plotTitleText$setWidthChars(15)
     plotTitleText$setText("Functional Network")
     plotTitleFrame$add(plotTitleText)
     fgnPlotOptionsL3Box$packStart(plotTitleFrame, expand=TRUE)
     
     # legendPrefix=NULL
-    legendPrefixFrame <- gtkFrame("Legend prefix")
-    legendPrefixBox <- gtkHBox(FALSE,3)
-    gtkFrameSetShadowType(legendPrefixFrame, GtkShadowType["none"])
-    legendPrefixText <- gtkEntryNew()
+    legendPrefixFrame <- RGtk2::gtkFrame("Legend prefix")
+    legendPrefixBox <- RGtk2::gtkHBox(FALSE,3)
+    RGtk2::gtkFrameSetShadowType(legendPrefixFrame, GtkShadowType["none"])
+    legendPrefixText <- RGtk2::gtkEntryNew()
     legendPrefixText$setText("Cl ")
     legendPrefixText$setWidthChars(7)
     legendPrefixBox$packStart(legendPrefixText, expand=FALSE)
     
-    showLegendCheck<- gtkCheckButton("Show legend")
+    showLegendCheck<- RGtk2::gtkCheckButton("Show legend")
     showLegendCheck$active <- TRUE
     legendPrefixBox$packStart(showLegendCheck, expand=FALSE)
     
@@ -301,9 +301,9 @@ tabPlotNetwork_fill <- function(mainWindow, statusbar, commonFields)
     # legendText=NULL
     
     # vSize=12
-    vSizeFrame <- gtkFrame("vSize")
-    gtkFrameSetShadowType(vSizeFrame, GtkShadowType["none"])
-    vSizeText <- gtkEntryNew()
+    vSizeFrame <- RGtk2::gtkFrame("vSize")
+    RGtk2::gtkFrameSetShadowType(vSizeFrame, GtkShadowType["none"])
+    vSizeText <- RGtk2::gtkEntryNew()
     vSizeText$setWidthChars(5)
     vSizeText$setText("12")
     vSizeText$"tooltip-text" <- "Vertex (node) size"
@@ -311,9 +311,9 @@ tabPlotNetwork_fill <- function(mainWindow, statusbar, commonFields)
     fgnPlotOptionsL4Box$packStart(vSizeFrame, expand=TRUE)
     
     # vLabelCex=0.75 
-    vLabelCexFrame <- gtkFrame("LabelCex")
-    gtkFrameSetShadowType(vLabelCexFrame, GtkShadowType["none"])
-    vLabelCexText <- gtkEntryNew()
+    vLabelCexFrame <- RGtk2::gtkFrame("LabelCex")
+    RGtk2::gtkFrameSetShadowType(vLabelCexFrame, GtkShadowType["none"])
+    vLabelCexText <- RGtk2::gtkEntryNew()
     vLabelCexText$setWidthChars(5)
     vLabelCexText$setText("0.75")
     vLabelCexText$"tooltip-text" <- "Node label size"
@@ -321,9 +321,9 @@ tabPlotNetwork_fill <- function(mainWindow, statusbar, commonFields)
     fgnPlotOptionsL4Box$packStart(vLabelCexFrame, expand=TRUE)
     
     # bgTransparency=0.4
-    bgTransparencyFrame <- gtkFrame("bgTransp.")
-    gtkFrameSetShadowType(bgTransparencyFrame, GtkShadowType["none"])
-    bgTransparencyText <- gtkEntryNew()
+    bgTransparencyFrame <- RGtk2::gtkFrame("bgTransp.")
+    RGtk2::gtkFrameSetShadowType(bgTransparencyFrame, GtkShadowType["none"])
+    bgTransparencyText <- RGtk2::gtkEntryNew()
     bgTransparencyText$"tooltip-text" <- "Background transparency"
     bgTransparencyText$setWidthChars(5)
     bgTransparencyText$setText("0.4")
@@ -331,9 +331,9 @@ tabPlotNetwork_fill <- function(mainWindow, statusbar, commonFields)
     fgnPlotOptionsL4Box$packStart(bgTransparencyFrame, expand=TRUE)
     
     # eColor="#323232"
-    eColorFrame <- gtkFrame("eColor")
-    gtkFrameSetShadowType(eColorFrame, GtkShadowType["none"])
-    eColorText <- gtkEntryNew()
+    eColorFrame <- RGtk2::gtkFrame("eColor")
+    RGtk2::gtkFrameSetShadowType(eColorFrame, GtkShadowType["none"])
+    eColorText <- RGtk2::gtkEntryNew()
     bgTransparencyText$setWidthChars(5)
     eColorText$setText("#323232")
     eColorText$"tooltip-text" <- "Edge color"
@@ -351,7 +351,7 @@ tabPlotNetwork_fill <- function(mainWindow, statusbar, commonFields)
     tabPlotNetwork$packStart(fgnPlotOptionsL2Box, expand=FALSE,10)
     tabPlotNetwork$packStart(plotOptionsExpander, expand=FALSE,10)
     
-    buttonNetwork <- gtkButton("Create")
+    buttonNetwork <- RGtk2::gtkButton("Create")
     tabPlotNetwork$packStart(buttonNetwork, expand = FALSE, FALSE, 10) 
     
     # Make list with fields:
@@ -361,10 +361,10 @@ tabPlotNetwork_fill <- function(mainWindow, statusbar, commonFields)
     
     
     # SignalConnects
-    gSignalConnect(buttonNetwork, "clicked", generateNetwork, data=list(parentWindow=mainWindow, statusbar=statusbar, 
+    RGtk2::gSignalConnect(buttonNetwork, "clicked", generateNetwork, data=list(parentWindow=mainWindow, statusbar=statusbar, 
                                                             commonFields=commonFields, onlyNwFields=fields))
     
-    gSignalConnect(comboFunNwIntNw, "changed", selectNetworkType, data=list(comboFunNwIntNw=comboFunNwIntNw,funNwIntNwID=funNwIntNwID, funNwIntNwText=funNwIntNwText, plotTitleText=plotTitleText, comboPlotOutput=comboPlotOutput,plotOutputID=plotOutputID,
+    RGtk2::gSignalConnect(comboFunNwIntNw, "changed", selectNetworkType, data=list(comboFunNwIntNw=comboFunNwIntNw,funNwIntNwID=funNwIntNwID, funNwIntNwText=funNwIntNwText, plotTitleText=plotTitleText, comboPlotOutput=comboPlotOutput,plotOutputID=plotOutputID,
                                                                             weightedCheck=weightedCheck, keepAllNodesCheck=keepAllNodesCheck))
     
     return(list(tabPlotNetwork=tabPlotNetwork, fields=fields))

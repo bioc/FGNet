@@ -35,7 +35,7 @@
 # "TAS" (traceable author statement, probably the most restrictive)
 # http://geneontology.org/page/guide-go-evidence-codes
 #
-# keys(org.Hs.eg.db, keytype="EVIDENCE")
+# AnnotationDbi::keys(org.Hs.eg.db, keytype="EVIDENCE")
 # "EXP" "IBA" "IC"  "IDA" "IEA" "IEP" "IGI" "IMP" "IPI" "ISS" "NAS" "ND"  "TAS"
 
 
@@ -105,7 +105,7 @@ fea_topGO <- function(geneList, geneIdType="ENSEMBL", geneLabels=NULL, organism=
     
     GOdata <- list()
     goResTable <- list()
-    if(is.null(testStat)) testStat <- new("classicCount", testStatistic=GOFisherTest, name="Fisher test")
+    if(is.null(testStat)) testStat <- new("classicCount", testStatistic=topGO::GOFisherTest, name="Fisher test")
     for(ont in annotations)
     {
         GOdata[[ont]] <- new("topGOdata", ontology=ont, allGenes=inputGeneList, annot=annFUN.gene2GO, gene2GO=geneID2GO[[ont]], nodeSize=nodeSize)

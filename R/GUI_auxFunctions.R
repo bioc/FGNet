@@ -17,33 +17,33 @@ actDeactGenes <- function(pointer1, pointer2, newPage, argsList)
     curPage <- rownames(FEA_tools)[which(FEA_tools[,"ID"]==newPage)]
     if(curPage %in% c("DAVID", "GeneTerm Linker", "topGO"))
     {
-        gtkWidgetSetSensitive(argsList$geneListFrame, TRUE)   
+        RGtk2::gtkWidgetSetSensitive(argsList$geneListFrame, TRUE)   
         argsList$geneListFrame$visible <- TRUE
         
-        gtkWidgetSetSensitive(argsList$esetBox, FALSE)
+        RGtk2::gtkWidgetSetSensitive(argsList$esetBox, FALSE)
         argsList$esetBox$visible <- FALSE
     }
     if(curPage %in% c("gage"))
     {
-        gtkWidgetSetSensitive(argsList$geneListFrame, FALSE)   
+        RGtk2::gtkWidgetSetSensitive(argsList$geneListFrame, FALSE)   
         argsList$geneListFrame$visible <- FALSE
         
-        gtkWidgetSetSensitive(argsList$esetBox, TRUE)   
+        RGtk2::gtkWidgetSetSensitive(argsList$esetBox, TRUE)   
         argsList$esetBox$visible <- TRUE
     }
     if(curPage %in% c("Imported text file"))
     {
-        gtkWidgetSetSensitive(argsList$geneListFrame, FALSE)   
-        gtkWidgetSetSensitive(argsList$esetBox, FALSE)   
+        RGtk2::gtkWidgetSetSensitive(argsList$geneListFrame, FALSE)   
+        RGtk2::gtkWidgetSetSensitive(argsList$esetBox, FALSE)   
     }
 }
 
 processGenesField <- function(genesText)
 {
     sepChar <- "\n"
-    genesBuffer <- gtkTextViewGetBuffer(genesText)
+    genesBuffer <- RGtk2::gtkTextViewGetBuffer(genesText)
     
-    geneList <- gtkTextBufferGetText(genesBuffer, gtkTextBufferGetStartIter(genesBuffer)$iter, gtkTextBufferGetEndIter(genesBuffer)$iter, include.hidden.chars = TRUE)
+    geneList <- RGtk2::gtkTextBufferGetText(genesBuffer, RGtk2::gtkTextBufferGetStartIter(genesBuffer)$iter, RGtk2::gtkTextBufferGetEndIter(genesBuffer)$iter, include.hidden.chars = TRUE)
     geneList <- unlist(strsplit(geneList, sepChar))
     
     # Clear whitespace
@@ -58,8 +58,8 @@ processGenesField <- function(genesText)
 
 processExpressionField <- function(expressionText)
 {
-    genesBuffer <- gtkTextViewGetBuffer(expressionText)
-    geneList <- gtkTextBufferGetText(genesBuffer, gtkTextBufferGetStartIter(genesBuffer)$iter, gtkTextBufferGetEndIter(genesBuffer)$iter, include.hidden.chars = TRUE)
+    genesBuffer <- RGtk2::gtkTextViewGetBuffer(expressionText)
+    geneList <- RGtk2::gtkTextBufferGetText(genesBuffer, RGtk2::gtkTextBufferGetStartIter(genesBuffer)$iter, RGtk2::gtkTextBufferGetEndIter(genesBuffer)$iter, include.hidden.chars = TRUE)
     geneList <- unlist(strsplit(geneList, "\n"))
     
     # Clear whitespace
@@ -99,11 +99,11 @@ loadFileDialog <- function(button, argsList) # button: Not used, but required fo
     fileName <- ""
 
     ### File dialog:
-    dialog <- gtkFileChooserDialog("Choose File", argsList$parentWindow, "open",
-                                   "gtk-open", GtkResponseType["accept"],
-                                   "gtk-cancel", GtkResponseType["cancel"])
+    dialog <- RGtk2::gtkFileChooserDialog("Choose File", argsList$parentWindow, "open",
+                                   "gtk-open", RGtk2::GtkResponseType["accept"],
+                                   "gtk-cancel", RGtk2::GtkResponseType["cancel"])
     
-    if(dialog$run() == GtkResponseType["accept"]) 
+    if(dialog$run() == RGtk2::GtkResponseType["accept"]) 
     {
         fileName <- dialog$getFilename()
         
@@ -118,9 +118,9 @@ loadFileDialog <- function(button, argsList) # button: Not used, but required fo
             # TO DO: Add file options?
             
             # Add to genes field
-            genesBuffer <- gtkTextBufferNew()
-            gtkTextBufferSetText(genesBuffer, geneList)
-            gtkTextViewSetBuffer(argsList$genesText, genesBuffer)
+            genesBuffer <- RGtk2::gtkTextBufferNew()
+            RGtk2::gtkTextBufferSetText(genesBuffer, geneList)
+            RGtk2::gtkTextViewSetBuffer(argsList$genesText, genesBuffer)
         }
         if(button$name == "buttonSelectExprFile") 
         {
@@ -130,9 +130,9 @@ loadFileDialog <- function(button, argsList) # button: Not used, but required fo
             # TO DO: Add file options?
             
             # Add to genes field
-            genesBuffer <- gtkTextBufferNew()
-            gtkTextBufferSetText(genesBuffer, geneExpr)
-            gtkTextViewSetBuffer(argsList$expressionText, genesBuffer)
+            genesBuffer <- RGtk2::gtkTextBufferNew()
+            RGtk2::gtkTextBufferSetText(genesBuffer, geneExpr)
+            RGtk2::gtkTextViewSetBuffer(argsList$expressionText, genesBuffer)
         }
     
         if(button$name == "buttonSelectFeaResults") 
@@ -187,7 +187,7 @@ submitQuery <- function(button, argsList) # button: Not used, but required for s
     data("FEA_tools", envir = environment())
     FEA_tools<- get("FEA_tools", envir  = environment())
     
-    activeTool <- rownames(FEA_tools)[which(FEA_tools[,"ID"]==gtkNotebookGetCurrentPage(argsList$tabFEA$commonFields$tabsTools))]
+    activeTool <- rownames(FEA_tools)[which(FEA_tools[,"ID"]==RGtk2::gtkNotebookGetCurrentPage(argsList$tabFEA$commonFields$tabsTools))]
     geneList <- processGenesField(argsList$tabFEA$commonFields$genesText) 
     eset <- argsList$tabFEA$commonFields$esetTxt$getText()
     
@@ -197,9 +197,9 @@ submitQuery <- function(button, argsList) # button: Not used, but required for s
     if(length(geneList)==0 && eset=="" )
     {
         # Dialog
-        dialog <- gtkDialogNewWithButtons("Enter genes", argsList$parentWindow,
+        dialog <- RGtk2::gtkDialogNewWithButtons("Enter genes", argsList$parentWindow,
                                           c("modal", "destroy-with-parent"), 
-                                          "gtk-ok", GtkResponseType["accept"],
+                                          "gtk-ok", RGtk2::GtkResponseType["accept"],
                                           show=TRUE)
         if(activeTool=="gage") 
         {
@@ -209,7 +209,7 @@ submitQuery <- function(button, argsList) # button: Not used, but required for s
         {
             msgTxt <- "Please enter a gene list."
         }
-        dialog[["vbox"]]$add(gtkLabel(msgTxt))
+        dialog[["vbox"]]$add(RGtk2::gtkLabel(msgTxt))
         response <- dialog$run() 
         dialog$destroy()
         
@@ -219,22 +219,22 @@ submitQuery <- function(button, argsList) # button: Not used, but required for s
         statusTxt <- NULL
         if(activeTool == "Imported text file")
         {
-            response <- GtkResponseType["accept"]
+            response <- RGtk2::GtkResponseType["accept"]
         }else
         {
             # Dialog    
-            dialog <- gtkDialogNewWithButtons("Submit?", argsList$parentWindow,
+            dialog <- RGtk2::gtkDialogNewWithButtons("Submit?", argsList$parentWindow,
                                              c("modal", "destroy-with-parent"), 
-                                             "gtk-ok", GtkResponseType["accept"], 
-                                             "gtk-cancel", GtkResponseType["reject"],
+                                             "gtk-ok", RGtk2::GtkResponseType["accept"], 
+                                             "gtk-cancel", RGtk2::GtkResponseType["reject"],
                                              show=FALSE)
-            if(activeTool %in% c("GeneTerm Linker","DAVID")) dialog[["vbox"]]$add(gtkLabel(paste("Submit query to ", activeTool, " server?", sep="")))
-               if(activeTool %in% c("topGO", "gage")) dialog[["vbox"]]$add(gtkLabel("Perform analysis?"))
+            if(activeTool %in% c("GeneTerm Linker","DAVID")) dialog[["vbox"]]$add(RGtk2::gtkLabel(paste("Submit query to ", activeTool, " server?", sep="")))
+               if(activeTool %in% c("topGO", "gage")) dialog[["vbox"]]$add(RGtk2::gtkLabel("Perform analysis?"))
             response <- dialog$run() # showAll()
             dialog$destroy()        
         }    
         
-        if (response == GtkResponseType["accept"]) 
+        if (response == RGtk2::GtkResponseType["accept"]) 
         {    
             queryReply <- NULL
             argsList$statusbar$push(argsList$statusbar$getContextId("info"), "Waiting for FEA results...")
@@ -291,7 +291,7 @@ submitQuery <- function(button, argsList) # button: Not used, but required for s
 
                     annotations <- unlist(sapply(queryArgs$annotsArea$getChildren(), function(anot) if(anot$active) return(anot$label)))
                     email <- queryArgs$emailText$getText()
-                    if(email=="" || !gtkWidgetGetSensitive(queryArgs$frameEmail)) email <- NULL
+                    if(email=="" || !RGtk2::gtkWidgetGetSensitive(queryArgs$frameEmail)) email <- NULL
                     
                     # Check libraries (ask install through dialog)
                     if(!is.null(email))
@@ -425,11 +425,11 @@ submitQuery <- function(button, argsList) # button: Not used, but required for s
             ############
             # Comun
             # queryReply dialog:
-            dialog <- gtkDialogNewWithButtons("Query submited", argsList$parentWindow,
+            dialog <- RGtk2::gtkDialogNewWithButtons("Query submited", argsList$parentWindow,
                                               c("modal", "destroy-with-parent"), 
-                                              "gtk-ok", GtkResponseType["accept"], 
+                                              "gtk-ok", RGtk2::GtkResponseType["accept"], 
                                               show=FALSE)
-            dialog[["vbox"]]$add(gtkLabel(msgText))
+            dialog[["vbox"]]$add(RGtk2::gtkLabel(msgText))
             response <- dialog$run() # showAll()
             dialog$destroy()                
 
@@ -447,7 +447,7 @@ submitQuery <- function(button, argsList) # button: Not used, but required for s
                 
 
                 # Go to Network tab and pass values
-                gtkNotebookSetCurrentPage(argsList$tabsSteps, argsList$tabID["Network"])
+                RGtk2::gtkNotebookSetCurrentPage(argsList$tabsSteps, argsList$tabID["Network"])
                 argsList$feaResultsText$setText(queryReply)
                 argsList$comboFeaTool$setActive(FEA_tools[activeTool,"ID"])
                 
@@ -455,9 +455,9 @@ submitQuery <- function(button, argsList) # button: Not used, but required for s
                 {
                     genesFC <- sort(names(feaResults$genesFC))                    
 
-                    expressionBuffer <- gtkTextBufferNew()
-                    gtkTextBufferSetText(expressionBuffer,  paste(genesFC,round(feaResults$genesFC[genesFC], digits=3), sep="\t", collapse="\n"))
-                    gtkTextViewSetBuffer(argsList$expressionText, expressionBuffer)                    
+                    expressionBuffer <- RGtk2::gtkTextBufferNew()
+                    RGtk2::gtkTextBufferSetText(expressionBuffer,  paste(genesFC,round(feaResults$genesFC[genesFC], digits=3), sep="\t", collapse="\n"))
+                    RGtk2::gtkTextViewSetBuffer(argsList$expressionText, expressionBuffer)                    
                 }
             }
             msgText <- NULL
@@ -484,9 +484,9 @@ readFEAresults <- function(feaResultsText, comboFeaTool, expressionText, serverW
         {
             genesFC <- sort(names(feaResults$genesFC))                    
             
-            expressionBuffer <- gtkTextBufferNew()
-            gtkTextBufferSetText(expressionBuffer,  paste(genesFC,round(feaResults$genesFC[genesFC], digits=3), sep="\t", collapse="\n"))
-            gtkTextViewSetBuffer(expressionText, expressionBuffer)                    
+            expressionBuffer <- RGtk2::gtkTextBufferNew()
+            RGtk2::gtkTextBufferSetText(expressionBuffer,  paste(genesFC,round(feaResults$genesFC[genesFC], digits=3), sep="\t", collapse="\n"))
+            RGtk2::gtkTextViewSetBuffer(expressionText, expressionBuffer)                    
         }
     }else{
         reportTool <- comboFeaTool$getActive()
@@ -515,11 +515,11 @@ readFEAresults <- function(feaResultsText, comboFeaTool, expressionText, serverW
             
             if(!is.null(msgText))
             {
-                dialog <- gtkDialogNewWithButtons("FEA not ready", parentWindow,
+                dialog <- RGtk2::gtkDialogNewWithButtons("FEA not ready", parentWindow,
                                                   c("modal", "destroy-with-parent"), 
-                                                  "gtk-ok", GtkResponseType["accept"], 
+                                                  "gtk-ok", RGtk2::GtkResponseType["accept"], 
                                                   show=FALSE)
-                dialog[["vbox"]]$add(gtkLabel(msgText))
+                dialog[["vbox"]]$add(RGtk2::gtkLabel(msgText))
                 response <- dialog$run() 
                 dialog$destroy() 
                 #stop()
