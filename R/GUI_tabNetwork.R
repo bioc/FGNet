@@ -32,18 +32,18 @@ selectNetworkTool <- function(aux, argsList)
         
         argsList$frameFEAresultsText$label <- "Job ID or file"        
         
-        gtkWidgetSetSensitive(argsList$gtLinkerDownloadExpander, TRUE)
+        RGtk2::gtkWidgetSetSensitive(argsList$gtLinkerDownloadExpander, TRUE)
         argsList$plotChecksValues[["plotKeggPw"]]$active <- FALSE
-        gtkWidgetSetSensitive(argsList$plotChecksValues[["plotKeggPw"]], FALSE)
-        gtkWidgetSetSensitive(argsList$plotChecksValues[["onlyGoLeaves"]], FALSE)
+        RGtk2::gtkWidgetSetSensitive(argsList$plotChecksValues[["plotKeggPw"]], FALSE)
+        RGtk2::gtkWidgetSetSensitive(argsList$plotChecksValues[["onlyGoLeaves"]], FALSE)
         
     }else{
         argsList$frameFEAresultsText$label <- "FEA results"
         
         argsList$gtLinkerDownloadExpander$Hide()
-        gtkWidgetSetSensitive(argsList$gtLinkerDownloadExpander, FALSE)
-        gtkWidgetSetSensitive(argsList$plotChecksValues[["plotKeggPw"]], TRUE)
-        gtkWidgetSetSensitive(argsList$plotChecksValues[["onlyGoLeaves"]], TRUE)
+        RGtk2::gtkWidgetSetSensitive(argsList$gtLinkerDownloadExpander, FALSE)
+        RGtk2::gtkWidgetSetSensitive(argsList$plotChecksValues[["plotKeggPw"]], TRUE)
+        RGtk2::gtkWidgetSetSensitive(argsList$plotChecksValues[["onlyGoLeaves"]], TRUE)
     }    
 }
 
@@ -61,7 +61,7 @@ tabNetwork_fill <- function(mainWindow, statusbar, geneList)
     tabNetwork <- tabNetwork_common_fill(mainWindow, geneList)
 
     # Create subtabs: 
-    tabsNw <- gtkNotebookNew()
+    tabsNw <- RGtk2::gtkNotebookNew()
     tabsNw$setTabPos("top")
    
     ####################################################
@@ -83,14 +83,14 @@ tabNetwork_fill <- function(mainWindow, statusbar, geneList)
     
     # ####################################################
     # ####### FGNet tab end
-    gtkNotebookInsertPage(tabsNw, tabReport$tabReport, tab.label = gtkLabelNew("HTML report"))
-    gtkNotebookInsertPage(tabsNw, tabPlotNetwork$tabPlotNetwork, tab.label = gtkLabelNew("Plot network"))
+    RGtk2::gtkNotebookInsertPage(tabsNw, tabReport$tabReport, tab.label = gtkLabelNew("HTML report"))
+    RGtk2::gtkNotebookInsertPage(tabsNw, tabPlotNetwork$tabPlotNetwork, tab.label = gtkLabelNew("Plot network"))
     # gtkNotebookInsertPage(tabsNw, tabSubNetwork$tabSubNetwork, tab.label = gtkLabelNew("Subnetwork [in construction]"))
     tabNetwork$fields$commonBox$add(tabsNw)
     
     # SignalConnects
-    gSignalConnect(tabNetwork$fields$buttonSelectFeaResults, "clicked", loadFileDialog, data=list(parentWindow=mainWindow, feaResultsText=tabNetwork$fields$feaResultsText, comboFeaTool=tabNetwork$fields$comboFeaTool, expressionText=tabNetwork$fields$expressionText, alreadyDownloadedCheck=tabNetwork$fields$alreadyDownloadedCheck)) # Assigns value to feaResultsText_other
-    gSignalConnect(tabNetwork$fields$comboFeaTool, "changed", selectNetworkTool, data=c(tabNetwork$fields, list(legendPrefixText=tabPlotNetwork$fields$legendPrefixText, plotChecksValues=tabReport$fields$plotChecksValues, FEA_tools=FEA_tools)))
+    RGtk2::gSignalConnect(tabNetwork$fields$buttonSelectFeaResults, "clicked", loadFileDialog, data=list(parentWindow=mainWindow, feaResultsText=tabNetwork$fields$feaResultsText, comboFeaTool=tabNetwork$fields$comboFeaTool, expressionText=tabNetwork$fields$expressionText, alreadyDownloadedCheck=tabNetwork$fields$alreadyDownloadedCheck)) # Assigns value to feaResultsText_other
+    RGtk2::gSignalConnect(tabNetwork$fields$comboFeaTool, "changed", selectNetworkTool, data=c(tabNetwork$fields, list(legendPrefixText=tabPlotNetwork$fields$legendPrefixText, plotChecksValues=tabReport$fields$plotChecksValues, FEA_tools=FEA_tools)))
 
     fields <- list(commonFields=tabNetwork$fields, tabReport=tabReport, tabPlotNetwork=tabPlotNetwork, tabSubNetwork=tabSubNetwork)
     #######################################################################

@@ -86,9 +86,9 @@ goTreeLinks <- function(gtSets, grPrefix, geneExpr, folder, plotGoTree, clusterC
     {
         # Create DB
         parentsDB <- list()
-        parentsDB[["BP"]] <- AnnotationDbi::as.list(GOBPPARENTS)
-        parentsDB[["MF"]] <- AnnotationDbi::as.list(GOMFPARENTS)
-        parentsDB[["CC"]] <- AnnotationDbi::as.list(GOCCPARENTS)
+        parentsDB[["BP"]] <- AnnotationDbi::as.list(GO.db::GOBPPARENTS)
+        parentsDB[["MF"]] <- AnnotationDbi::as.list(GO.db::GOMFPARENTS)
+        parentsDB[["CC"]] <- AnnotationDbi::as.list(GO.db::GOCCPARENTS)
         
         # For each Mg/Cluster...
         geneSplit <- ","

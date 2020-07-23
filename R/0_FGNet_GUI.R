@@ -17,17 +17,17 @@ FGNet_GUI <- function(geneList=NULL)
     GOEvidenceCodes <- get("GOEvidenceCodes", envir  = environment())
     
     # Crear ventana
-    mainWindow <- gtkWindowNew("toplevel", show=FALSE)
+    mainWindow <- RGtk2::gtkWindowNew("toplevel", show=FALSE)
     #mainWindow$setDefaultSize(500,768)
     mainWindow$setTitle("Functional Gene Networks")
     mainWindow$setBorderWidth(2)
     
     # Statusbar
-    statusbar <- gtkStatusbar()
+    statusbar <- RGtk2::gtkStatusbar()
     statusbar$push(statusbar$getContextId("info"), "Ready.")
     
     # Create tabs
-    tabsSteps <- gtkNotebookNew()
+    tabsSteps <- RGtk2::gtkNotebookNew()
     tabsSteps$name<-"tabsSteps"
     tabsSteps$setTabPos("left")
     
@@ -51,13 +51,13 @@ FGNet_GUI <- function(geneList=NULL)
     ###################################################################################
     ############## Add tabs to mainWindow
     tabID <- setNames(0:4, c("FEA", "Network", "Compare", "help")) #"Import",
-    gtkNotebookInsertPage(tabsSteps, tabFEA$tabFEA, position = tabID["FEA"], tab.label = gtkLabelNew("1 - FEA    "))
-    # gtkNotebookInsertPage(tabsSteps, tabImport, position = tabID["Import"], tab.label = gtkLabelNew("import?"))
-    gtkNotebookInsertPage(tabsSteps, tabNetwork$tabNetwork, position = tabID["Network"], tab.label =  gtkLabelNew("2 - Network"))
-    # gtkNotebookInsertPage(tabsSteps, tabCompare, position = tabID["Compare"], tab.label = gtkLabelNew("compare?"))
-    gtkNotebookInsertPage(tabsSteps, tabHelp$tabHelp, position = tabID["help"], tab.label = gtkLabelNew("Help"))
+    RGtk2::gtkNotebookInsertPage(tabsSteps, tabFEA$tabFEA, position = tabID["FEA"], tab.label = RGtk2::gtkLabelNew("1 - FEA    "))
+    # RGtk2::gtkNotebookInsertPage(tabsSteps, tabImport, position = tabID["Import"], tab.label = RGtk2::gtkLabelNew("import?"))
+    RGtk2::gtkNotebookInsertPage(tabsSteps, tabNetwork$tabNetwork, position = tabID["Network"], tab.label =  RGtk2::gtkLabelNew("2 - Network"))
+    # RGtk2::gtkNotebookInsertPage(tabsSteps, tabCompare, position = tabID["Compare"], tab.label = RGtk2::gtkLabelNew("compare?"))
+    RGtk2::gtkNotebookInsertPage(tabsSteps, tabHelp$tabHelp, position = tabID["help"], tab.label = RGtk2::gtkLabelNew("Help"))
 
-    box.vMain <- gtkVBoxNew()
+    box.vMain <- RGtk2::gtkVBoxNew()
     box.vMain$packStart(tabsSteps, expand=TRUE, fill=TRUE, 0)
     box.vMain$packStart(statusbar, expand=FALSE, fill=TRUE, 0)
     
@@ -65,7 +65,7 @@ FGNet_GUI <- function(geneList=NULL)
     ###################################################################################
     ############## Signal connects
     # Submit Query:
-    gSignalConnect(tabFEA$commonFields$buttonSubmit, "clicked", submitQuery, data=list(parentWindow=mainWindow, statusbar=statusbar, 
+    RGtk2::gSignalConnect(tabFEA$commonFields$buttonSubmit, "clicked", submitQuery, data=list(parentWindow=mainWindow, statusbar=statusbar, 
                                                                                        feaResultsText=tabNetwork$commonFields$feaResultsText, comboFeaTool=tabNetwork$commonFields$comboFeaTool, expressionText=tabNetwork$commonFields$expressionText,serverWebReportText=tabNetwork$commonFields$serverWebReportText, 
                                                                                        tabsSteps=tabsSteps, tabID=tabID, tabFEA=tabFEA))    
     mainWindow$add(box.vMain)

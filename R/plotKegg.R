@@ -28,15 +28,15 @@ plotKegg <- function(keggIDs, geneExpr, geneIDtype="ENSEMBL", colType=c("continu
     orgDb <- eval(parse(text=orgDb))
     
     # Check provided ID (for compatibility with report and DAVID)
-    if(!geneIDtype %in% columns(orgDb)) geneIDtype <- columns(orgDb)[sapply(columns(orgDb), function(x) grepl(x, geneIDtype))]
+    if(!geneIDtype %in% AnnotationDbi::columns(orgDb)) geneIDtype <- columns(orgDb)[sapply(columns(orgDb), function(x) grepl(x, geneIDtype))]
     if(length(geneIDtype)!=1) stop("geneIDtype not valid")
 
-    numRecogKeys <- sum(names(geneExpr) %in% keys(orgDb, keytype=geneIDtype))
+    numRecogKeys <- sum(names(geneExpr) %in% AnnotationDbi::keys(orgDb, keytype=geneIDtype))
     if(numRecogKeys == 0)
     {
         # Try with gene symbol or labels, in case geneLabels was used
         geneIDtype <- c("SYMBOL", "GENENAME")[which(c("SYMBOL", "GENENAME") %in% columns(orgDb))][1]
-        numRecogKeys <- sum(names(geneExpr) %in% keys(orgDb, keytype=geneIDtype))
+        numRecogKeys <- sum(names(geneExpr) %in% AnnotationDbi::keys(orgDb, keytype=geneIDtype))
     }        
         
     fileNames <- NULL
@@ -47,9 +47,9 @@ plotKegg <- function(keggIDs, geneExpr, geneIDtype="ENSEMBL", colType=c("continu
         geneIDrequired <- "ENTREZID" 
         if(orgDb$packageName=="org.At.tair.db") geneIDrequired <- "TAIR"    # Kegg prefix: "ath"
         if(orgDb$packageName %in% c("org.Pf.plasmo.db", "org.Sc.sgd.db")) geneIDrequired <- "ORF"    # Kegg prefix: "pfa","sce" 
-        if(!geneIDrequired %in% columns(orgDb)) stop("Gene ID is not available in organism database.")
+        if(!geneIDrequired %in% AnnotationDbi::columns(orgDb)) stop("Gene ID is not available in organism database.")
         
-        newIDs <- select(orgDb, keys=names(geneExpr), columns=geneIDrequired, keytype=geneIDtype)
+        newIDs <- AnnotationDbi::select(orgDb, keys=names(geneExpr), columns=geneIDrequired, keytype=geneIDtype)
         newIDs <- newIDs[!is.na(newIDs[,geneIDrequired]),]
         
         geneExprNewIDs <- sapply(unique(newIDs[,geneIDrequired]), function(x) mean(geneExpr[unique(newIDs[newIDs[,geneIDrequired]==x, geneIDtype])])) # Mean in case there are several values for the same ID
@@ -76,7 +76,7 @@ plotKegg <- function(keggIDs, geneExpr, geneIDtype="ENSEMBL", colType=c("continu
         names(colsExpr) <- names(geneExprNewIDs)
         #cols <- unique(names(table(sort(colsExpr)))); pie(rep(1,length(cols)),col=cols)
        
-        allIds<- keys(orgDb, keytype=geneIDrequired)
+        allIds<- AnnotationDbi::keys(orgDb, keytype=geneIDrequired)
         allG <- rep(0, length(allIds))
         names(allG) <- allIds
         geneExprNewIDs <- geneExprNewIDs[!is.na(geneExprNewIDs)]
@@ -98,7 +98,7 @@ plotKegg <- function(keggIDs, geneExpr, geneIDtype="ENSEMBL", colType=c("continu
             pathwayNames <- setNames(rep("profile", length(keggIDs)), keggIDs) 
             if(loadInstPkg("KEGG.db"))
             {
-                pathwayNames <- unlist(AnnotationDbi::as.list(KEGGPATHID2NAME)[keggIDs])
+                pathwayNames <- unlist(AnnotationDbi::as.list(KEGG.db::KEGGPATHID2NAME)[keggIDs])
             }        
         }
         

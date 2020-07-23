@@ -13,11 +13,11 @@ refList <- function(dbPackage, geneIdType)
     if(!loadInstPkg(dbPackage)) stop(paste("Package", dbPackage, "is not available."))
 
     pkg.db <- eval(parse(text=dbPackage))
-    columns(pkg.db)
+    AnnotationDbi::columns(pkg.db)
     
-    if(!geneIdType %in% columns(pkg.db)) stop(paste("geneIdType not available for ",dbPackage,". \nAvailable columns: ",paste(columns(pkg.db), collapse=", "), sep=""))
+    if(!geneIdType %in% AnnotationDbi::columns(pkg.db)) stop(paste("geneIdType not available for ",dbPackage,". \nAvailable columns: ",paste(columns(pkg.db), collapse=", "), sep=""))
     
-    return(keys(pkg.db, keytype=geneIdType))
+    return(AnnotationDbi::keys(pkg.db, keytype=geneIdType))
 }
 
 
@@ -43,15 +43,15 @@ buildGeneSets <- function(organismDb, geneIDtype, annotations=c("GO_BP","GO_MF",
 
     org.db <- eval(parse(text=organismDb))
     
-    if(!geneIDtype %in% columns(org.db)) stop(paste("geneIDtype not available for ",organismDb,". \nAvailable columns: ",paste(columns(org.db), collapse=", "), sep=""))
+    if(!geneIDtype %in% AnnotationDbi::columns(org.db)) stop(paste("geneIDtype not available for ",organismDb,". \nAvailable columns: ",paste(columns(org.db), collapse=", "), sep=""))
 
-    allGenes <- keys(org.db, keytype=geneIDtype)
+    allGenes <- AnnotationDbi::keys(org.db, keytype=geneIDtype)
     allGenes <- gsub(pattern="\"", "",allGenes)
     ret <- list(genes2terms=NULL, terms2genes=NULL, asTable=NULL)
     #### Build GO tables:
     if(any(c("GO_BP","GO_MF","GO_CC") %in% annotations))
     {
-        tableGoGenes <- suppressWarnings(select(org.db, keys=allGenes, columns="GO", keytype=geneIDtype))
+        tableGoGenes <- suppressWarnings(AnnotationDbi::select(org.db, keys=allGenes, columns="GO", keytype=geneIDtype))
         tableGoGenes <- tableGoGenes[!is.na(tableGoGenes[,"GO"]),] # Bueno o malo?
         if(!is.null(evidence)) tableGoGenes <- tableGoGenes[tableGoGenes$EVIDENCE %in% evidence, ]
         
@@ -69,7 +69,7 @@ buildGeneSets <- function(organismDb, geneIDtype, annotations=c("GO_BP","GO_MF",
      
         if(loadInstPkg("GO.db")) 
         {
-            termsLabels <- select(GO.db, keys=unlist(sapply(ret$terms2genes, names)), columns="TERM", keytype="GOID")  # ONLY annotations NEEDS TO BE GO!
+            termsLabels <- AnnotationDbi::select(GO.db, keys=unlist(sapply(ret$terms2genes, names)), columns="TERM", keytype="GOID")  # ONLY annotations NEEDS TO BE GO!
             termsLabels <- split(termsLabels$TERM, termsLabels$GOID)# (as list for consistency with other annotationss)
             termsLabels <- lapply(termsLabels, capitalize)
             
@@ -92,9 +92,9 @@ buildGeneSets <- function(organismDb, geneIDtype, annotations=c("GO_BP","GO_MF",
     #### Build KEGG tables:
     if("KEGG" %in% annotations)
     {
-        if("PATH" %in% columns(org.db))
+        if("PATH" %in% AnnotationDbi::columns(org.db))
         {
-            tableKeggGenes <- suppressWarnings(select(org.db, keys=allGenes, columns="PATH", keytype=geneIDtype))
+            tableKeggGenes <- suppressWarnings(AnnotationDbi::select(org.db, keys=allGenes, columns="PATH", keytype=geneIDtype))
             tableKeggGenes <- tableKeggGenes[!is.na(tableKeggGenes[,"PATH"]),] # Bueno o malo?
             
             genes2kegg <- split(as.character(tableKeggGenes$PATH),tableKeggGenes[,geneIDtype])
@@ -107,7 +107,7 @@ buildGeneSets <- function(organismDb, geneIDtype, annotations=c("GO_BP","GO_MF",
             if(loadInstPkg("KEGG.db")) 
             {
                 # Labels...
-                termsLabels <- AnnotationDbi::as.list(KEGGPATHID2NAME)
+                termsLabels <- AnnotationDbi::as.list(KEGG.db::KEGGPATHID2NAME)
                 termsLabels <- termsLabels[which(names(termsLabels) %in% names(kegg2genes))]
                 # termsLabels <- sapply(termsLabels, function(x) x[1]) # Take only first
                 
@@ -131,9 +131,9 @@ buildGeneSets <- function(organismDb, geneIDtype, annotations=c("GO_BP","GO_MF",
     
     if("REACTOME" %in% annotations)
     {
-        reactPw2geneID <- AnnotationDbi::as.list(reactomePATHID2EXTID)  
-        geneID2reactPw <- AnnotationDbi::as.list(reactomeEXTID2PATHID)
-        entrezIdsOrg <- keys(org.db, keytype="ENTREZID")
+        reactPw2geneID <- AnnotationDbi::as.list(reactome.db::reactomePATHID2EXTID)  
+        geneID2reactPw <- AnnotationDbi::as.list(reactome.db::reactomeEXTID2PATHID)
+        entrezIdsOrg <- AnnotationDbi::keys(org.db, keytype="ENTREZID")
         
         geneID2reactPw <- geneID2reactPw[which(names(geneID2reactPw) %in% entrezIdsOrg)]
         reactPw2geneID <- sapply(reactPw2geneID, function(x) x[which(x %in% entrezIdsOrg)])

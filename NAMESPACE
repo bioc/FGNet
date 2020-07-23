@@ -36,3 +36,13 @@ importFrom(hwriter,hwriteImage)
 importFrom(hwriter,openPage)
 importFrom(hwriter,closePage)
 
+
+importFrom("grDevices", "col2rgb", "dev.off", "png", "rainbow")
+importFrom("graphics", "abline", "axis", "barplot", "box", "boxplot",
+           "image", "layout", "legend", "par", "title")
+importFrom("methods", "new")
+importFrom("stats", "dist", "hclust", "quantile", "setNames")
+importFrom("utils", "View", "browseURL", "data", "download.file",
+           "install.packages", "installed.packages", "read.csv",
+           "read.table", "write.table")
+

@@ -8,7 +8,11 @@ Format DAVID output
 Format DAVID 'functional annotation and clustering' output to use with FGNet.
 }
 \usage{
-format_david(fileName, jobName = NULL, geneLabels = NULL, moveFile = FALSE, downloadFile=TRUE)
+format_david(fileName, 
+jobName = NULL, 
+geneLabels = NULL, 
+moveFile = FALSE, 
+downloadFile=TRUE)
 }
 \arguments{
   \item{fileName}{

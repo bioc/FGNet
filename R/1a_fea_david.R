@@ -56,7 +56,7 @@ fea_david <- function(geneList, geneIdType="ENSEMBL_GENE_ID", geneLabels=NULL, a
         # Connect to DAVID        
         tryCatch( 
         {
-            davidConnection <- DAVIDWebService$new(email=email, url="https://david.ncifcrf.gov/webservice/services/DAVIDWebService.DAVIDWebServiceHttpSoap12Endpoint/")
+            davidConnection <- RDAVIDWebService::DAVIDWebService$new(email=email, url="https://david.ncifcrf.gov/webservice/services/DAVIDWebService.DAVIDWebServiceHttpSoap12Endpoint/")
         }, warning = function (w)
         {
             if(grepl("SSL", w)) w <- paste("If you are seeing this error you might need to install a certificate to connect to DAVID web service.\n See the instructions in the forum: \nhttps://support.bioconductor.org/p/70090/#72226", w, sep="\n")
@@ -66,7 +66,7 @@ fea_david <- function(geneList, geneIdType="ENSEMBL_GENE_ID", geneLabels=NULL, a
         # Upload gene list
         result <- tryCatch( 
             {
-                addList(davidConnection, geneList, idType=geneIdType, listName=paste("List_", randomNumber, sep=""), listType="Gene")
+                RDAVIDWebService::addList(davidConnection, geneList, idType=geneIdType, listName=paste("List_", randomNumber, sep=""), listType="Gene")
             }, error = function(e) 
             {
                 if(grep("idType", e$message)) 
@@ -87,7 +87,7 @@ fea_david <- function(geneList, geneIdType="ENSEMBL_GENE_ID", geneLabels=NULL, a
         # Set annotations
         tryCatch( 
         {
-            setAnnotationCategories(davidConnection, categories=annotations)                    
+            RDAVIDWebService::setAnnotationCategories(davidConnection, categories=annotations)                    
         }, error = function(e) 
         {
             if(grep("categories", e$message)) 
@@ -104,7 +104,7 @@ fea_david <- function(geneList, geneIdType="ENSEMBL_GENE_ID", geneLabels=NULL, a
         )
         
         # Request & save clustering report
-        getClusterReportFile(davidConnection, type="Term", fileName=downloadFileName, 
+        RDAVIDWebService::getClusterReportFile(davidConnection, type="Term", fileName=downloadFileName, 
                                                  overlap=argsWS["overlap"], initialSeed=argsWS["initialSeed"], finalSeed=argsWS["finalSeed"], linkage=argsWS["linkage"], kappa=argsWS["kappa"])
         moveFile <- TRUE
         
@@ -123,7 +123,7 @@ fea_david <- function(geneList, geneIdType="ENSEMBL_GENE_ID", geneLabels=NULL, a
         # URL has a charactor size limitation (<= 2048 characters in total), i.e., the very large gene list may not be able to completely passed by URL.
         if(nchar(queryUrl)>2048) stop("Query url too long.")
                 
-        curlHandle <- getCurlHandle(cookiefile = "CurlHandleCookie.txt")        
+        curlHandle <- RCurl::getCurlHandle(cookiefile = "CurlHandleCookie.txt")        
         reply <- getURL(queryUrl, curl = curlHandle, ssl.verifypeer = FALSE)
 
         replyRowids <- getContent(reply, attribute = 'document.apiForm.rowids.value="')
@@ -173,9 +173,6 @@ fea_david <- function(geneList, geneIdType="ENSEMBL_GENE_ID", geneLabels=NULL, a
             stop(paste("Message from David: ", errorMsg, sep=""))
         }
     } 
-print(downloadFileName)
-print(jobName)
-print(moveFile)
 
     ret <- format_david(downloadFileName, jobName=jobName, geneLabels=geneLabels, moveFile=moveFile, downloadFile=downloadFile)
     invisible(c(queryArgs=queryArgs,ret))

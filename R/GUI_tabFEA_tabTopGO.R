@@ -19,28 +19,27 @@
     
 tabTopGo_fill <- function(mainWindow, allOrgs)
 {
-    tabTopGo <- gtkVBox(FALSE,2)
-    hbox1TopGO <- gtkHBoxNew(homogeneous=FALSE, spacing=0)
+    tabTopGo <- RGtk2::gtkVBox(FALSE,2)
+    hbox1TopGO <- RGtk2::gtkHBoxNew(homogeneous=FALSE, spacing=0)
     # geneIdType 
     geneIDsTopGO <- c("ENTREZID", "ENSEMBL", "ENSEMBLPROT", "ENSEMBLTRANS", "UNIPROT", "SYMBOL") # Los ensemble en algunos org  no estan
     geneIDsTopGO <- c(geneIDsTopGO, "ALIAS", "COMMON", "TAIR") # Varios (no humano)
-    # geneIDs <- geneIDs[geneIDs %in% columns(org.db)] # comprobar para cada organismos que IDs hay...
-    frameGeneIdTypeTopGo <- gtkFrame("Gene ID")
-    gtkFrameSetShadowType(frameGeneIdTypeTopGo, GtkShadowType["none"])
-    comboGeneIdTypeTopGo <- gtkComboBoxNewText()
-    for(id in geneIDsTopGO) gtkComboBoxAppendText(comboGeneIdTypeTopGo, id)
+    frameGeneIdTypeTopGo <- RGtk2::gtkFrame("Gene ID")
+    RGtk2::gtkFrameSetShadowType(frameGeneIdTypeTopGo, GtkShadowType["none"])
+    comboGeneIdTypeTopGo <- RGtk2::gtkComboBoxNewText()
+    for(id in geneIDsTopGO) RGtk2::gtkComboBoxAppendText(comboGeneIdTypeTopGo, id)
     comboGeneIdTypeTopGo$setActive(1)
     frameGeneIdTypeTopGo$add(comboGeneIdTypeTopGo)
     hbox1TopGO$packStart(frameGeneIdTypeTopGo, expand=TRUE)
     
     # Organism
-    orgTopGoBox <- gtkHBoxNew(homogeneous=FALSE, spacing=0)
-    comboOrgTopGo <- gtkComboBoxNewText()
-    for (ch in names(allOrgs[["Descr"]])) gtkComboBoxAppendText(comboOrgTopGo, ch)
+    orgTopGoBox <- RGtk2::gtkHBoxNew(homogeneous=FALSE, spacing=0)
+    comboOrgTopGo <- RGtk2::gtkComboBoxNewText()
+    for (ch in names(allOrgs[["Descr"]])) RGtk2::gtkComboBoxAppendText(comboOrgTopGo, ch)
     comboOrgTopGo$setActive(allOrgs[["ID"]]["Hs"])
     comboOrgTopGo$"tooltip-text" <- "Available organisms"
-    frameOrgTopGo <- gtkFrame("Organism")
-    gtkFrameSetShadowType(frameOrgTopGo, GtkShadowType["none"])
+    frameOrgTopGo <- RGtk2::gtkFrame("Organism")
+    RGtk2::gtkFrameSetShadowType(frameOrgTopGo, GtkShadowType["none"])
     orgTopGoBox$packStart(comboOrgTopGo, expand = TRUE)
     frameOrgTopGo$add(orgTopGoBox)
     hbox1TopGO$packStart(frameOrgTopGo, expand=TRUE)
@@ -50,13 +49,13 @@ tabTopGo_fill <- function(mainWindow, allOrgs)
     # Annotations
     topGO_annots <- c("GO Biological Process (BP)","GO Molecular Function (MF)", "GO Cellular Component (CC)")
     names(topGO_annots) <- c("GO_BP","GO_MF","GO_CC")
-    frameAnnotsTopGo <- gtkFrame("Annotations")
-    annotsAreaTopGo <- gtkVBoxNew(homogeneous=FALSE, spacing=0)
+    frameAnnotsTopGo <- RGtk2::gtkFrame("Annotations")
+    annotsAreaTopGo <- RGtk2::gtkVBoxNew(homogeneous=FALSE, spacing=0)
     frameAnnotsTopGo$add(annotsAreaTopGo)
     checkAnnotsTopGo<-list()
     for(annot in topGO_annots)
     {
-        checkAnnotsTopGo[[annot]] <- gtkCheckButton(annot)
+        checkAnnotsTopGo[[annot]] <- RGtk2::gtkCheckButton(annot)
         checkAnnotsTopGo[[annot]]$active <- TRUE
         annotsAreaTopGo$add(checkAnnotsTopGo[[annot]])
     }
@@ -66,24 +65,24 @@ tabTopGo_fill <- function(mainWindow, allOrgs)
     data("GOEvidenceCodes", envir = environment())
     GOEvidenceCodes <- get("GOEvidenceCodes", envir  = environment())
     
-    frameEvidenceTopGo <- gtkFrame("Evidence")
+    frameEvidenceTopGo <- RGtk2::gtkFrame("Evidence")
     frameEvidenceTopGo$setShadowType("none")
-    evidenceScroll <- gtkScrolledWindow()
+    fevidenceScroll <- RGtk2::gtkScrolledWindow()
     evidenceScroll$setPolicy("automatic", "automatic")
     evidenceScroll$setShadowType("none")
     
-    evidenceViewport <- gtkViewportNew()
+    evidenceViewport <- RGtk2::gtkViewportNew()
     
-    subFrameEvidence <- gtkFrame()
-    gtkFrameSetShadowType(subFrameEvidence, GtkShadowType["none"])
+    subFrameEvidence <- RGtk2::gtkFrame()
+    RGtk2::gtkFrameSetShadowType(subFrameEvidence, GtkShadowType["none"])
                   
-    evidArea <- gtkVBoxNew(FALSE, 0)         
+    evidArea <- RGtk2::gtkVBoxNew(FALSE, 0)         
     subFrameEvidence$add(evidArea)
     # Fill...
     checkEvidenceTopGo <-list()
     for(evid in rownames(GOEvidenceCodes))
     {
-        checkEvidenceTopGo[[evid]] <- gtkCheckButton(paste(evid, " (",GOEvidenceCodes[evid,2],")", sep=""))
+        checkEvidenceTopGo[[evid]] <- RGtk2::gtkCheckButton(paste(evid, " (",GOEvidenceCodes[evid,2],")", sep=""))
         evidArea$add(checkEvidenceTopGo[[evid]])
     }
     #checkEvidenceTopGo[["TAS"]]$active <- TRUE
@@ -95,34 +94,34 @@ tabTopGo_fill <- function(mainWindow, allOrgs)
     
     # refPackage <- NULL  
     ## 
-    refPackageFrame <- gtkFrame("Chip package (gene universe)")
-    refPackageBox <- gtkHBoxNew(homogeneous=FALSE, spacing=0)
-    gtkFrameSetShadowType(refPackageFrame, GtkShadowType["none"])
-    refPackageTxt <- gtkEntryNew()
+    refPackageFrame <- RGtk2::gtkFrame("Chip package (gene universe)")
+    refPackageBox <- RGtk2::gtkHBoxNew(homogeneous=FALSE, spacing=0)
+    RGtk2::gtkFrameSetShadowType(refPackageFrame, GtkShadowType["none"])
+    refPackageTxt <- RGtk2::gtkEntryNew()
     refPackageTxt$setWidthChars(25)
     refPackageTxt$"tooltip-text" <- "The chip package is used to estimate all the measured genes (gene universe). If blank, the organism package will be used."
     refPackageBox$packStart(refPackageTxt, expand = TRUE)
     # Installed automatically by buildGeneSets()
-    refPackageURL <- gtkLinkButtonNewWithLabel("http://www.bioconductor.org/packages/release/BiocViews.html#___ChipDb", label = "[install]", show = TRUE)
+    refPackageURL <- RGtk2::gtkLinkButtonNewWithLabel("http://www.bioconductor.org/packages/release/BiocViews.html#___ChipDb", label = "[install]", show = TRUE)
     refPackageBox$packStart(refPackageURL, expand = FALSE)
     refPackageFrame$add(refPackageBox)
     tabTopGo$packStart(refPackageFrame, expand = FALSE)
     
     # TopGoOptions
-    topGoOptionsBox <- gtkHBoxNew(homogeneous=FALSE, spacing=0)
+    topGoOptionsBox <- RGtk2::gtkHBoxNew(homogeneous=FALSE, spacing=0)
     # nodeSize <- 5    
-    nodeSizeFrame <- gtkFrame("Minimum term size (nodeSize)")
-    gtkFrameSetShadowType(nodeSizeFrame, GtkShadowType["none"])
-    nodeSizeTxt <- gtkEntryNew()
+    nodeSizeFrame <- RGtk2::gtkFrame("Minimum term size (nodeSize)")
+    RGtk2::gtkFrameSetShadowType(nodeSizeFrame, GtkShadowType["none"])
+    nodeSizeTxt <- RGtk2::gtkEntryNew()
     nodeSizeTxt$"tooltip-text" <- "Set to 1 not to leave out any term. TopGO authors recommend setting to 5-10 for more stable results"
     nodeSizeTxt$setText("5")
     nodeSizeFrame$add(nodeSizeTxt)
     topGoOptionsBox$packStart(nodeSizeFrame, expand=TRUE)
     
     # pValThr <- 0.01
-    pValThrFrame <- gtkFrame("P-value threshold")
-    gtkFrameSetShadowType(pValThrFrame, GtkShadowType["none"])
-    pValThrTxt <- gtkEntryNew()
+    pValThrFrame <- RGtk2::gtkFrame("P-value threshold")
+    RGtk2::gtkFrameSetShadowType(pValThrFrame, GtkShadowType["none"])
+    pValThrTxt <- RGtk2::gtkEntryNew()
     pValThrTxt$"tooltip-text" <- "p-value threshold to select terms through Fisher test"
     pValThrTxt$setText("0.01")
     pValThrFrame$add(pValThrTxt)
