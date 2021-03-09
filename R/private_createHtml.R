@@ -462,11 +462,11 @@ createHtml <- function(htmlFileName, feaResults, jobName, tablesGenes, tablesTer
             attrs <- c(paste("Silhouette: ", round(globalMetagroups[mg, "Silhouette Width"], 2), sep=""),
                                  paste("P-value: ", signif(globalMetagroups[mg, "pValue"],2),sep=""))        
         }        
-        if(tool=="DAVID")
-        {    
-            attrs <- c(paste("Score: ", signif(as.numeric(as.character(globalMetagroups[mg, "ClusterEnrichmentScore"])),2),sep=""),
-                                 "","")
-        }    
+        # if(tool=="DAVID")
+        # {    
+        #     attrs <- c(paste("Score: ", signif(as.numeric(as.character(globalMetagroups[mg, "ClusterEnrichmentScore"])),2),sep=""),
+        #                          "","")
+        # }    
         if(tool=="topGO")
         {    
             pVal <- signif(as.numeric(gsub("< ", "", as.character(globalMetagroups[mg, "classic"]))),2)                

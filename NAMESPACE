@@ -3,11 +3,9 @@ export(FGNet_report)
 
 export(fea_gtLinker)
 export(fea_gtLinker_getResults)
-export(fea_david)
 export(fea_gage)
 export(fea_topGO)
 
-export(format_david)
 export(format_results)
 export(readGeneTermSets)
 

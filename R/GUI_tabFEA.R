@@ -1,21 +1,21 @@
     
 # David global constants/variables (to avoid reconnect to webservice)
-newDavidVars <- function()
-{ 
-    object <- new.env(parent=globalenv()) 
-    
-    # Constants:
-    object[["dav_DefaultAnnots"]] <- c("GOTERM_BP_ALL", "GOTERM_MF_ALL", "GOTERM_CC_ALL","INTERPRO") 
-    object[["dav_DefaultId"]] <- "ENSEMBL_GENE_ID"
-    
-    # Modified when selecting API or WS (global variables to avoid reconnect):
-    object[["DAV_GeneIds"]] <- NULL
-    object[["dav_wsGeneIds"]] <- NULL 
-    object[["dav_wsAnnots"]] <- NULL
-    
-    class(object) <- 'DavidVars'
-    return(object) 
-}  
+# newDavidVars <- function()
+# { 
+#     object <- new.env(parent=globalenv()) 
+#     
+#     # Constants:
+#     object[["dav_DefaultAnnots"]] <- c("GOTERM_BP_ALL", "GOTERM_MF_ALL", "GOTERM_CC_ALL","INTERPRO") 
+#     object[["dav_DefaultId"]] <- "ENSEMBL_GENE_ID"
+#     
+#     # Modified when selecting API or WS (global variables to avoid reconnect):
+#     object[["DAV_GeneIds"]] <- NULL
+#     object[["dav_wsGeneIds"]] <- NULL 
+#     object[["dav_wsAnnots"]] <- NULL
+#     
+#     class(object) <- 'DavidVars'
+#     return(object) 
+# }  
 
 tabFEA_fill <- function(mainWindow, statusbar, geneList)
 {    

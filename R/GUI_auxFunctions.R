@@ -15,7 +15,7 @@ actDeactGenes <- function(pointer1, pointer2, newPage, argsList)
     
     # tabsTool$GetCurrentPage()  (OLD page)
     curPage <- rownames(FEA_tools)[which(FEA_tools[,"ID"]==newPage)]
-    if(curPage %in% c("DAVID", "GeneTerm Linker", "topGO"))
+    if(curPage %in% c("GeneTerm Linker", "topGO")) #"DAVID", 
     {
         RGtk2::gtkWidgetSetSensitive(argsList$geneListFrame, TRUE)   
         argsList$geneListFrame$visible <- TRUE
@@ -228,7 +228,7 @@ submitQuery <- function(button, argsList) # button: Not used, but required for s
                                              "gtk-ok", RGtk2::GtkResponseType["accept"], 
                                              "gtk-cancel", RGtk2::GtkResponseType["reject"],
                                              show=FALSE)
-            if(activeTool %in% c("GeneTerm Linker","DAVID")) dialog[["vbox"]]$add(RGtk2::gtkLabel(paste("Submit query to ", activeTool, " server?", sep="")))
+            if(activeTool %in% c("GeneTerm Linker")) dialog[["vbox"]]$add(RGtk2::gtkLabel(paste("Submit query to ", activeTool, " server?", sep=""))) #"DAVID"
                if(activeTool %in% c("topGO", "gage")) dialog[["vbox"]]$add(RGtk2::gtkLabel("Perform analysis?"))
             response <- dialog$run() # showAll()
             dialog$destroy()        
@@ -282,38 +282,39 @@ submitQuery <- function(button, argsList) # button: Not used, but required for s
                      queryReply <- formatResultsFile(c(argsList$tabFEA$toolTabs$tabOther$fields, list(jobNameText=argsList$tabFEA$commonFields$jobNameText)))
                      msgText <- paste("The file has been formated to use with FGNet \n and saved as '", queryReply$fileName, "'\nYou can now build the functional network.",sep="")
                 }
-                if(activeTool =="DAVID")
-                {                    
-                    queryArgs <- argsList$tabFEA$toolTabs$tabDavid$queryArgs    
-
-                    ## Get arguments
-                    geneIdType <- queryArgs$davidVars$DAV_GeneIds[queryArgs$comboIdType$getActive()+1]
-
-                    annotations <- unlist(sapply(queryArgs$annotsArea$getChildren(), function(anot) if(anot$active) return(anot$label)))
-                    email <- queryArgs$emailText$getText()
-                    if(email=="" || !RGtk2::gtkWidgetGetSensitive(queryArgs$frameEmail)) email <- NULL
-                    
-                    # Check libraries (ask install through dialog)
-                    if(!is.null(email))
-                    {
-                        if(!loadInstPkg("RDAVIDWebService", parentWindow=argsList$parentWindow)) stop("Package RDAVIDWebService is required to query DAVID through the webserver. Install the package or set email=NULL to query DAVID through the web API.")
-                    }else{
-                        if(!loadInstPkg("RCurl", parentWindow=argsList$parentWindow)) stop("Package 'RCurl' is required to query DAVID throught the web API. Install it or provide an email to query DAVID through the Web Service.")
-                    }
-                        
-                    argsWS <- eval(parse(text=paste("c(",queryArgs$argsText$getText(), ")", sep="")))
-                    
-                    # Submit query
-                    queryReply <- tryCatch( 
-                    {                        
-                        tmpReply <- fea_david(geneList=geneList, geneIdType=geneIdType, annotations=annotations, email=email, argsWS=argsWS, jobName=jobName)
-                        tmpReply # (invisible returns)
-                    }, error = function(e) 
-                    {
-                        msgText <<- paste("Error in query:\n " ,e, sep="")
-                        NULL
-                    })
-                }
+                # if(activeTool =="DAVID")
+                # {                    
+                #     queryArgs <- argsList$tabFEA$toolTabs$tabDavid$queryArgs    
+                # 
+                #     ## Get arguments
+                #     geneIdType <- queryArgs$davidVars$DAV_GeneIds[queryArgs$comboIdType$getActive()+1]
+                # 
+                #     annotations <- unlist(sapply(queryArgs$annotsArea$getChildren(), function(anot) if(anot$active) return(anot$label)))
+                #     email <- queryArgs$emailText$getText()
+                #     if(email=="" || !RGtk2::gtkWidgetGetSensitive(queryArgs$frameEmail)) email <- NULL
+                #     
+                #     # Check libraries (ask install through dialog)
+                #     if(!is.null(email))
+                #     {
+                #         if(!loadInstPkg("RDAVIDWebService", parentWindow=argsList$parentWindow)) 
+                #             stop("Package RDAVIDWebService is required to query DAVID through the webserver. Install the package or set email=NULL to query DAVID through the web API.")
+                #     }else{
+                #         if(!loadInstPkg("RCurl", parentWindow=argsList$parentWindow)) stop("Package 'RCurl' is required to query DAVID throught the web API. Install it or provide an email to query DAVID through the Web Service.")
+                #     }
+                #         
+                #     argsWS <- eval(parse(text=paste("c(",queryArgs$argsText$getText(), ")", sep="")))
+                #     
+                #     # Submit query
+                #     queryReply <- tryCatch( 
+                #     {                        
+                #         tmpReply <- fea_david(geneList=geneList, geneIdType=geneIdType, annotations=annotations, email=email, argsWS=argsWS, jobName=jobName)
+                #         tmpReply # (invisible returns)
+                #     }, error = function(e) 
+                #     {
+                #         msgText <<- paste("Error in query:\n " ,e, sep="")
+                #         NULL
+                #     })
+                # }
                     
                 if(activeTool =="topGO")
                 { 
