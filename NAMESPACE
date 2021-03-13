@@ -7,6 +7,7 @@ export(fea_gage)
 export(fea_topGO)
 
 export(format_results)
+export(format_david)
 export(readGeneTermSets)
 
 export(fea2incidMat)

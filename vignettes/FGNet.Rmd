@@ -48,14 +48,14 @@ FGNet takes as input a query list of genes selected by the user, and builds and 
 After obtaining a list of genes or proteins from an experiment or omic studies (microarrays, RNAseq, mass spectrometry, etc), the next step is usually to perform a functional analysis of the genes to search for the biological functions or processes in which they are involved. In order to facilitate the analysis of large lists of genes, multiple functional enrichment tools have been developed. These tools search for the genes in biological databases (i.e. GO, Kegg, Interpro), and test whether any biological annotations are over-represented in the query gene list compared to what would be expected in the whole population. However, the raw output from a functional enrichment analysis often provides dozens or hundreds of terms, and it still requires a lot of time and attention to go through the whole list of genes and annotations. A way to simplify this task is grouping genes and terms which often appear together and create associated networks: the Functional Networks.
 
 FGNet builds the functional networks, based on data from a previous functional enrichment analysis (FEA). The package provides the functions to perform the FEA through four specific tools:
-    
-* **DAVID** with Functional Annotation Clustering (DAVID-FAC), which measures relationships among annotation terms based on their co-association with subsets of genes within the query gene list ([Huang et al](#references)). This type of clustering mostly results in groups of highly related terms, such as synonymous annotations from different annotation spaces (i.e. term "glycolysis" in KEGG and GO-BP), which also share most of their genes. This tool provides great coverage but does not avoid redundant terms and very general terms (like *signal transduction* or *regulation of transcription* that correspond to specific terms in Gene Ontology, GO). 
 
 * **GeneTerm Linker**, a post-enrichment tool, which focuses on clearing and sorting the results from a previous modular enrichment analysis. This is achieved by filtering general terms with low information content (i.e. *cellular process* or *protein binding*) and redundant annotations (i.e. *metabolic process* and *primary metabolic process*). The remaining gene-term sets are grouped into `metagroups` based on their shared genes and terms (using a reciprocal linkage approach) ([Fontanillo et al](#references)).
 
 * **TopGO** ([Alexa et al](#references)), an enrichment analysis tool based on Gene Ontology (GO) that tests GO terms while accounting for the topology of the GO graph to eliminate local similarities and dependencies between GO terms. TopGO does not provide clusters, and therefore the functional network is built using only the gene-term sets. TopGO can be applied off-line.
 
 * **GAGE** ([Luo et al](#references)), a gene set enrichment analysis (GSEA) tool. It searches for functional enrichment in gene sets (i.e. Reactome, GO) and allows including a signal value -like expression changes- to rank the genes and then to identify the enrichment in functional terms that are altered (i.e. changed in genes UP and DOWN) or altered consistently in one direction (UP or DOWN). GAGE also clusters the resulting enriched gene-term sets and can be applied off-line.
+
+* **DAVID** with Functional Annotation Clustering (DAVID-FAC), which measures relationships among annotation terms based on their co-association with subsets of genes within the query gene list ([Huang et al](#references)). This type of clustering mostly results in groups of highly related terms, such as synonymous annotations from different annotation spaces (i.e. term "glycolysis" in KEGG and GO-BP), which also share most of their genes. This tool provides great coverage but does not avoid redundant terms and very general terms (like *signal transduction* or *regulation of transcription* that correspond to specific terms in Gene Ontology, GO). Unfortunately, DAVID analyses can no longer be run within R, but you can still perform the analysis on the website, and import the results into FGNet.
 
 To build the network based on other *other tools*, the raw output should be saved into a text file which contains the enriched terms and their genes. (For more details see function `format_results()`).
 
@@ -90,12 +90,12 @@ library(FGNet)
 ```
 
 To reduce system requirements, only the minimum packages are required to execute FGNet. 
-However, there are several functionalities that require further packages. i.e. the Graphical User Interface (GUI) requires "RGtk2", the FEA analyses might require "RDAVIDWebService", "gage", "topGO" or some annotation packages... etc.
+However, there are several functionalities that require further packages. i.e. the Graphical User Interface (GUI) requires "RGtk2", the FEA analyses might require "gage", "topGO" or some annotation packages... etc.
 
 To make sure all FGNet functionalities are available, install the following packages:
 ```{r, eval=FALSE}
 BiocManager::install(c("RGtk2", "RCurl",
-    "RDAVIDWebService", "gage", "topGO", 
+    "gage", "topGO", 
     "GO.db", "reactome.db", "org.Sc.sgd.db"))
 ```
 
@@ -109,10 +109,10 @@ To generate a functional network with FGNet:
     
     |FEA tool         |Online?  |Input          |Annotations        |
     |:----------------|:---------|:--------------|:------------------|
-    |DAVID            |Yes       |Gene list      |Many               |
     |Gene-Term Linker |Yes       |Gene list      |GO, Interpro       |
     |TopGO            |No        |Gene list      |GO                 |
     |GAGE (GSEA)      |No        |Expression set |Any gene set       |
+    |DAVID            |Only web  |Gene list      |Many               |
 
 
 2.  Create an [HTML report](#html-report) with multiple views of the networks and analyses.
@@ -163,11 +163,11 @@ Since the arguments required to perform the FEA depends on the tool, there are s
 
 | FEA tool  | Function | Output group type |
 |----------|---------|---------|
-| DAVID | `fea_david()` | Clusters |
 | TopGO | `fea_topGO()` | No grouping |
 | Gene-Term Linker | `fea_gtLinker()` & `fea_gtLinker_getResults()` | Metagroups |
 | GAGE | `fea_gage()` | Clusters |
 | Other | `format_feaResults()` | |
+| DAVID | `Website` | Clusters |
 
 All the FEA functions and `FGNet_report()` save the results in the current working directory. 
 ```{r, eval=FALSE}
@@ -194,21 +194,6 @@ genesYeastExpr <- setNames(c(rep(1,28), rep(-1,30)),genesYeast)
 
 ```
     
-**DAVID**
-
-> NOTE: Since August 2015, DAVID requires https. This causes errors in some systems. 
-> A (hopefully) temporary solution requries to install some certificates locally. See RDAVIDWebService help: https://support.bioconductor.org/p/70090/#72226
-
-Using DAVID requires internet connection. In addition, we recommend to register at http://david.abcc.ncifcrf.gov/webservice/register.htm to perform the queries through its Web Service.
-
-By default, `geneIdType="ENSEMBL_GENE_ID"`. To replace the gene IDs by readable names in the plots and HTML report, use the argument `geneLabels`. To see the gene IDs supported by DAVID's Web Service, use: `getIdTypes(DAVIDWebService$new(email=...))`.
-
-```{r, eval=FALSE}
-feaResults_David <- fea_david(names(genesYeast), geneLabels=genesYeast, 
-                           email="example@email.com")
-?fea_david
-```
-
 **TopGO**
     
 Since TopGO uses local databases, it does not require internet connection. 
@@ -536,7 +521,8 @@ feaResults_David <- format_david(txtFile, jobName="David_example", geneLabels=ge
 ```
 
 ```{r, eval=FALSE}
-feaResults_David <- fea_david(names(genesYeast), email="...", geneLabels=genesYeast)
+# Sorry, this function is no longer supported. Use  another fea_ function, or DAVID through the website.
+# feaResults_David <- fea_david(names(genesYeast), email="...", geneLabels=genesYeast)
 ```
 
 ```{r, eval=FALSE}
@@ -676,9 +662,10 @@ To filter out terms, (1) filter or select the terms in the the `feaReults$geneTe
 
 In this case, we will use DAVID's example, and keep the terms thar are annotated to less than 100 genes in yeast:
 ```{r, eval=FALSE}
+# No longer supported
 # Same analysis, setting overlap to 6:
-feaResults_David_ov6 <- fea_david(names(genesYeast), geneLabels=genesYeast, email="example@email.com",
-    argsWS=c(overlap=6, initialSeed=3, finalSeed=3, linkage=0.5, kappa=50))
+# feaResults_David_ov6 <- fea_david(names(genesYeast), geneLabels=genesYeast, email="example@email.com",
+#     argsWS=c(overlap=6, initialSeed=3, finalSeed=3, linkage=0.5, kappa=50))
 ```
 ```{r, echo=FALSE}
 txtFile <- paste(file.path(system.file('examples', package='FGNet')), "DAVID_Yeast_overl6_raw.txt", sep=.Platform$file.sep)
