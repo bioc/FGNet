@@ -51,7 +51,6 @@ Reactome ID change depending on the database version. Links to reactome website 
 \seealso{
 Functional enrichment analysis functions:
 \itemize{
-    \item{\code{\link[FGNet:fea_david]{fea_david()}} (Requires internet connection)}
     \item{\code{\link[FGNet:fea_gtLinker]{fea_gtLinker()}} & \code{fea_gtLinker_getResults()}
           (Requires internet connection)}
     \item{\code{\link[FGNet:fea_gage]{fea_gage()}}}

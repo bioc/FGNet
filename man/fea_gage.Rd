@@ -86,7 +86,6 @@ other arguments to pass to GAGE.
 }
 \seealso{
 \itemize{
-    \item{\code{\link[FGNet:fea_david]{fea_david()}} (Requires internet connection)}
     \item{\code{\link[FGNet:fea_gtLinker]{fea_gtLinker()}} & \code{fea_gtLinker_getResults()}
           (Requires internet connection)}
     \item{\code{\link[FGNet:fea_topGO]{fea_topGO()}} 

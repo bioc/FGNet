@@ -75,7 +75,6 @@ character. Folder name and prefix for the files.
 \seealso{
 Other FEA tools:
 \itemize{
-    \item{\code{\link[FGNet:fea_david]{fea_david()}} (Requires internet connection)}
     \item{\code{\link[FGNet:fea_gtLinker]{fea_gtLinker()}} & \code{fea_gtLinker_getResults()}
           (Requires internet connection)}
     \item{\code{\link[FGNet:fea_gage]{fea_gage()}}

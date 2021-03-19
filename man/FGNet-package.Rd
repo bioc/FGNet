@@ -27,7 +27,6 @@ If you have any issue, you can contact us at: <jrivas at usal.es>
 1. The Functional Enrichment Analysis can be performed through several tools:
 
 \itemize{
-\item{DAVID [1]: \code{\link[FGNet:fea_david]{fea_david()}} (Requires internet connection)}
 \item{GeneTerm Linker [2]: \code{\link[FGNet:fea_gtLinker]{fea_gtLinker()}} & \code{fea_gtLinker_getResults()}
  (Requires internet connection)}
  \item{\link[topGO:getSigGroups]{topGO} [3]: \code{\link[FGNet:fea_topGO]{fea_topGO()}} (Only supports GO. For offline use requires having installed the required database packages)}

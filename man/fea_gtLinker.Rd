@@ -112,7 +112,6 @@ Metagroups with negative Silhouette Width usually include diverse annotations an
 \seealso{
 Other FEA tools:
 \itemize{
-    \item{\code{\link[FGNet:fea_david]{fea_david()}} (Requires internet connection)}
     \item{\code{\link[FGNet:fea_gage]{fea_gage()}}}
     \item{\code{\link[FGNet:fea_topGO]{fea_topGO()}} 
     
