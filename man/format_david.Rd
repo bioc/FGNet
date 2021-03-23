@@ -33,14 +33,36 @@ logical. If TRUE, the result files are saved in the current directory (required 
 }
 }
 \value{
-List. Same as \link[FGNet:fea_david]{fea_david}. 
+\link[base:invisible]{Invisible} list with the folowing fields:\cr
+\code{queryArgs } list with the arguments for the query.
+
+\code{clusters } data.frame containing the clusters and their information:
+\itemize{ 
+    \item Cluster: Cluster ID.
+    \item nGenes: Number of genes in the cluster.
+    \item ClusterEnrichmentScore: Score for the cluster.
+    \item Genes: Genes in the cluster.
+    \item Terms: Terms in the cluster.
+    \item keyWordsTerm: Term is the most representative of the terms in the cluster based on keywords.
+}
+ 
+\code{geneTermSets } data.frame containing the gene-term sets that support each cluster.
+\itemize{ 
+    \item Cluster: Number (id) of the cluster the gene-term set belongs to.
+    \item ClusterEnrichmentScore: Score for the cluster. Same value for all terms in each cluster.
+    \item Category: Type of annotation of the term (i.e. GO, Kegg...)
+    \item Terms: Term in the gene-term set.
+    \item Genes: Genes in the gene-term set.
+    \item GenesIDs: In case GeneLabels was provided, original gene ID.
+    \item Other stats: Count, PValue, List.Total, Pop.Hits, Pop.Total, Fold.Enrichment, Bonferroni, Benjamini, FDR.
+}
+ 
+\code{fileName} .txt file with the formatted FEA results.
 }
 \references{
 [1] Huang DW, Sherman BT, Lempicki RA (2009) Bioinformatics enrichment tools: paths toward the comprehensive functional analysis of large gene lists. Nucleic Acids Res. 37(1):1-13.
 }
 \seealso{
-Function to perform the FEA through DAVID: \link[FGNet:fea_david]{fea_david}
-
 Overview of the package: \code{\link[FGNet:FGNet-package]{FGNet}}
 
 Package tutorial: \code{vignette("FGNet-vignette")}

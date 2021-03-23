@@ -11,7 +11,7 @@ getTerms(feaResults, returnValue = "description")
 }
 \arguments{
   \item{feaResults}{
-Output returned by any of the \link[FGNet:fea_david]{fea functions}.
+Output returned by any of the \link[FGNet:fea_gtLinker]{fea functions}.
 }
   \item{returnValue}{
 "description" Returns term description, e.g. "GO" returns GO term IDs.

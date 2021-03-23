@@ -21,7 +21,7 @@ logical. Only for GAGE: Wether to simplify the results and keep only the essenti
 }
 }
 \value{
-List formated in the same way as the \link[FGNet:fea_david]{fea} functions. 
+List formated in the same way as the \link[FGNet:fea_gtLinker]{fea} functions. 
 }
 \seealso{
 Overview of the package: \code{\link[FGNet:FGNet-package]{FGNet}}
