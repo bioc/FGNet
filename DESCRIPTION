@@ -6,7 +6,7 @@ Version: 3.29.1
 Date: 2022-04-04
 Author: Sara Aibar, Celia Fontanillo, Conrad Droste and Javier De Las Rivas.
 Maintainer: Sara Aibar <saibar@usal.es>
-Depends: R (>= 2.15)
+Depends: R (>= 4.2.0)
 VignetteBuilder: knitr
 Imports: igraph (>= 0.6), hwriter, R.utils, XML,  plotrix, reshape2, RColorBrewer, png, methods, stats, utils, graphics, grDevices
 Suggests: RCurl, gage, topGO, GO.db, reactome.db, RUnit, BiocGenerics, org.Sc.sgd.db, knitr, rmarkdown, AnnotationDbi, BiocManager
