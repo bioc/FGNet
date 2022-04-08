@@ -94,9 +94,11 @@ However, there are several functionalities that require further packages. i.e. t
 
 To make sure all FGNet functionalities are available, install the following packages:
 ```{r, eval=FALSE}
-BiocManager::install(c("RGtk2", "RCurl",
+BiocManager::install(c("RCurl",
     "gage", "topGO", 
     "GO.db", "reactome.db", "org.Sc.sgd.db"))
+
+BiocManager::install(c("RGtk2"))
 ```
 
 
@@ -119,30 +121,6 @@ To generate a functional network with FGNet:
 3.  Personalize or analyze an [specific network](#individual-networks). 
 
 These steps are integrated into the Graphical User Interface (GUI), which provides access to the main functionalities of FGNet.
-
-## Graphical User Interface (GUI)
-
-The Graphical User Interface (GUI) provides access to most FGNet functionalities in Windows and Linux (The current version of the GUI is not available for Mac OS X Snow Leopard).
-
-To launch the GUI, type in the R console:
-
-```{r, eval=FALSE}
-library(FGNet)
-FGNet_GUI()
-```
-
-![FGNet GUI](FGNet_GUI.png)
-    
-In case you already have a gene list or gene expression from a previous analysis, it is possible to load it directly into the GUI genes field by passing it as argument:
-
-```{r, eval=FALSE}
-geneExpr <- c("YBL084C", "YDL008W", "YDR118W", "YDR301W", "YDR448W", 
-              "YFR036W", "YGL240W", "YHR166C", "YKL022C", "YLR102C", "YLR115W", 
-              "YLR127C", "YNL172W", "YOL149W", "YOR249C")
-geneExpr <- setNames(c(rep(1,10),rep(-1,5)), geneExpr)
-
-FGNet_GUI(geneExpr)
-```
 
 ## In R code...
 The first step in the workflow is always is to perform a Functional Enrichment Analysis (FEA) on a list of genes or expression set. 
@@ -194,7 +172,7 @@ genesYeastExpr <- setNames(c(rep(1,28), rep(-1,30)),genesYeast)
 
 ```
     
-**TopGO**
+#### TopGO
     
 Since TopGO uses local databases, it does not require internet connection. 
 
@@ -206,23 +184,7 @@ feaResults_topGO <- fea_topGO(genesYeast, geneIdType="GENENAME", organism="Sc")
 ?fea_topGO
 ```
 
-**Gene-Term Linker**
-    
-Since the analysis with Gene-Term Linker usually takes several minutes to be ready, the workflow is divided in two steps: (1) sending the analysis request, and (2) retrieving the results:
-
-```{r, eval=FALSE}
-jobID <- fea_gtLinker(geneList=genesYeast, organism="Sc")
-?fea_gtLinker
-```
-
-once the analysis is ready...
-
-```{r, eval=FALSE}
-jobID <- 3907019
-feaResults_gtLinker <- fea_gtLinker_getResults(jobID=jobID, organism="Sc")
-```
-
-**GAGE**
+#### GAGE
     
 As a GSEA approach, instead of performing the functional enrichment over a gene list, gage requires a raw expression set and the samples to compare:
 
@@ -231,6 +193,7 @@ library(gage)
 data(gse16873)
 
 # Set gene labels? (they need to have unique identifiers)
+# BiocManager::install("org.Hs.eg.db")
 library(org.Hs.eg.db)
 geneSymbols <- select(org.Hs.eg.db,columns="SYMBOL",keytype="ENTREZID", 
     keys=rownames(gse16873))
@@ -248,7 +211,8 @@ feaResults_gage <- fea_gage(eset=gse16873,
 ?fea_gage
 ```
 
-**Other tools**
+
+#### Other tools
     
 To import the results from a functional enrichment analysis performed with other tools, see:
 
@@ -256,7 +220,7 @@ To import the results from a functional enrichment analysis performed with other
 ?format_results()
 ```
 
-**Web analysis**
+#### Web analysis
 
 FGNet can also be applied to an analysis performed at DAVID and GeneTerm Linker web site:
 
@@ -281,10 +245,10 @@ The HTML report function allows to create a comprehensive report including diffe
 
 Here is the code to use `FGNet_report()` with each of the previous examples:
 ```{r, eval=FALSE}
-FGNet_report(feaResults_David, geneExpr=genesYeastExpr)
 FGNet_report(feaResults_topGO, geneExpr=genesYeastExpr)  
-FGNet_report(feaResults_gtLinker, geneExpr=genesYeastExpr)
 FGNet_report(feaResults_gage)
+FGNet_report(feaResults_David, geneExpr=genesYeastExpr)
+FGNet_report(feaResults_gtLinker, geneExpr=genesYeastExpr)
 ```
 
 By default, the clusters included in these reports are filtered out to get cleaner results. The default values depend on the tool, and can be modified through FGNet_report arguments:
@@ -306,7 +270,8 @@ FGNet_report(feaResults_gtLinker, filterThreshold=0.3)
 After the FEA is ready, it is also possible to generate specific networks rather than the full report. Here is a simple example on how to use  `fea2incidMat()` to generate the incidence matrices that represent the networks and plot them.  There are more detailed examples on how to edit and explore the networks in sections [Editing and creating new networks](#editing-and-creating-new-networks) and [Filtering and selecting clusters](#filtering-and-selecting-clusters).
 
 ```{r, eval=FALSE}
-feaResults <- feaResults_gtLinker
+#feaResults <- feaResults_gtLinker
+feaResults <- feaResults_gage
 incidMat <- fea2incidMat(feaResults)
 incidMat$metagroupsMatrix[1:5, 1:5]
 incidMat_terms <- fea2incidMat(feaResults, key="Terms")
@@ -768,4 +733,52 @@ This work was supported by Instituto de Salud Carlos III [Research Projects PS09
 * Alexa A, and Rahnenfuhrer J (2010) *topGO: Enrichment analysis for Gene Ontology.* R package version 2.16.0. URL: http://www.bioconductor.org/packages/release/bioc/html/topGO.html
 
 * Luo W, Friedman MS, Shedden K, Hankenson KD, Woolf PJ (2009) *GAGE: generally applicable gene set enrichment for pathway analysis.* BMC Bioinformatics. 10:161. URL: http://www.bioconductor.org/packages/release/bioc/html/gage.html
+
+
+# Deprecated functionalities:
+
+## Graphical User Interface (GUI)
+
+The Graphical User Interface (GUI) provides access to most FGNet functionalities in Windows and Linux.
+
+Note: Since April 2022 the `RGtk2` package that is used for the interface is not available. It will be deprecated/updated within the next FGNet versions.
+
+To launch the GUI, type in the R console:
+
+```{r, eval=FALSE}
+library(FGNet)
+FGNet_GUI()
+```
+
+![FGNet GUI](FGNet_GUI.png)
+    
+In case you already have a gene list or gene expression from a previous analysis, it is possible to load it directly into the GUI genes field by passing it as argument:
+
+```{r, eval=FALSE}
+geneExpr <- c("YBL084C", "YDL008W", "YDR118W", "YDR301W", "YDR448W", 
+              "YFR036W", "YGL240W", "YHR166C", "YKL022C", "YLR102C", "YLR115W", 
+              "YLR127C", "YNL172W", "YOL149W", "YOR249C")
+geneExpr <- setNames(c(rep(1,10),rep(-1,5)), geneExpr)
+
+FGNet_GUI(geneExpr)
+```
+
+
+**Gene-Term Linker**
+    
+Gene-Term Linker is no longer available.
+    
+Since the analysis with Gene-Term Linker usually takes several minutes to be ready, the workflow is divided in two steps: (1) sending the analysis request, and (2) retrieving the results:
+
+```{r, eval=FALSE}
+jobID <- fea_gtLinker(geneList=genesYeast, organism="Sc")
+?fea_gtLinker
+```
+
+once the analysis is ready...
+
+```{r, eval=FALSE}
+jobID <- 3907019
+feaResults_gtLinker <- fea_gtLinker_getResults(jobID=jobID, organism="Sc")
+```
 

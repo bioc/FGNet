@@ -225,30 +225,30 @@ createHtml <- function(htmlFileName, feaResults, jobName, tablesGenes, tablesTer
     #### Set folder to save images etc: Same as downloaded feaResults    
     folder <- paste(jobName, .Platform$file.sep, sep="")      
     
-    # # Get metagroup terms
-    # keggPlots <- NULL   
+    # Get metagroup terms
+    # keggPlots <- NULL
     # geneIDtype <- feaResults$queryArgs$geneIdType
-    # if(plotKeggPw && !is.null(geneIDtype)) 
+    # if(plotKeggPw && !is.null(geneIDtype))
     # {
     #     keggExpression <- geneExpr
     #     if(is.null(keggExpression)) keggExpression <- setNames(rep(NA, length(genesMetagroups)), genesMetagroups)
-    #     
+    # 
     #     keggIDs <- getTerms(feaResults, returnValue="KEGG")
     #     names(keggIDs) <- NULL
     #     keggIDs <- unlist(keggIDs)
-    #     keggPlots <- tryCatch( 
+    #     keggPlots <- tryCatch(
     #                 {
     #                     keggPlots <- plotKegg(keggIDs, keggExpression, geneIDtype=geneIDtype)
     #                     keggPlots
-    #                 }, error = function(e) 
+    #                 }, error = function(e)
     #                 {
     #                     plotKeggPw <<- FALSE
     #                 })
     #     if(all(keggPlots==FALSE)) keggPlots <- NULL
     #     if(!is.null(keggPlots))   keggPlots <- setNames(paste(folder, keggPlots, sep=""), names(keggPlots))
     # }
-    # mgTerms <- getMGTerms(globalMetagroups, grType, keggPlots=keggPlots)
-    
+    mgTerms <- getMGTerms(globalMetagroups, grType)
+
     # Add asterisc to terms in several metagroups:
     termsMultipleMg <- termsNumMg[which(termsNumMg>1)]
     if(length(termsMultipleMg)>0)
